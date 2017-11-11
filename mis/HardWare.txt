@@ -1,0 +1,346 @@
+ @) R/CISC: Reduced/Complex Instruction Set Computing
+
+@) i686 is 32bit
+@) x86_64 is 64bit;
+
+@) BIOS interrupts are not available in pmode;
+
+@) UEFI is a replacement of BIOS;
+http://www.rodsbooks.com/efi-bootloaders/principles.html
+ *) it has a EFI System Partition(ESP); 
+ 	..) FAT32(officially)/16
+ 	..) contains EFI drivers, EFI applications, EFI scripts, and EFI boot loaders (in /EFI), among other things;
+
+..) each OS creates a directory in /EFI, in which a 'EFI boot loader file' always exists, with '.efi' extension;
+	..) this 'EFI boot loader file' is registered with EFI in RAM;
+	..) the default bootloader folder is named 'BOOT', acts as a fallback;
+	..) in MBR, with type code of 0xEF;
+	..) in GPT, with GUID of C12A7328-F81F-11D2-BA4B-00A0C93EC93B;
+	..) libparted-based tools(gparted,...) show with a 'boot/esp flag' (** same name set on os partition in MBR);
+	..) mounted at /boot/efi in linux;
+ *) can boot from both of GPT and MBP(with ESP);
+ *) usually a 'UEFI' in parenthesis is appended in boot entry;
+ *) disable CMS to ensure EFI is selected;
+ *) when install linux, select 'device for boot loader installation' to 'efi' partition if exists; 'Reserved BIOS boot area' is not needed;
+ *) some UEFI BIOS hardcoded boot entry as /EFI/Microsoft/boot/bootmgfw.efi; to boot into another entry by default, replace that file, and point windows boot entry to the orginal file in the other boot manager;
+ 	.) is boot-repair, check that option;
+
+@UEFI firmware boot management: 
+ *) windows: bcdedit
+   .) bcdedit /enum firmware
+   .) bcdedit /set {fwbootmgr} displayorder {b140f7b4-049d-11e7-8759-af5f34d71656} {e6debb5a-6d78-11e7-babc-806e6f6e6963} {bootmgr} {e6debb59-6d78-11e7-babc-806e6f6e6963} {e6debb5b-6d78-11e7-babc-806e6f6e6963}
+   	the list should includes all entries;
+   .) bcdedit /set {fwbootmgr} displayorder {b140f7b4-049d-11e7-8759-af5f34d71656} /addfirst|/addlast
+ *) linux: efibootmgr
+
+@) segmentation mechanism can't be turned of; even Flat model employs the minimal segmentation mechanism.
+
+@@ real mode addressing:
+~~ segment * 0fh + offset
+~~ normalized segment:offset notation use one hex char in offset(one paragraph per segment, overlapping never occurs.);
+
+0000:0000 - 0000:ffff	---			one segment =  64 kib = 1 00 00h = (4 00h(1 kib) * 4 = 10 00h) * 16(0fh)
+1000:0000 - 1000:ffff	   |
+2000:0000 - 2000:ffff	   |-- Conventional memory		---		10 * 64 kib = 640kib= a 00 00h = 655 360b
+	|	   	   			   |  (0 00 00 - 9 ff ff)		   |
+9000:ffff - 9000:ffff	---	   							   |
+														   |-- 1 mib(16 segments) = 10 00 00h = 1 048 576b	====
+a000:0000 - a000:ffff	---							  	   |													|
+b000:0000 - b000:ffff	   |							   |													|
+c000:0000 - c000:ffff	   |-- Upper memory area(UMA)	---		6 * 64 kib = 393 216b							|
+	|	   	   			   |  (a 00 00 - f ff ff)																|-- 10 ff efh = 1 114 096b
+f000:0000 - f000:ffff	---	   																					|
+	   																											|
+(ffff:0000 - ffff:000f	==	f000:fff0 - f000:ffff)	--- 16b(one paragraph)	overlap to the end of one mib(***)	|
+ffff:0010 - ffff:ffff	====- High memory area(HMA)	-- 64kib - 16b = ff efh = 65 536b - 16b = 65 520b		====
+						(one segment(64 kib) - one paragraph(16b) = 10 00 00 - 10 ff ef)
+
+*** when 1 mib(ffff:f) is reached, there are still three chars are 0 in segment(f000:ffff) or offset(ffff:000f) part;  if more than 5 chars is allowed, then the three chars can increase to fff; since the least significant position of them is the second one, so there are ffff bytes more; but the first one(000:0-f) is used in the one mib already(16 bytes), totally 64k-16b. 
+
+
+@@ General x86 Real Mode Memory Map:
+
+   --0x00000 - 0x003FF - Real Mode Interrupt Vector Table
+  |  0x00400 - 0x004FF - BIOS Data Area
+  |  0x00500 - 0x07BFF - Unused
+  |  0x07C00 - 0x07DFF - Bootloader
+  |  0x07E00 - 0x9FFFF - Unused(page 1 to 9)
+[RAM]0xA0000 - 0xBFFFF - Video RAM (VRAM) Memory
+  |  0xB0000 - 0xB7777 - Monochrome Video Memory
+  |  0xB8000 - 0xBFFFF - Color Video Memory
+  |  0xC0000 - 0xC7FFF - Video ROM BIOS
+   --0xC8000 - 0xEFFFF - Expand ROM Cards
+[ROM]0xF0000 - 0xFFFFF - System BIOS (adjust the start point to make sure it ends at the end of the first megabyte)
+
+~) 
+C8000-F3FFF	extension BIOS
+F4000-FFFFF	resident BIOS
+
+~) Each ROM can be configured to be shadowed in RAM.
+
+~) shadow should be turned off when flashing.
+
+@@) startup process:
+F000:FFF0	- Power On Reset Vector(the first opcode cpu executes, which is hardwired in cpu)
+	|JMP
+F000:E05B	- Power On Reset 
+	|INT 19(load MBR)
+0000:7C00	- MBR
+	|load volume bootloader(relocate itself to 00600)
+0000:7C00	- 
+
+@@ Real Mode x86 Interrupt Vector Table (IVT)
+offset+segment
+[Base Address]	[Interrupt Number]	[Description]
+£þ£þ£þ£þ£þ£þ£þ£þ£þ£þ£þ£þ£þ£þ£þ£þ£þ£þ£þ£þ£þ£þ£þ£þ£þ
+0x000			0					Divide by 0
+0x004			1					Single step (Debugger)
+0x008			2					Non Maskable Interrupt (NMI) Pin
+0x00C			3					Breakpoint (Debugger)
+0x010			4					Overflow
+0x014			5					Bounds check
+0x018			6					Undefined Operation Code (OPCode) instruction
+0x01C			7					No coprocessor
+0x020			8					Double Fault
+0x024			9					Coprocessor Segment Overrun
+0x028			10					Invalid Task State Segment (TSS)
+0x02C			11					Segment Not Present
+0x030			12					Stack Segment Overrun
+0x034			13					General Protection Fault (GPF)
+0x038			14					Page Fault
+0x03C			15					Unassigned
+0x040			16					Coprocessor error
+0x044			17					Alignment Check (486+ Only)
+0x048			18					Machine Check (Pentium/586+ Only)
+0x04C			19					Bootstrap loader(search 0xAA55, load and execute at 0x7c00.)
+0x050			1A					System Timer & real Time clock services 
+0x054			1B					Keyboard Break 
+0x058			1C					User Timer Tick 
+0x05C			1D					Video Parameters 
+0x060			1E					Floppy Disk Parameters 
+0x064			1F					Video Graphic Characters
+0x068			20¨C3F				Reserved for DOS
+0x06C 			40					Floppy Disk BIOS revector 
+0x070 			41					Hard Disk Parameters 
+0x074 			42					Reserved 
+0x078 			43					Reserved 
+0x07C 			44					Reserved 
+0x080 			45					Reserved 
+0x084 			46					Hard Disk Parameters 
+0x088 			47					Reserved 
+0x08C 			48					Reserved 
+0x090 			49					Reserved 
+0x094 			4A					User Alarm 
+0x098 			4B-5F				Reserved 
+0x09C 			60-67				Reserved for user program interrupts 
+0x0A0 			68-6F				Reserved 
+0x0A4 			70					Real Time clock interrupt 
+0x0A8 			71-74				Reserved 
+0x0AC 			75					Redirect to NMI 
+0x0B0 			76-7F				Reserved 
+0x0B4 			80-85				Reserved for BASIC 
+0x0B8 			86-F0				Used by BASIC interpreter while Running BASIC 
+0x0BC			F1-FF				Reserved for User program interrupts
+
+
+@@ Protect Mode x86 Processor Exceptions
+[Interrupt Number]	[Class]		[Description]		[Error Code]
+£þ£þ£þ£þ£þ£þ£þ£þ£þ£þ£þ£þ£þ£þ£þ£þ£þ£þ£þ£þ£þ£þ£þ£þ£þ£þ£þ£þ£þ£þ£þ£þ£þ£þ
+0	Fault	Divide by 0	None
+1	Trap or Fault	Single step (Debugger)	None. Can be retrived from debug registers
+2	Unclassed	Non Maskable Interrupt (NMI) Pin	Not applicable
+3	Trap	Breakpoint (Debugger)	None
+4	Trap	Overflow	None
+5	Fault	Bounds check	None
+6	Fault	Unvalid OPCode	None
+7	Fault	Device not available	None
+8	Abort	Double Fault	Always 0
+9	Abort (Reserved, do not use)	Coprocessor Segment Overrun	None
+10	Fault	Invalid Task State Segment (TSS)	See error code below
+11	Fault	Segment Not Present	See error code below
+12	Fault	Stack Fault Exception	See error code below
+13	Fault	General Protection Fault (GPF)	See error code below
+14	Fault	Page Fault	See error code below
+15	-	Unassigned	-
+16	Fault	x87 FPU Error	None. x87 FPU provides own error information
+17	Fault	Alignment Check (486+ Only)	Always 0
+18	Abort	Machine Check (Pentium/586+ Only)	None. Error information abtained from MSRs
+19	Fault	SIMD FPU Exception	None
+20-31	-	Reserved	-
+32-255	-	Avilable for software use	Not applicable
+
+@@ 
+====CHS(count starting from 1) - count like Russian doll;
+Cylinder	- track(circle)	1024
+Head		- side(face)	255(dos bug)
+Sector		- arc			63(hardware)	
+
+[12345678]¡þ12[345678]¡þ12345678	-(H-S-C)
+	|	    |	|		  |
+head(2^8)	| sec(2^6)	  |
+			|			  |
+			 - cyl(2^10) -
+max:8.4Gb/7.84Gib
+
+====LBA - Logical/linear Block Addressing(index starting form 0)
+
+====LBA to CHS :
+--LBA++		(index to count)
+C=LBA/(HPC*SPT)
+H=(LBA/SPT)%HPC
+S=LBA%SPT
+
+
+====CHS to LBA	
+Secs =	C*SPC			+	H*SPT		+		S								
+   		|					|				odd-sectors		(empty-sectors) 
+   		|				  	|					|				 |
+   		|				full-heads				|_ one-odd-head _|			(empty-heads)
+   		|				  	|							|						|
+   	full-cylinders		  	|__________________ one-odd-cylinder _______________|			(empty-clinders)
+		|												|											|
+		|_______________________________________ single-disk _______________________________________|
+
+LBA = Secs - 1 = (C*HPC+H)*SPT+S-1
+
+====SPC(sectors per cylinder)=HPC(heads per cylinder)*SPT(sectors per track)
+
+@@) the first track(63 sectors) are reserved usually, where mbr resides. so the first partition starts from chs(0,1,1).
+
+@@ logical sector begins from LBA 63;
+
+
+@@ Boot Record(MBR/EBR)
+{
+	Code Area				446(1BDh)		-IPL(Initial Program Loader):
+	Partition Table	64(1FDh)
+	Boot Record Signature	2(511h)			-AA55h
+}
+
+@@) Partition table entry:
+{
+	Boot Indicator (80h = active)	1
+	Starting sector in CHS values	3
+	Partition-type Descriptor		1	- (0 indicates not used)
+	Ending sector in CHS values		3
+	Starting Sector					4	-LBA offset
+	Partition Size (in sectors)		4	- (maximum is 2^32 sectors / 2^41 bytes / 2TiB)
+}
+~~ when size larger than 7.84gib, the two CHS values are set to its maximum; then only use the last two elements to calculate;
+~~ extended partition entry indicating the size of the whole contiguous block for all extended partitions.
+
+@@) extended partition entry in MBR describes the whole part of the extended area, within which there are one or more logical disks linked one after another; each one knows where it starts from the beginning of the area.
+
+@@) An Extended Partition has the same geometry with a disk, so it's a logical drive. 
+
+1) there is a Boot Record(EBR) sector at the very beginning, of which the structure is the same with MBR; 
+2) the first track is reverved. 
+
+@@) extended partition table only has two entries:
+1) the first Partition table entry describes this partition:
+{
+	Boot Indicator
+	Starting sector in CHS values
+	Partition-type Descriptor		-	others rather than 5/15
+	Ending sector in CHS values	
+	Starting Sector					-	***start from this "extended disk", always 63(the reserved track)
+	Partition Size (in sectors)		-	the size excluding reserved sectors(the partition size);
+}
+2) the second Partition table entry describes the next extended partition:
+{
+	Boot Indicator
+	Starting sector in CHS values	
+	Partition-type Descriptor		-	5/15
+	Ending sector in CHS values	
+	Starting Sector					-	***start from the first extended partition, which is the size of all extended partitions before.
+	Partition Size (in sectors)		-	the size of this "extended disk", including reserved sectors(logical disk size);
+}
+~~ its start point is (Starting Sector in MBR)+(Starting Sector in this)
+
+@@ logical sector begins from absolute sector 63
+
+@@ default segment register:
+cs:ip es:di ss:bp 
+Others use ds
+
+
+@@ GPT protective MBR should set its only partition to the exact capacity of the whole disk per the specification; however windows 7/8 always set it to the maximum.
+
+@@) the disk IO unit is sector, indicating the bytes written is a multiple of 512, or IO operation will fail.
+
+@) General BIOS interrupts:
+100E:	print on screen.
+11:		get devices installed.
+1308:	get disk parameters/geometry and numbers.(maximum index, increase the heads&cylinders index to get its number)
+100f:	get display mode/page
+18:		no disk(start ROM BASIC or reboot)
+
+@)
+physical(variable sectors)
+	|
+	| disk controller
+	|
+IDE/ATA spec(Max cylinders: 65536;	Max HPC: 16;	Single SPT: 63)
+	|
+	| BOIS(divid cylinders, multiply HPC, with shift	--	***how much to shift is not mandatory.)
+	|
+BIOS spec(Max cylinders: 1024;	Max HPC: 255;	Single SPT: 63)	- when translation applied, called ECHS/large mode.
+
+~)in normal CHS mode, the limit(combined two specs limit) is 504 MIB=1024*16*63;
+
+*)dos COM program occupies one segment, code from low to high, data from high to low;
+
+@) cluster is the allocation unit(the minimum sectors to be placed together);
+
+@)geometry is specific to bios(the same disk presents different geometries by different bios)
+
+@) page directory contains 1K entries, each represents a page table, which contains 1k of pages. since one page is 4k bytes, so the total is 4k*1K*1K=4G.
+
+@) In x86, there are three kinds of addresses:
+    1. Logical - segment:offset
+    2. Linear (aka Virtual) - 32 bits - 0 to 2^32 - 1
+    3. Physical - the actual hardware - usually represented by 32 or 36 bits
+
++-----------------------------------------------------------------------------+
+|                      Memory Management Unit (MMU)                           |
+|  Logical ==> [Segmentation Unit] == Linear ==> [Paging Unit] ===> Physical  |
++-----------------------------------------------------------------------------+
+
+@) page protection distinguishes "supervisor mode"/"user mode", along with access types;
+
+@) GDT Entry Definition(segment descriptor)
+   typedef struct _KGDTENTRY
+   {
+       USHORT LimitLow;
+       USHORT BaseLow;
+       union
+       {
+           struct
+           {
+               UCHAR BaseMid;
+               UCHAR Flags1;
+               UCHAR Flags2;
+               UCHAR BaseHi;
+           } Bytes;
+           struct
+           {
+               ULONG BaseMid:8;
+               ULONG Type:5;
+               ULONG Dpl:2;
+               ULONG Pres:1;
+               ULONG LimitHi:4;
+               ULONG Sys:1;
+               ULONG Reserved_0:1;
+               ULONG Default_Big:1;
+               ULONG Granularity:1;
+               ULONG BaseHi:8;
+           } Bits;
+       } HighWord;
+   } KGDTENTRY, *PKGDTENTRY;
+ *) limit is 2.5bytes/20bits/ffff_f, unit is page(add another 1.5bytes/12bits/fff) or bytes;
+
+@) segment selector:
+15	--	3	-	2			----	0
+	|			|			|
+  index		GDT(0)/LDT	  access
+ *) index * 8 + GDT_BASE	(entry is 8 bytes long; just clear the first three bits and add to base)  

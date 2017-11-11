@@ -1,0 +1,12 @@
+.logopen F:\TMP\wdb.log
+.outmask- /l ffff
+.while(1){
+	.if(@$ip==ntdll!DbgBreakPoint){
+		.echo Quit Animating
+		.break;
+	}
+	r@$ip
+	p;
+}
+.logclose
+.outmask /d

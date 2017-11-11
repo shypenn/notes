@@ -1,0 +1,283 @@
+@) in interactive mode, to end a block, enter an empty line;
+
+@) power: **
+
+@) ternary operator:
+ *)	var= a if condition else b
+ *)	var= condition and a or b
+	
+
+@) the topmost module (running environment) is named '__main__'; can only be tested with __name__=='__main__', otherwise we can't detect its existence in it; 
+
+@) no 'switch';
+
+@) no 'var++', but 'var+=1'
+
+@ name convention:
+ *) _single_leading_underscore(protected): weak "internal use" indicator. E.g. "from M import *" does not import objects whose name starts with an underscore.
+ *) single_trailing_underscore_: used by convention to avoid conflicts with Python keyword, e.g. Tkinter.Toplevel(master, class_='ClassName')
+ *) __double_leading_underscore(private): when naming a class attribute, invokes name mangling (inside class FooBar, __boo becomes _FooBar__boo; see below).
+ *) __double_leading_and_trailing_underscore__: "magic" objects or attributes that live in user-controlled namespaces. E.g. __init__, __import__ or __file__. Never invent such names; only use them as documented; usually called by system not user.
+
+@) code block follows ':' at the end of a line, identified by indentation; 
+
+@) comment is '#', no multiple line comment, however docstring can work around it("""...""");
+
+@) get type of object: type()
+
+@) boolean values are: True/False;
+
+@) in version 2.x, 'bytes' is equivalent to 'str';
+
+@) assign multiple variable in a single line:
+	a, b=1, 2
+
+@) function:
+ *) like in js, but replace 'function' by 'def';
+ *) can return multiple values: a, b=fun()	--variables can be less than returned values(the last variable is a tuple), not vice versa;
+ *) can have default value for argument like in C;
+ *) variable arguments:
+ 	.) def fun(arg1, *arg2)			-- arg2 contains a list;
+ 	.) def fun(arg1, **arg2)		-- arg2 contains a dictionary including all keys which excludes 'arg1';
+		fun(key1=1, key2=2, arg1=3, key3=4)
+ *) argument can't be omited;
+
+@) function argument passing can take name explicitly;
+ *) arguments order is bypassed;
+ *) fit for variable argument of dictionary type;
+ *) named and unamed can be mixed, but all should be named after the first named one;
+
+@) unnamed function:
+ lambda arg1, arg2: return arg1+arg2
+
+@) hashable <==> unmodifiable <==> pass-by-value
+ *) number
+ *) string
+ *) tuple
+ *) frozenset
+
+@)sequence can be accessed by range:
+ s[2:5]			-- start including, end excluding;
+ s[:]			-- first and last by default;
+ s[2:5:2]		-- the last one is step;
+
+@) pop() of mutable sequence accept index (last one by default);
+
+@)sequence constructor takes deepcopy;
+
+@) no push() but append();
+
+@) tuple is an unmodifiable array;
+ *) literl notation is parentheses ();
+
+@) list names in a scope: dir(n)
+
+@) print/pprint(pretty print) can only output content of fundamental type; other complex types such as files, sockets, classes, or instances are outputed as repr();
+
+@) compare operator(==/>/<) takes value comparing(deeply);
+ *) 'is' is used for entity comparison;
+
+@) print append line break automatically; file.write() does not;
+ *) to prevent print adding newline, append a comma at the end: print 1,
+ *) print without arguments prints an empty line;
+ *) output to file:
+	f=open('f.txt', 'w')
+ 	print >>f, 111111111
+ *) format:
+	'%s,%i'%('abc', 2)
+
+@) logic operators are: (not > and > or) 
+
+@) single element tuple:
+ tp=(1,)
+
+@) string supports multiply:
+ s='a';
+ s*=3
+ s -> 'aaa'
+
+@) null is 'None':
+ *) use 'is' to test instead of '==';
+
+@) list/array supports '+';
+
+@) list copy:
+ *) shallow: b=a[:]
+ *) deep: copy.deepcopy(a);
+
+@) dictionary initialization:
+ *) dc={'a':1, 'b':2}	-- key can be variable, so it should be enclosed as string;
+ *) dc=dict(a=1, b=2)	-- key can be only string;
+ *) dc=dict([(1,2),('a', 2), ([1,2], 'a')])
+ 						-- from list of tuple;
+
+@) dictionary key can be any hashable value;
+
+@) key of dictionary can't be accessed by dot symantics, just ['key'];
+
+@) set:
+ *) unique
+ *) unordered	-- which element to remove by pop() is undefined;
+ *) hashed		-- only hashable value is allowed;
+
+@) power operator:
+ 2**8==256
+
+@) while loop:
+ *) no post-condition;
+
+@) for loop:
+ for ... in (range(start, end, step))
+
+
+@) both loop can have 'else' clause, which executes when condition becomes false,  except ended by 'break';
+
+@) 'pass' is 'nop' in asm;
+
+@) class constructor is __init__, destructor is __del__;
+
+@) a class instance is created by calling the class;
+
+@) class base classes:
+ class ClassA(base1, base2):
+
+@) static method:
+ *) class ClassA(base1, base2):
+		@staticmethod
+		def method():
+			pass
+ *) class ClassA(base1, base2):
+		def method():
+			pass
+		stMethod=staticmethod(method)
+
+ClassA.stMethod()
+
+@) class definition is prototype of instance, which can be modified and will be reflected in instances immediately; attributes added to instance overrides class's definition;
+
+@) class definition is converted to an instance of its metaclass:
+ *) default value of '__metaclass__' is 'type'
+ *) custom '__metaclass__' should derive from 'type'
+
+	---------------------------------------
+	class Cls(basecls):
+		prop=1
+		__metaclass__=Metaclass
+	---------------------------------------
+	Cls = Metaclass('Cls', (basecls,), {prop:1, __metaclass__:Metaclass})
+
+@) private attribute of class prefixed with '__' will be renamed, so it can't be overriden;
+
+
+@) object toString function:
+ *) backquotes: `[1,2]`	-> '[1,2]'
+ *) def __str__:
+ 		return 'name'
+ 	print obj	--> 'name'
+ 	str(obj)	--> 'name'
+ *) __repr__
+ 		return 'name'
+ 	obj			--> 'name'
+ 	repr(obj)	--> 'name'
+
+@) convert string representation of expression to expression:
+ *) eval()
+ *) ast.literal_eval()
+
+@) augmented binary operator overloading is to prepend a 'i' to the normal name;
+ __add__	-->		+
+ __iadd__	-->		+=
+
+@) vars() returns __dict__, which is the internal type of namespace as dictionary; 
+
+@) to overwrite data in file, open it with 'r+';
+
+@) string length should match which is calculated from 'format' in 'unpack()';
+
+@) if names in a module are imported directly, even the module is reloaded, those names stay the same;
+ *) to refer names from 'module name' works;
+
+@) reload(m): re-import a module;
+
+@) import from path:
+import imp
+foo = imp.load_source('module.name', '/path/to/file.py')
+
+@) 'del' can remove a name from namespace;
+
+
+@) '__module__' of name tells which module it resides; 
+
+
+@) format a string by replacing:
+ '{0}abc{1}'.format(1, 2)
+
+@) print binary string as hex:
+ binascii.hexlify(d)
+
+@) dict doesn't keep order as declared, collections.OrderedDict does;
+
+@) check attribute exists:
+ hasattr(obj, 'name')
+
+@) check key exists:
+ 'key' in keyvalueObjt
+
+@) class derived from 'object' or subclass of which are new-style class;
+
+@) call base class methods:
+	super(BaseClass, instance).method()
+
+@) 'join' method is set on string instead of array;
+
+@) loop key,val in dict.iteritems()
+
+@) global variable assignment takes effect only if it's declared as 'global'; access works normally;
+ var=None
+ def fun():
+ 	global var	#neccesary
+	var=1
+
+@) ctypes.POINTER(c_type) creates a type of pointer;
+ *) ctypes.pointer(c_type_value) creates an instance of that type;
+
+@) internal types resides in '__builtin__' module;
+
+@) class is defined as an instance of 'PyTypeObject': 
+PyObject* m=Py_InitModule(...)
+PyModule_AddObject(m, "name", (PyObject *)&nameType);
+
+@) python c api can be accessed from ctypes.pythonapi; 
+
+@) python source codes is hosted at hg.python.org;
+
+@) ctypes wrapping memory data:
+ 1) PyCSimpleObject(c_byte/c_int/c_char_p/py_object...): byte/word/char */PyObject *...
+  *) read/write memory through 'value'
+ 2) PyCStructureObject/PyCUnionObject(Strucute/Union): complex structure data
+  *) defining fields in '_fields_' in subclass;
+ 3) PyCPointerObject(POINTER): address
+  *) read/write pointer memory through 'contents';
+  *) read/write pointed memory through [index];
+ 4) PyCFuncPtrType(CFUNCTYPE/WINFUNCTYPE/PYFUNCTYPE): function 
+
+ Notes:
+ *) init:
+ 	.) create new: pass corresponding python object as argument(python->C);
+	.) create from memory: pass address to from_address();
+ *) non-pointer types(c_byte/c_int) contains data in the PyObject structure directly;
+ *) pointer types (c_char_p/py_object...) contains an address in its PyObject structure which points to a piece of memory containing chars/PyObject...; 
+ *) addressof() returns address of the wrapped memory data in its PyObject structure;
+ *) from_address() accepts an address which contains the wrapped memory data; 
+ *) addressof <-> from_address
+ 	c_int.from_address(addressof(c_int(12))).value==12
+
+@) py_object is a c pointer, which stores an address of PyObject;
+
+@) if an object is not stored, it will be destroyed immediately after use;
+ *) id(object())==id(object()): true, memory is reused;
+ *) object()!=object(): true, the first object inst is waiting for passing to compare, then the second one has a different address;
+
+@) lambda:
+ *) only one expression
+ *) 'return' is missing and implied;

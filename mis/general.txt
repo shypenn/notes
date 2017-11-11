@@ -1,0 +1,187 @@
+20802033
+,
+894112	y..l...:1707
+
+cd insure 63...[8]
+
+
+512924196003274891.51292419630123488x
+
+zh-hans_windows_xp_professional_with_service_pack_3_x86_cd_vl_x14-74070
+QC986-27D34-6M3TY-JJXP9-TBGMD
+
+envy15:
+f10: bios	f9: boot options	f11: recovery
+cd: be31...(C:1)
+ja..ki..l0..t?2Mbo2n900101
+
+@) usb boot only support certain port, try each;
+
+@) fiddler can't monitor "locahost",instead use ip or other names.
+
+@) IIS 7 ÀïaspÁ¬½ÓaccessÊý¾Ý¿â»áÓÐÈ¨ÏÞµÄÎÊÌâ¶ø³öÏÖÎ´Öª´íÎó.
+½â¾ö°ì·¨ÊÇÐÞ¸Ä
+System32\inetsrv\config\applicationHost.configÀïµÄ:
+<applicationPoolDefaults>
+    <processModel identityType="NetworkService" loadUserProfile="false" />
+</applicationPoolDefaults> 
+
+
+moto:
+1:rocovery:
+	x+power
+volume up+camera
+2:bootloader:
+	up+power
+3:enable power to end call:system/usr/keylayout/cpcap-key.kl:
+	key	107	ENDCALL		WAKE_DROPPED
+
+
+run SQLManagementStudio_x86_ENU.exe--> install center-->installation->new stand-alone installation->management tool(basic)
+
+
+ ¾©ICP±¸09078293ºÅ
+
+
+ctrl+c cmd cancel execution;
+
+@) 32 bit true color: 24-bit truecolor depth with 8 bits for an alpha channel;
+
+@) when apache is installed as a console application, just run 'httpd.exe', then the server starts;
+
+@) the optical modem super account is stored in 'backupsettings.conf' which can be downloaded after login by ordinary account:
+      <X_CT-COM_TeleComAccount>
+        <Password>qC0F4265</Password>
+      </X_CT-COM_TeleComAccount>
+
+@) let virtual machine boot from usb: plop boot manager.iso (plpbt)
+
+@) multiboot manager: yumi;
+
+@) create bootable USB: rufus;
+
+@) pico->nano->micro->milli
+
+@) 'NAT Network' works in virtual machine when Symantec Endpoint protection is running; 
+
+@) hide virtualbox menu and status bar:
+VBoxManage.exe setextradata global GUI/Customizations noMenuBar,noStatusBar
+
+@) apache no cache:
+<IfModule mod_headers.c>
+    Header set Cache-Control "max-age=public"
+    Header unset Pragma
+    Header set Expires "Wed, 11 Jan 3000 00:00:00 GMT"
+</IfModule>
+
+@) glob(global command) rules:
+*		matches any number of any characters including none
+?		matches any single character
+[abc]	matches one character given in the bracket	
+[a-z]	matches one character from the range given in the bracket
+****************************************
+linux/posix, also:
+[!abc]
+[!a-z]
+
+@)avidemux transforming video throuth 'filter';
+ *) speedup or slowdown: first change fps, then resample fps;
+ *) resize: swsResize
+ *) clip: crop
+ *) combine: file -> append
+ *) compress: video output: HEVC(x265) -> configure -> general -> rate control -> encoding mode: video size(two pass) -> target video size
+
+@) virtualbox networking:
+ *) bridged: vm is a member of the physical network which the host resides;
+ *) nat: a local network; (no access can be initiated to vm, unless port forwarding is enabled;)
+ *) nat network: as a router
+ 	*) first create a network in File-Preference-Network
+ *) internal: guest to guest(dhcp server needs be added manually with cmd);
+ *) host-only: as internal network, the host joins, which acts as dhcp server by default; 
+ **) private/host-only network don't have internet access; to set another to fulfill it;
+ **) port forwarding: NAT: host ip: outer ip
+
+@) continuous intergration (CI) is a server monitoring source code management(SCM) system for building(deploying);
+
+@) vmware;
+ *) shared file is locked caused by bug, fix: open preoperty dialgo then close;
+
+@) in utf16 text file, at the start, a BOM(byte order mark) number may appear:
+ *) 0xfeff/0xff0xfe: little endian 
+ *) 0xfffe/0xfe0xff: big endian 
+
+@) 'NAT loopback' should be supported in router for accessing public IP inside the network;
+
+@) exuberant ctags:
+ *) ignore/replace preprocessor macro(can be placed in a file if too much)
+ 	-I "mac1, mac2=word"
+ *) specify details included in tag file:
+ 	--fields=
+ *) specify which kinds of tag included(+/- from default, or override default):
+ 	--c++-kinds=cdefglmnpstuvx
+ *) display supported languages:
+ 	--list-languages
+ *) display supported kinds for languages:
+ 	--list-kinds=c++
+ *) display default mapping of language with file extension(change with --langmap or --language-force):
+ 	--list-maps=c++|all
+@) when 'open source' is required in a license, source code should be available;
+  Generally speaking, you must keep the copyright notices in each file intact and not delete the LICENSE.md file located in the CKEditor installation folder.
+
+@) partitioning tool in windows: diskpart;
+
+@) LinuxMint HiDPI setting:
+Preference -> General -> User interface scaling;
+
+@) error when send email via exchange server: blocked by recipient server;
+smtp;550 5.7.1 Delivery not authorized, message refused
+
+@) [IPA][] (International Phonetic Alphabet) Extension unicode table:
+[IPA]:<https://en.wikipedia.org/wiki/IPA_Extensions>
+		0	1	2	3	4	5	6	7	8	9	A	B	C	D	E	F
+U+025x	ɐ	ɑ	ɒ	ɓ	ɔ	ɕ	ɖ	ɗ	ɘ	ə	ɚ	ɛ	ɜ	ɝ	ɞ	ɟ
+U+026x	ɠ	ɡ	ɢ	ɣ	ɤ	ɥ	ɦ	ɧ	ɨ	ɩ	ɪ	ɫ	ɬ	ɭ	ɮ	ɯ
+U+027x	ɰ	ɱ	ɲ	ɳ	ɴ	ɵ	ɶ	ɷ	ɸ	ɹ	ɺ	ɻ	ɼ	ɽ	ɾ	ɿ
+U+028x	ʀ	ʁ	ʂ	ʃ	ʄ	ʅ	ʆ	ʇ	ʈ	ʉ	ʊ	ʋ	ʌ	ʍ	ʎ	ʏ
+U+029x	ʐ	ʑ	ʒ	ʓ	ʔ	ʕ	ʖ	ʗ	ʘ	ʙ	ʚ	ʛ	ʜ	ʝ	ʞ	ʟ
+U+02Ax	ʠ	ʡ	ʢ	ʣ	ʤ	ʥ	ʦ	ʧ	ʨ	ʩ	ʪ	ʫ	ʬ	ʭ	ʮ	ʯ
+
+00E6  æ   latin small letter ae
+00E7  ç   latin small letter c with cedilla
+00F0  ð   latin small letter eth
+00F8  ø   latin small letter o with stroke
+0127  ¿   latin small letter h with stroke
+014B  ¿   latin small letter eng
+0153  ¿   latin small ligature oe
+03B2  ¿   greek small letter beta
+03B8  ¿   greek small letter theta
+03BB  ¿   greek small letter lamda
+03C7  ¿   greek small letter chi
+
+@) ctags -h ".h.c" *
+
+@) dual boot clock conflicts: windows read bios time as 'local', whereas linux as 'UTC';
+ *) windows to UTC (after win7):  
+	[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\TimeZoneInformation]
+     "RealTimeIsUniversal"=dword:00000001
+	*) time service still write as local, turn off time sync:
+		sc config w32time start= disabled
+ *) linux to local:
+	*) ubuntu
+	   *) before 15.04
+	   		/etc/default/rcS	->	UTC=no
+	   *) equal and after: timedatectl set-local-rtc 1
+
+@)gimp
+ *) jpg file has no alpha channel by default, which can not be deleted to transparency;
+
+@) install virtualbox addons in linux:
+ *) mount /dev/cdrom /media/cdrom
+ *) sudo apt-get -y install gcc make linux-headers-$(uname -r)
+ *) /media/cdrom/VBoxLinuxAdditions.run
+@) vagrant boxes download links:
+	http://www.vagrantbox.es/
+
+@) jenkins 
+	* runs in user named after as its name by default;
+	* PATH is set internally as a constant;

@@ -1,0 +1,88 @@
+It can be used for the following purposes under UNIX or Linux:
+
+    Display text files on screen.
+    Copy text files.
+    Combine text files.
+    Create new text files.
+
+cat command Syntax
+
+The syntax is as follows:
+
+ 
+cat filename
+cat options filename
+cat file1 file2
+cat file1 file2 > newcombinedfile
+ 
+
+Displaying The Contents of Files
+
+To read or read the contents of files, enter:
+$ cat /etc/passwd
+The above command will display the contents of a file named /etc/passwd. By default cat will send output to the monitor screen. But, you can redirect from the screen to another command or file using redirection operator as follows:
+$ cat /etc/passwd > /tmp/test.txt
+In the above example, the output from cat command is written to /tmp/text.txt file instead of being displayed on the monitor screen. You can view /tmp/text.txt using cat command itself:
+$ cat /tmp/test.txt
+Concatenate files
+
+Concatenation means putting multiple file contents together. The original file or files are not modified or deleted. In this example, cat will concatenate copies of the contents of the three files /etc/hosts, /etc/resolv.conf, and /etc/fstab:
+$ cat /etc/hosts /etc/resolv.conf /etc/fstab
+You can redirect the output as follows using shell standard output redirection:
+$ cat /etc/hosts /etc/resolv.conf /etc/fstab > /tmp/outputs.txt
+$ cat /tmp/outputs.txt
+You can also use a pipe to filter data. In this example send output of cat to the less command using a shell pipe as the file is too large for all of the text to fit on the screen at a time:
+$ cat /etc/passwd | less
+How Do I Create a File?
+
+You can use cat command for file creation. To create a file called foo.txt, enter:
+$ cat > foo.txt
+Sample outputs:
+
+This is a test.
+
+To save and exit press the CONTROL and d keys (CTRL+D). Please note that if a file named foo.txt already exists, it will be overwritten. You can append the output to the same file using >> operator:
+$ cat >> bar.txt
+The existing bar.txt file is preserved, and any new text is added to the end of the existing file called bar.txt. To save and exit press the CONTROL and d keys (CTRL+D).
+How Do I Copy File?
+
+The cat command can also be used to create a new file and transfer to it the data from an existing file. To make copy of
+$ cat oldfile.txt > newfile.txt
+To output file1's contents, then standard input, then file2's contents, enter:
+$ cat file1 - file2
+A hyphen indicates that input is taken from the keyboard. In this example, to create a new file file2 that consists of text typed in from the keyboard followed by the contents of file1, enter:
+$ cat - file1 > file2
+cat command options
+
+To number non-blank output lines, enter (only works with GNU cat command version):
+$ cat -b /etc/passwd
+Sample outputs:
+
+     1	root:x:0:0:root:/root:/bin/bash
+     2	daemon:x:1:1:daemon:/usr/sbin:/bin/sh
+     3	bin:x:2:2:bin:/bin:/bin/sh
+     4	sys:x:3:3:sys:/dev:/bin/sh
+     5	sync:x:4:65534:sync:/bin:/bin/sync
+     6	games:x:5:60:games:/usr/games:/bin/sh
+     7	man:x:6:12:man:/var/cache/man:/bin/sh
+     8	lp:x:7:7:lp:/var/spool/lpd:/bin/sh
+     9	mail:x:8:8:mail:/var/mail:/bin/sh
+    10	news:x:9:9:news:/var/spool/news:/bin/sh
+
+To number all output lines, enter (GNU cat version only):
+$ cat -n /etc/passwd
+To squeeze multiple adjacent blank lines, enter (GNU cat version only):
+$ cat -s /etc/passwd
+To display all nonprinting characters as if they were visible, except for tabs and the end of line character, enter (GNU cat version only):
+$ cat -v filename
+cat Command Abuse
+
+The main purpose of cat is to catenate files. If it's only one file, concatenating it with nothing at all is a waste of time, and costs you a process. For example,
+$ cat /proc/cpuinfo | grep model
+Can be used as follows:
+$ grep model /proc/cpuinfo
+Another example,
+cat filename | sed -e 'commands' -e 'commands2'
+Can be used as follows which is cheaper:
+sed sed -e 'commands' -e 'commands2' filename
+

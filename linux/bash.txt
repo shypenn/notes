@@ -1,0 +1,385 @@
+@) execute script file
+ *) without executable permission:
+	 *) sourced:
+		 1. `.`
+		 2. `source`
+		 *) $0 is what sourced it;
+		 *) can accept parameters;
+	 *) subshell:
+		`bash` (invoke interpreter with the file as parameter)
+		 *) $0 is this script ($0 == "$BASH_SOURCE");
+ *) with executable permission:
+ 	 1. cmd (in path)
+	 2. `./`
+	 *) the interpreter is specified by the first line starting with '#!';
+	 *) a single parameter may be supplied, then the text file becomes the second param;
+ *) $BASH_SOURCE always contains this script file path;
+
+@) no & as in cmd;
+
+@) exit compatible between sourced and subshell
+
+	[ "$BASH_SOURCE" = "$0" ] && alias quit exit || alias quit return
+
+@) 'return' from function or `source`ed script;
+ *) get returned value, same as 'exit code': $? 
+ *) the maximum number is 255, then wraparound;
+ *) $0 is always what it is when entering this script, even in function;
+
+@) no ternary operator, instead:
+
+	cond && op1 || op2
+
+@) run command through 'env'
+ *) bypass shell alias;
+ *) search command in 'PATH';
+
+@) line separator is ';' or newline;
+
+@) '\' is used to escape char; 
+ * takes effect everywhere except in single quotes;
+ * leave its following char as is (prevent its special meaning taking effect);
+ * newline's default separating line function is turned off also;
+
+@) quotes is used for escaping keywords or special char[s] when interpreter parsing script **text** file;
+ *) single: escape everything; 
+ 	* so single quotes can't appear in itself, since escaping char '\' has no effect;
+	* newline can't be turned off;
+ *) double: escape all but:
+ 	* $: variable expansion works;
+	* ``: command substitution works;
+	* !: history expansion works;
+	* newline
+	* limited '\': can only escape exception chars in this list;
+	** ~ has to be replaced manually: ${str/#~/$HOME}
+ *) ansi-c: $'abc\ndef'
+ *) locale-specific translation: $""
+
+@) echo 
+ * content from file; 
+	data=$(<filename)
+	echo $data		**all kinds of spaces are replaced with a whitespace**
+	echo "$data"	**all kinds of spaces are preserved**
+ * unrecognized backslash escape sequences are ignored
+ 	echo ab\c
+	abc
+ * with color("" is mandatory):
+ 	echo -e "\e[33;34mTEXT\e[0m"
+@) force evaluate an expansion:
+ * txt=$(eval "echo \"`<.aliyun_ubuntu.txt`\"")
+ * envsubst "afadsf${afd}"
+    * only works for 'exported' or passed
+
+@) cmd |& cmd
+ =>
+   cmd 2>&1 | cmd
+
+ pipe with error	
+
+@) exit code (as errorlevel in cmd): $?
+
+@) [[]] is expansion to [], not posix;
+
+@) if...then are two lines;
+
+@) in sense of bash:
+ *) parameter is a name/number/special char, which stores value;
+ *) variable is a parameter with a name; 
+
+@) when a variable is declared as integer, arithmatic expansion is not required at assignment;
+	declare -i num
+	num=1+2
+ *) if not, num=$((1+2))
+
+@) arithmatic expansion can evaluate logical expression;
+
+@) to set env variable local for a command when invoke, preceding the assigment before command, with space separating;
+	var1=1 var2=2 cmd arg1 arg2
+ *) if separated by ';', it's not local;
+
+@) expansion is before executing:
+	var1=1 echo var1	-> nothing
+
+@) '-' as a parameter for some program, indicates content is read from stdin;
+ *) usually stdin is filled with pipeline;
+ *) bash only accepts pipeline form;
+
+@) ctrl+d: end stdin input;
+
+@) ctrl+r, then type "string"
+search command starting from "string" in history;
+
+@)!string
+execute a command starting with "string" in the history;
+? is wildcard;
+
+@@)return a link target:
+readlink linkname
+
+
+@) has two modes like vim;
+
+@) change readline mode:
+set -o vi 
+
+@) when in vi mode:
+ *) 'G' goes to the first line instead of last
+ *) can't go to sepecific line number; 
+ *) go to the last line: large number - j
+ *) 'v' invokes 'fc' command, which edit command in the default editor and execute it;
+
+@) set default editor:
+export EDITOR=vim
+
+@) command&: create a job in the background; stdin is /dev/null, instead of prompt; so prompt is still interactive;
+
+@) variable is defined by assign value; 'declare' is used for special purpose such as read/integer only;
+ *) 'set' is not for declare variable, instead for setting shell options;
+ *) remove variable: unset;
+ *) 'local' specify function scope variable;
+ *) associative array has to be 'declare' explicitly; or the last element value is set;
+ *) access variable/parameter: prefix of '$'(maybe also enclose name in {}/(()));
+
+@) array:
+ *) general: arr=(1 2 3)
+ *) associative: arr=([a]=1 [b]=2 [c]='str')
+ *) read: ${arr[0]); ${arr[a]); 
+ *) get length: ${#arr[@]}
+
+
+@)put a command output (stdout) as another command's parameter using backticks or $() or pipe:
+cd `readlink somelinkname`
+cd $(readlink somelinkname)
+readlink somelinkname|cd
+
+@) equivalent of [] for group of strings in regex is {}.
+
+@) $IFS:	internal field separator.
+can be set as local in function
+
+@) redirect operators: 
+
+ *) categories:
+	 * > : output, overwrite if no 'noclobber'
+	 * >| : output, overwrite unconditionally;
+	 * >> : append
+	 * < : input
+
+ *) binary: fileDescriptor/number + fileName/string
+
+ *) fileName can be represented by '&fileDescriptor';
+	* redirect stderr to stdout('2>&1' can't be placed before '>file'):
+
+		cmd >file 2>&1
+
+	shorthand:
+
+		cmd >&file
+
+
+
+ *) if file descriptor is omited, the corresponding std one is adopted:
+	 * < : 0<
+	 * > : 1>
+
+
+@) file descriptor:
+
+ *) default file descriptor:
+	 * 0 : stdin 
+	 * 1 : stdout 
+	 * 2 : stderr 
+
+ *) open
+
+	exec 3<fileanme
+
+ *) close:
+
+	exec 3<&-
+	||
+	exec 3>&-
+	
+	** if file descriptor number is omited, '>'/'<' matters, denoting different one;
+
+
+
+@) here document/string (<<, <<<) substitute for stdin:
+
+ *) binary: fileDescriptor/number + fileContent/string
+
+ *) here document (multiline)
+
+  can be used as multiline comment:
+
+  ```
+	<<NAME
+		string
+		string
+	NAME
+  ```
+
+ *) here string (one line):
+
+	 <<<string
+
+@) adopt back quotes when test string length: if [ -n "$str" ]
+
+@) $@/$*, expand parameters/array elements,  separated with IFS.
+ *) if placed in "", $@ expands to separate words, whereas $* joins them to a single one;
+ *) $0 is omited;
+
+@) $IFS print whatever char as space; only act as what it is when comparing.
+
+@)bash history:
+ctrl-r	-search
+ctrl-n/p	-next/previous
+!start		-execute command starts with "start"
+!!			-the previous one
+
+@) ctrl+\	quit; 
+
+@) find ~/note -atime 0 -type f -ok ls -l {} \;
+"\;" is necessary.
+"{}" full path found.
+
+@)view bash builtin command help, use "help cmd".
+
+@) to turn on/off a shell option:
+set -/+o verbose
+
+@)comparison:
+~)string: =/==/!=/</>(= equal with ==)
+~)arithmetic: arg1 -eq/-lt/-gt/-le/-ge arg2
+
+	`if [ "" = "" ]`
+
+	**spaces are required arround '='**
+
+@)suppress further output:
+echo -e "aa\c"
+
+@) quotes will be removed automatically.
+
+@) pass file to loop:
+while read line; do
+	echo $line
+done < "file.txt"
+ *) reserve spaces:
+ 	* while IFS= read line
+	* while read; do echo $REPLY
+
+@) read file as a single line (change newline to none):
+
+	read -d ''
+
+ ** returns false**
+
+@) output strings to file reserving special chars, `cat` is better as `echo`, which will string quotes;
+ *) cat heredoc to file:
+
+	 cat <<DOC | file
+	 	...
+	 DOC
+
+@) space should always be placed between operators/strings/identifiers.
+
+@) when assign value to variable, no spaces should surround '=', or 'command not found';
+
+@) if space exist in variable, placed it in quotes to treat it as a whole string;
+
+
+@)split string to array:
+~)IFS=","; declare -a arr=(string)
+~)IFS="," read -a arr<<<"string"	(IFS only take effect in the same line; double quotes arround string is necessary)
+
+@)every thing left is stored to the last variable "rest":
+IFS="," read catnum rest <<<"$line"
+
+@) .profile is a lagacy name for .bash_profile, which is the shell startup script(usually invokes .bashrc);
+
+@) file created in windows may incur error 'unexpected end of file';
+
+@) the 16 colors of palette are divided into two groups, the first 8 ones are with 'brightness' of 0, the latter are 1;
+@) in PS1, surround '\[\]' to color control code, or they will be included in prompt char numbers; cause problems such as 'reverse-i-search' overriding text;
+
+@) control sequence
+ *) codes placed in '\e[' and 'm';
+ *) '\e[0m' restores to default;
+ *) different types of control codes can be placed together, separated by semi-colon;
+ *) affect everything after it, until modified by another;
+ *) 1: bold, selects the bright group of colors for texts;
+ *) the least significant digit in 3*/4* is the index into colors group;
+
+	 \e[3;1;33;41mTEXT
+ 
+ *) list
+ 	- 1	- bold/bright
+	- 3	- italic
+	- 4	- underline
+	- 9	- strikethrough
+	- 3*- text color
+	- 4*- background color
+
+
+
+@) $?	most recently exit status code;
+
+@) group symbols:
+ *)	(command): Gsubshell
+ *)	{ command; command; }: usually for function; they are operators like '[]'; ';' is required at th end if on the same line with '}';
+ *)	{a,2,3}: brace expansion
+	 * range: {1..8..2}
+ *)	${abc}: variable expansion
+ *)	((2+3)): arithmethic expression
+ *)	[ s)): arithmethic expression
+
+@) 'if' checks command result, usually 'test/[]/[[]]' or any command; 
+
+@) logical operator treats arguments as string unless grouped in (());
+
+@) logical operator check exit code, 0 true, others false;
+
+@) quickest way to check exit code is logical operator: cp -rf . ~/ || quit
+
+
+@) test/[] 
+ *) if [ 12 /< 2 ]
+ 	*) for string
+ 	*) >/< needs escape (redirector)
+	*) space needs around operator (' = ');
+ *) if [ '12' -lt '2.1' ]; then
+ 	*) for integer
+	*) string converted automatically
+	*) '.' is invalid;
+ *) -v : if variable is set;
+ *) logical operator: 
+	 * -a, -o: can not mixed with bash conditional switches;
+ 	 * &&/||: **BETWEEN** []
+
+@) logical operator &&/|| can be used **IN** [[]];
+
+
+@) for loop;
+ * for step in {1..10..2};
+	 ||
+ * for ((step=1; step<=10; step+=2));
+
+ * for i in string: separate string with IFS
+
+
+@) asterisk (*) as a standalone symbol will be replaced with all file names in the current directory; 
+
+@) redirect into variable: 
+data=$(< "$file")
+
+@) stdout can be stored in to variable:
+var=`echo aaa`
+
+@) variable expansion
+ *) substitute:
+    * replace all('/pat'):	${param//pat/subs}
+@) resolve path:
+	* folder: dirname;
+	* filename: basename
+	* absolute: realpath

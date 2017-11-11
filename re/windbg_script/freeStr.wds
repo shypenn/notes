@@ -1,0 +1,1 @@
+ad /q str;  bp MSVCR100!free "ad /q str; r $t0=poi(esp+4); .if(not $t0){gc;}; r $t1=by($t0); .if($t1<20  or $t1>=7f){gc;} ;as /ma str poi(esp+4); .block{j $spat(\"${str}\", \"F:\\*\") .echo str; gc}"

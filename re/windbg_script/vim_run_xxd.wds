@@ -1,0 +1,73 @@
+ad /q ${/v:$imageName}
+.childdbg1
+sxn epr
+$$sxn wob
+r $t0=0
+g;
+.while(@$t0!=2){
+	.echo Breakin
+	.if(@$ra==ntdll!DbgUiRemoteBreakin+0x34){	$$ctrl+break;
+		.echo User Breakin
+		.break 
+	}
+	.elsif(@$ra==ntdll!LdrpInitializeProcess+768d1){	$$onload
+		.echo Image Loaded
+		as /mu $imageName @@(@$peb->ProcessParameters->ImagePathName.Buffer)
+		.block{
+			.echo $imageName
+			.if($spat("$imageName", "*\cmd.exe")){
+				r$t0=$t0+1;
+				.if($t0=2){
+					.echo the Second CMD.exe Loaded
+					.break;
+				}.else{
+					.echo the first CMD.exe Loaded
+				}
+			}
+		}
+		ad $imageName
+	}
+	.echo Go...
+	g;
+}
+.echo Loop ended.
+.if(@$t0==2){
+	g cmd!SearchForExecutable+8341
+	g ntdll_776e0000!RtlQueryEnvironmentVariable+A8
+	u
+	*
+	g KERNELBASE!GetEnvironmentVariableW+2f
+	u
+	*
+	g cmd!GetEnvVar+1d
+	u
+	*
+	g cmd!GetEnvVar+23
+	u
+	db cmd!getenvVarBuffer
+	*
+	g cmd!SearchForExecutable+8341
+	u
+	*
+	g cmd!SearchForExecutable-496
+	u
+	*
+	.echo goto cmd!SearchForExecutable-401
+	ga cmd!SearchForExecutable-401
+	k
+*
+	bp cmd!SearchForExecutable+85a6
+	.echo bp cmd!SearchForExecutable+85a6
+	bp cmd!SearchForExecutable+4f42
+	.echo bp cmd!SearchForExecutable+4f42
+	bp cmd!SearchForExecutable+8716
+	.echo bp cmd!SearchForExecutable+8716
+	g;
+
+	.while(@$bp2!=@$ip){
+		g;
+		r $t1=$t1
+	}
+	.echo Going to quit...
+	k
+}

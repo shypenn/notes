@@ -1,0 +1,65 @@
+2.7. GRUB Menu Configuration File
+The configuration file (/boot/grub/grub.conf), which is used to create the list of operating systems to boot in GRUB's menu interface, essentially allows the user to select a pre-set group of commands to execute. The commands given in Section 2.6 GRUB Commands can be used, as well as some special commands that are only available in the configuration file.
+
+2.7.1. Configuration File Structure
+The GRUB menu interface configuration file is /boot/grub/grub.conf. The commands to set the global preferences for the menu interface are placed at the top of the file, followed by stanzas for each operating kernel or operating system listed in the menu.
+
+The following is a very basic GRUB menu configuration file designed to boot either Red Hat Enterprise Linux or Microsoft Windows 2000:
+
+default=0
+timeout=10
+splashimage=(hd0,0)/grub/splash.xpm.gz
+
+# section to load Linux
+title Red Hat Enterprise Linux (2.4.21-1.ent)
+        root (hd0,0)
+        kernel /vmlinuz-2.4.21-1 ro root=/dev/sda2
+        initrd /initrd-2.4.21-1.img
+
+# section to load Windows
+title Windows
+        rootnoverify (hd0,0)
+        chainloader +1
+This file configures GRUB to build a menu with Red Hat Enterprise Linux as the default operating system and sets it to autoboot after 10 seconds. Two sections are given, one for each operating system entry, with commands specific to the system disk partition table.
+
+Note	Note
+ 	
+Note that the default is specified as an integer. This refers to the first title line in the GRUB configuration file. For the Windows section to be set as the default in the previous example, change the default=0 to default=1.
+
+Configuring a GRUB menu configuration file to boot multiple operating systems is beyond the scope of this chapter. Consult Section 2.11 Additional Resources for a list of additional resources.
+
+2.7.2. Configuration File Directives
+The following are directives commonly used in the GRUB menu configuration file:
+
+chainloader </path/to/file> — Loads the specified file as a chain loader. Replace </path/to/file> with the absolute path to the chain loader. If the file is located on the first sector of the specified partition, use the blocklist notation, +1.
+
+color <normal-color> <selected-color> — Allows specific colors to be used in the menu, where two colors are configured as the foreground and background. Use simple color names such as red/black. For example:
+
+color red/black green/blue
+default=<integer> — Replace <integer> with the default entry title number to be loaded if the menu interface times out.
+
+fallback=<integer> — Replace <integer> with the entry title number to try if the first attempt fails.
+
+hiddenmenu — Prevents the GRUB menu interface from being displayed, loading the default entry when the timeout period expires. The user can see the standard GRUB menu by pressing the [Esc] key.
+
+initrd </path/to/initrd> — Enables users to specify an initial RAM disk to use when booting. Replace </path/to/initrd> with the absolute path to the initial RAM disk.
+
+kernel </path/to/kernel> <option-1> <option-N> — Specifies the kernel file to load when booting the operating system. Replace </path/to/kernel> with an absolute path from the partition specified by the root directive. Multiple options can be passed to the kernel when it is loaded.
+
+password=<password> — Prevents a user who does not know the password from editing the entries for this menu option.
+
+Optionally, it is possible to specify an alternate menu configuration file after the password=<password> directive. In this case, GRUB restarts the second stage boot loader and uses the specified alternate configuration file to build the menu. If an alternate menu configuration file is left out of the command, a user who knows the password is allowed to edit the current configuration file.
+
+For more information about securing GRUB, refer to the chapter titled Workstation Security in the Red Hat Enterprise Linux Security Guide.
+
+root (<device-type><device-number>,<partition>) — Configures the root partition for GRUB, such as (hd0,0), and mounts the partition.
+
+rootnoverify (<device-type><device-number>,<partition>) — Configures the root partition for GRUB, just like the root command, but does not mount the partition.
+
+timeout=<integer> — Specifies the interval, in seconds, that GRUB waits before loading the entry designated in the default command.
+
+splashimage=<path-to-image> — Specifies the location of the splash screen image to be used when GRUB boots.
+
+title group-title — Specifies a title to be used with a particular group of commands used to load a kernel or operating system.
+
+To add human-readable comments to the menu configuration file, begin the line with the hash mark character (#).

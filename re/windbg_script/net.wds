@@ -1,0 +1,7 @@
+ad /q *
+sxe ld mscorjit;
+g
+.load F:\IT\drv\sosex_32\sosex.dll
+.loadby sos.dll mscorwks
+!eeversion
+!bpmd GhostbusterPortable.exe Ghostbuster.Program.Main

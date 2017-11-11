@@ -1,0 +1,227 @@
+==============================
+http://www.hexblog.com
+==============================
+@)
+idaq: All platforms, graphical
+idaw: Windows, text
+idal: Linux/Mac, text
+
+@) when file has '64' suffix, 'ea' is 8 bytes, even target is 32bit; 
+
+@) plugin file name:
+	Windows 32 bit:        *.plw
+	Windows 64 bit:        *.p64
+	Linux 32 bit:          *.plx
+	Linux 64 bit:          *.plx64
+
+@) 6.6 bug: when tinfo exists for an EA, it isn't deleted when name is removed; 
+
+@) if some imports are not referenced, there should be unexplored code;
+
+@) althrough 'this' is placed at the first argument, it's passed in 'ecx' instead of stack;
+
+@) relocations are finished(mimic runtime);
+
+@) 
+  get_tinfo2() 				 get_realtype()
+-------------->	tinfo_t/int -------------->	type_t 
+
+@) cross-reference:
+ *)open list:
+	1) focus on address, open subview;
+	2) context menu, jump to xref to operand;
+ *)suffixes:(code:p/j; data:r/w/o)	-p:procedure/call;	-o:offset/address.
+
+@) View - Graphs - User xrefs chart
+ *) user customed cross-reference flow chart;
+ *) Start address / End address: defines the symbols to search for, which are referenced to or from; if they are equal, then only the single one in the this address is searched;
+
+@) cross-ref type of '^' is the preceding instruction in ordinary flow;
+
+@) search binary string:
+558b	- word (from high to low);
+55 8b	- two byte (from low to high);
+
+@) 'g' to label, which is case sensitive;
+
+@) 'function chunk' is a short piece of code called multiple times in a function, which is then placed out of the function;
+
+@) in IDA-View, green line indicates jump allowed, red line disallowed, and blue line is 'go to';
+
+@) python:	
+ *) (>6.6)set as default, run idc: RunPlugin("python", 3);
+ *) 'idapythonrc.py' in '%IDAUSR%' is executed when start;
+ *) Lib\site-packages is included in sys.path;
+
+@) environment variables:
+ *) IDADIR: idadir(null), default is where executable resides;
+ *) IDAUSR: get_user_idadir(), Default: 
+	Windows:  %APPDATA%/Hex-Rays/IDA Pro
+	*nux:    $HOME/.idapro
+
+@) IDC:
+ *) global initialization can't be done when declare:
+ 	extern var="abc";	--illegal
+ 	extern var;
+	var="abc";	--legal
+ *) compound assignment is not supported(+=..);
+ *) shift right always perform arithmetic shifting;
+ *) variable scope is beyond the brace block;
+ *) variable passed by reference is indicated by calling with '&' prepended to the argument ( function type is always passed by reference, '&' is omited);
+ *) return type is always 'static';
+ *) program entry is 'main';
+ *) array is not supported;
+ *) sizeof("int")
+
+@) OpAlt() changes operand to a label name, then a text reference is added automatically(if no data ref exists; no matter code ref exists or not);
+ *) remove name, setting to "";
+ *) failed on data (dialog works);
+
+@) add data reference to an unknown place, then the target is named automatically;
+ *) still unknown;
+
+@) check address types: isCode/isData...
+ *) the argument get from GetFlags(ea);
+
+@) AddCodeXref:
+ *) if the target is unknown, only 'MakeCode' is done(call twice or call 'MakeCode' at first)
+ *) name is created or renamed(change prefix to 'sub') automatically;
+
+@) here
+ *) IDC: ScreenEA()
+ *) python: ScreenEA
+
+@) to import structure definition from header file, a C struct(only C, rather than c++) can be passed;
+ *) appears in 'Local Types' window;
+ *) click 'Synchronize to idb' in 'Local Types' windows or press 'Insert' in 'Structures' window to import to structures;
+
+@) global variables containing current objects in effect:
+ *) inf		-	idainfo (global information and configuration)
+ *) cmd		-	insn_t (instruction);
+ *) ph		-	processor_t (idp module)
+ *) ash		-	asm_t (assembler)
+ *) idati	-	til_t (local type library)
+
+@) 'LPH' is of type 'processor_t', defining a processor module, such as regNames/u_ana/u_emu/e_out/e_outop;
+
+@) every byte has a dword flags:
+ *) 0-7:	value(copy of the byte);
+	MS_VAL  0x000000FFLU             // Mask
+
+ *) 8:		initialized(value is known);
+	FF_IVL  0x00000100LU             // Mask
+
+ *) 9-10:	state(can't distinguish tail in code or data);
+	MS_CLS  0x00000600LU             // Mask
+
+	FF_CODE 0x00000600LU             // Code start
+	FF_DATA 0x00000400LU             // Data start
+	FF_TAIL 0x00000200LU             // Tail, not head(code or data start)
+	FF_UNK  0x00000000LU             // Unknown
+
+ *) 11-19:	common;
+	MS_COMM  0x000FF800LU            // Mask
+get_tinfo2
+	FF_COMM  0x00000800LU            // Has comment ?
+	FF_REF   0x00001000LU            // has references
+	FF_LINE  0x00002000LU            // Has next or prev lines ?
+	FF_NAME  0x00004000LU            // Has name ?
+	FF_LABL  0x00008000LU            // Has dummy name?
+	FF_FLOW  0x00010000LU            // Exec flow from prev instruction
+	FF_SIGN  0x00020000LU            // Inverted sign of operands
+	FF_BNOT  0x00040000LU            // Bitwise negation of operands
+	FF_VAR   0x00080000LU            // is variable byte?
+
+ *) 20-27:	representation (how to display):
+	MS_0TYPE 0x00F00000LU            // Mask for 1st operand
+
+	FF_0VOID 0x00000000LU            // Void (unknown)?
+	FF_0NUMH 0x00100000LU            // Hexadecimal number?
+	FF_0NUMD 0x00200000LU            // Decimal number?
+	FF_0CHAR 0x00300000LU            // Char ('x')?
+	FF_0SEG  0x00400000LU            // Segment?
+	FF_0OFF  0x00500000LU            // Offset?
+	FF_0NUMB 0x00600000LU            // Binary number?
+	FF_0NUMO 0x00700000LU            // Octal number?
+	FF_0ENUM 0x00800000LU            // Enumeration?
+	FF_0FOP  0x00900000LU            // Forced operand?
+	FF_0STRO 0x00A00000LU            // Struct offset?
+	FF_0STK  0x00B00000LU            // Stack variable?
+	FF_0FLT  0x00C00000LU            // Floating point number?
+	FF_0CUST 0x00D00000LU            // Custom representation?
+
+	MS_1TYPE 0x0F000000LU            // Mask for the type of other operands
+	......
+
+ *) 28-31:
+ 	.) data(type)
+		DT_TYPE 0xF0000000LU             // Mask for DATA typing
+
+		FF_BYTE     0x00000000LU         // byte
+		FF_WORD     0x10000000LU         // word
+		FF_DWRD     0x20000000LU         // double word
+		FF_QWRD     0x30000000LU         // quadro word
+		FF_TBYT     0x40000000LU         // tbyte
+		FF_ASCI     0x50000000LU         // ASCII ?
+		FF_STRU     0x60000000LU         // Struct ?
+		FF_OWRD     0x70000000LU         // octaword/xmm word (16 bytes/128 bits)
+		FF_FLOAT    0x80000000LU         // float
+		FF_DOUBLE   0x90000000LU         // double
+		FF_PACKREAL 0xA0000000LU         // packed decimal real
+		FF_ALIGN    0xB0000000LU         // alignment directive
+		FF_3BYTE    0xC0000000LU         // 3-byte data (only with support from the processor module)
+		FF_CUSTOM   0xD0000000LU         // custom data type
+		FF_YWRD     0xE0000000LU         // ymm word (32 bytes/256 bits)
+
+	.) code(characteristics) 
+		MS_CODE 0xF0000000LU			// Mask
+
+		FF_FUNC 0x10000000LU             // function start?
+		//      0x20000000LU             // not used
+		FF_IMMD 0x40000000LU             // Has Immediate value ?
+		FF_JUMP 0x80000000LU             // Has jump table or switch_info?
+	
+*) uFlag is flag for the first byte of current instruction(cmd);
+
+@) OF_NO_BASE_DISP and OF_OUTER_DISP are used in 'memory indirect' addressing mode, which don't exist in x86;	
+
+@) global variables:
+	(Get/Set)(Long/Short/Char/)Prm
+ *) lowest address:
+ 	GetLongPrm(INF_MIN_EA)	-- MinEA()
+ *) entry point:
+ 	GetLongPrm(INF_BEGIN_EA)	-- BeginEA()
+
+@) restore operand to original:
+ change operand type to whatever;
+
+@) get operand:
+ *)original: GetOpnd()
+ *)user: AltOp()
+
+@) netnode:
+ *) length of netnode number/id is as of machine word length; which is the only member of netnode; usually its an ea;
+ *) has an optional name;
+ *) 256 arrays in a netnode, the number(byte) of which is a tag;
+ *) the arrays with tag of 'A', 'S', 'H', 'V', 'N', 'L' correspond to its own dedicated functions as 'alt-','sup-','hash-'...
+ *) value types are: long/32bits(altvals); arbitrary/string(supvals); 8bit/char(charvals); arbitrary size of index and value(hashvals);
+ *) index of array can be 8bit or 32bit; IDC only applys 32bit;
+
+@) IDP_Hooks is an abstract class, override its method in derived class to supply callbacks;
+ *) return negative decimal to prevent action in callbacks;
+ *) only one hook takes effect; the latest one overrides previous one;
+
+@) view the original operand representation:
+ alt+F1: Manual
+
+@) ERROR: "Coherency check failed: bidx < nodes_data.book.size()"
+  graph view updated, go to start to reanalyze;
+ 
+
+@) __fastcall is borland 'register'; check 'Type Libary';
+
+@) __thiscall is c++ calling convention;
+
+@) if an instruction changes sp pointer that ida won't know, like calling an variable, set the number of bytes it changes in 'edit -> function -> change stack pointer'(alt+k); 
+
+@) print_type2 is a wrapper of print_tinfo;

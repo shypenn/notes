@@ -1,0 +1,11 @@
+ga cmd!SearchForExecutable-1a819
+.logopen G:\TMP\xxd.log
+.while(1){
+	.if(@$ra==ntdll!DbgUiRemoteBreakin+0x34){
+		.echo Quit loop
+		.break;
+	}
+	ln
+	p;
+}
+.logclose

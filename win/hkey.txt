@@ -1,0 +1,19 @@
+??) shell command only search file in system32 if no path specified;
+
+@) register application(for WIN+R, list for 'open with', not for cmd as PATH):
+ *) HKCR\applications\
+ *) HKLM\software\microsoft\windows\currentVersion\app paths
+
+@) environment variables:
+ *) HKCR\Environment
+ *) HKCR\Volatile Environment
+ *) HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Environment
+
+	***no effect before logout or set in 'system' gui***
+	
+
+
+@) startup apps:
+ *) HKEY_LOCAL_MACHINE/HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Run
+ *) Windows\Start Menu\Programs\Startup
+

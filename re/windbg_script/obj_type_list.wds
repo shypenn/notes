@@ -1,0 +1,11 @@
+$$ ?? ((nt!_OBJECT_TYPE**)@@(nt!ObTypeIndexTable))[((nt!_OBJECT_HEADER*)0xfffffa800279cab0)->TypeIndex]
+.for(r $t0=nt!obTypeIndexTable+8, $t1=10; @$t0!=0 & @$t1>0; r $t0=@$t0+4, $t1=@$t1-1){
+	.echo -------------------------------------------
+	as /mu ${/v:Name} @@((&((*((nt!_object_type **)@$t0))->Name))->Buffer);
+	.block{
+		.if($scmp("${Name}", "Token")==0){
+			?? *((nt!_object_type **)@$t0)
+		}
+	}
+	ad Name
+}

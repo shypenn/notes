@@ -1,0 +1,62 @@
+@@) import only works for obj format;or:
+"Expected an instruction"
+[] is required.
+
+@@) export fun
+equivalent of .def for masm;
+
+@@) two ways to import function for obj format; in IAT pointed by the label, two types of data:
+lib:
+	a jmp instruction	-	call fun
+import:
+	actual address		-	call [fun]
+
+@@) var dd 1
+var		-		address
+[var]	-		content
+
+@@) everything is a label;
+
+@@) length should be specified always;
+mov byte [abc], 1
+
+@@) escape characters are effective only in backquotes;
+
+@@) various formats of numeric constant are supported.
+mov     ax,200          ; decimal 
+mov     ax,0200         ; still decimal 
+mov     ax,0200d        ; explicitly decimal 
+mov     ax,0d200        ; also decimal 
+mov     ax,0c8h         ; hex 
+mov     ax,$0c8         ; hex again: the 0 is required 
+mov     ax,0xc8         ; hex yet again 
+mov     ax,0hc8         ; still hex 
+mov     ax,310q         ; octal 
+mov     ax,310o         ; octal again 
+mov     ax,0o310        ; octal yet again 
+mov     ax,0q310        ; octal yet again 
+mov     ax,11001000b    ; binary 
+mov     ax,1100_1000b   ; same binary constant 
+mov     ax,1100_1000y   ; same binary constant once more 
+mov     ax,0b1100_1000  ; same binary constant yet again 
+mov     ax,0y1100_1000  ; same binary constant yet again
+
+@) %substr sub	"abcde" 2,-1
+-1: the same with CMD, except this includes the end char.
+
+@) pass parameter including comma to macro:
+fun {param,1}, param2
+
+@) local label:
+~)in normal code:
+.local
+~)in macro:
+%%local
+
+@)numbers of parameters supplied should be in the range defined, for the macro overload to function.
+~)then default parameter values can be supplied for those after the minimum number of parameters.
+%macro macroName 2-5
+(the parameters from the third can be supplied.)
+~)if more default parameters are supplied, those are appended after the maximum number.
+
+@) org can be used only in binary format; rather than that, resb is a substitute in obj format;

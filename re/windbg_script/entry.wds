@@ -1,0 +1,82 @@
+ad /q aaaaaaaaaa
+$$><F:\IT\RE\NOTE\windbg_script\purge.wdb
+
+sxn wob
+
+$$ running
+r $t0=1
+
+$$ No bp
+r $t1=1
+
+.block{
+	.if(${/d:$arg2}){
+		sxe ld ${$arg2}
+		g
+
+		aS /c ${/v:EVT} ".lastevent"
+		.block{
+			.if($spat("EVT", "Last event: ?+ Load module * at ?+")){
+				.echo Module found...
+				.if(0==$spat("$arg1", "0x*") & 0==$spat("$arg1", "@$exentry")){
+					aS /c BP "lm1m M*${$arg2}"
+					.block{
+						aS ${/v:BP} ${BP}!${$arg1}
+						r $t1=0
+					}
+				}
+			}.else{
+				.echo Expected module load event, but not, aborted the script............
+				r $t0=0
+			}
+		}
+	}
+}
+.if($t0){
+	.if($t1 & ${/d:$arg1}){
+		aS BP $arg1
+		r $t1=0
+	}
+	.block{
+		.if($t1==0){
+			.echo Breakpoint is BP
+			bp BP
+			g
+			.if(0==${/d:$arg3}){
+				t
+				.logopen G:\TMP\entry.log
+				.while(1){
+					aS /x IP @$ip
+					.block{
+						.echo $$>a<${$arg0} IP ${/f:$arg2}
+					}
+					ad IP
+					.if(@$ra==ntdll!DbgUiRemoteBreakin+0x34){
+						.logclose
+						.break
+					}
+					p
+				}
+			}
+		}.else{
+			.echo No bp specified.
+		}
+	}
+}
+.echo Quit entry.wdb
+
+
+
+
+*
+[SAMPLE]
+$$>a<F:\IT\RE\NOTE\windbg_script\entry.wdb @$exentry
+$$>a<F:\IT\RE\NOTE\windbg_script\entry.wdb ChromeMain chrome.dll
+$$>a<F:\IT\RE\NOTE\windbg_script\entry.wdb ChromeMain chrome.dll true
+[args]
+1: breakpoint
+2: target module
+3: don't step into bp
+[NOTE]
+0x - neccessary
+

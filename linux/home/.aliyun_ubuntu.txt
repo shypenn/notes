@@ -1,0 +1,5 @@
+deb http://mirrors.aliyun.com/ubuntu/ ${DISTRIB_CODENAME} main restricted universe multiverse
+deb http://mirrors.aliyun.com/ubuntu/ ${DISTRIB_CODENAME}-security main restricted universe multiverse
+deb http://mirrors.aliyun.com/ubuntu/ ${DISTRIB_CODENAME}-updates main restricted universe multiverse
+deb http://mirrors.aliyun.com/ubuntu/ ${DISTRIB_CODENAME}-proposed main restricted universe multiverse
+deb http://mirrors.aliyun.com/ubuntu/ ${DISTRIB_CODENAME}-backports main restricted universe multiverse

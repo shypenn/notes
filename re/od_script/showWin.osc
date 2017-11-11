@@ -1,0 +1,9 @@
+
+pusha
+exec
+	push 1
+	push 000E0A06
+	call ShowWindow
+ende
+popa
+ret

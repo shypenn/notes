@@ -1,0 +1,7 @@
+@) init/destroy is called once after/before the servlet is loaded/unloaded.
+
+@) in eclipse, project directory is placed in
+'.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps'; tmp0, tmp1
+is the instance of projects in the workspace
+
+@) after configs changed, 'clear' the server and restart it.

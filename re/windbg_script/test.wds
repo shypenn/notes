@@ -1,0 +1,24 @@
+$$ arg0: depth=a;
+
+.logappend F:\TMP\wdb.log
+.outmask- /l fff9;	$$ no error and warning, in case scripts error;
+
+.if(${/d:$arg1}){
+	r@$t9= $arg1
+}.else{
+	r@$t9=a;
+}
+?@$ip-@$t1
+.while(@$t9){
+	.if(@$ip==ntdll!DbgBreakPoint){
+		.echo Quit Animating
+		.break;
+	}
+	pt;
+	r@$ip, @$csp;
+	u . l1
+	?poi(esp);	$$ @$ra may not correct;
+	r@$t9=@$t9-1;
+}
+.logclose
+.outmask /d

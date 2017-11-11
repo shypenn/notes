@@ -1,0 +1,120 @@
+бяwindows console can't print wchar_t;
+
+бя.in service,the ServiceName property of the ServiceBase derived class must match  property with the same name of the ServiceInstaller class;
+
+бя.debug point(as debugger in js):
+            System.Diagnostics.Debugger.Launch();
+бя.value of checkbox in setup project is "1" or "0";
+
+бя.	8      16	unified
+char   CHAR   WCHAR	 TCHAR
+str 	      		 TEXT()
+
+бя.windows.h is placed before all others.
+
+бя._tcslen(strlen/wcslen) for characters;sizeof for bytes;
+
+бя.ctrl+k->ctrl+f format codes;
+
+бя.window procedure-->window class(set properties for all the windows)-->one or more windows<--createWindow(set properties for this window)
+
+бя.string initialized as array and pointer:
+   the array name is actually the first char;
+   the pointer is actually a variable of pointer points to the first char;Two blocks of memory are assigned;
+
+бя.prefix of some constants:
+CS_HREDRAW	=class style;
+CW_USEDEFAULT	=create window option;
+DT_SINGLELINE	=draw text option;
+IDI_QUESTION	=id number for an icon;
+IDC_CROSS	=id number for a cursor;
+MB_ICONERROR	=message box options;
+SND_ALIAS_SYSTEMSTART	=sound option;
+WM_CREATE	=window message;
+WS_OVERLAPPEDWINDOW	=window style;
+
+бя.prefix of some data types/variables;
+c	=char/WCHAR/TCHAR
+by	BYTE(unsigned char)
+n	short;
+i	int;
+x,y	coordinates;
+cx,cy	count(length) of x/y;
+cb	count of bytes;
+b/f	BOOL(INT)/flag;
+w	WORD(unsigned short);
+l	LONG(long);
+dw	DWORD(unsigned long);
+fn	function;
+s	string;
+sz	string terminated by zero;
+h	handle;
+p	pointer;
+hbr	handle to a brush;
+
+бя.connotation of shortcuts
+HDC	=handle of device context;
+
+бя.
+GetDC(NULL)			--Entire screen;
+GetDC(HWND)/WM_PAINT		--client area;
+GetWindowDC()/MW_NCPAINT	--entire window(NonClient paint);
+
+бя.int could be converted to char explicitly;
+	TCHAR c;
+	int i;
+	c=(TCHAR)i;
+the character is interpreted by the character code represented by the int,in the current charset;
+бя.WM_FOCUS>WM_SIZE;
+бя.
+SetTextColor()				--TextOut();
+SelectObject(..CreatePen())		--Rectangle()...
+бя._vscwprintf(fmt,argsList)/_vscprintf(fmt,argsList)
+	--doesn't include the null;
+	--select one for ansi or unicode in person;
+бягоTextOut(char*,x,y,len)	--len doesn't need the null length,so lenght-1;
+				--When SetTextAlign(hdc,TA_UPDATEDC) is applied,x and y is ignored and current position is used instead.
+бя.CreateWindow(..HMENU hMenu)	--hMenu could be an arbitary int as an unique identifier for a child window,
+being used for GetDlgItem(HWND,hMenu) to get the window's handle,which is the same one returned by CreateWindow;
+To get it,use GetWindowLong(hwnd,GWL_ID);
+
+бя.When WM_PAINT message is in queue,system would send it repeatedly until the EndPaint() is called;
+бя.space allocated by  malloc maybe larger than specified if it's too small;
+бя.void *p	--valid pointer not specified with type;
+бя.p=0		--null pointer pointing to invalid address;
+бя.win32 doesn't provide a separate local heap and global heap,so they are the same actually.
+бя.sizeof used only for type,variable(representing the type),and expression(unary-expression returns a variable);
+	--not for memory size evaluating,for which use HeapSize and others.
+бя.CreateWindow(TEXT("MDICLIENT"),TEXT("MDICLIENT"),WS_CHILD|WS_CLIPCHILDREN|WS_VISIBLE,0,0,500,500,hwnd,1,hInst,&CLIENTCREATESTRUCT);
+   SendMessage(hwndClient,WM_MDISETMENU,(WPARAM)hMenuInit,$GetSubMenu);
+	--hWindowMenu of CLIENTCREATESTRUCT when creating client window
+	and
+	  $GetSubMenu when WM_MDIACTIVATE after child created
+	is the submenu that document list will be appended.
+
+бя.For child window,the hMenu in CreateWindow is an identifier.
+бя.WSAStartup()	-->WSA:windows socket api
+бя.SCROLLINFO.nPos is the numbers of unit scrolled.
+бя.DialogBox 		---modal(not return until Enddialog is called)
+   CreateDialog		---modeless
+бя.StringCbLength excludes null.		--STRSAFE_MAX_CCH*sizeof(TCHAR);
+бя.to get size of memery:LocalSize()...			--(sizeof returns the size of pointer)
+бя.the pointer as a variable for an array can't veer to others.
+бя.int *pInt;
+fun(pInt);	--variable used without initialized.(pInt variable contains no value);
+
+бя.FtpGetFile can't create directory
+
+^_^GetVersion() > 0x8000 0000
+The high order bit determins if it's NT based (NT, 2000, XP and newer) or not (Win 3.1, 95, 98, ME)
+The remaining bits of the high order word specify the build number only on NT based Windows verions. 
+
+@) system callback should apply _stdcall(CALLBACK) convension;
+
+@) alignment:
+ *)#pragma pack(push, 1)	-can exceed the hardware alignment(less than 4 in x32);
+ *)__declspec(align(8)) 	-can't
+
+@) variables placed in a specific segment by #pragma data_seg("name") has to be initialized.
+
+@) __iob_func returns array of standard FILE: 'stdout/in/err...'

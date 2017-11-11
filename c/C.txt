@@ -1,0 +1,240 @@
+@) pointer is an address of memory, no matter what form it is in:
+ *) variable:	(Type *)varName->member
+ *) register:	(Type *)eax->member
+ *) immediate:	(Type *)0x12345->member
+
+@)@)@)gcc uses -c to inform to just compile to *.o but not link.
+@)@)@)cl.exe
+cd /d C:\Program Files\Microsoft Visual Studio 10.0\VC\bin
+call vcvars32.bat
+set root=d:\ne\
+cl %root%test1.c /Fo%root%test1.obj /Fe%root%test1.exe
+cl.exe file.c /link /out:file.exe
+
+@)libc/libcmt.lib(static)	-	msvcrt.lib(dynamic)
+	*mt:multithreaded
+
+@)
+setLocale(LC_ALL/...,NULL)	-	read the current locale(at first it would be "C");
+setLocale(LC_ALL/...,"")	-	set the locale as the environment locale;
+
+Locale categories:
+LC_ALL		The entire locale.
+LC_COLLATE	Affects the behavior of strcoll and strxfrm.
+LC_CTYPE	Affects character handling functions (all functions of <cctype>, except isdigit and isxdigit), and the multibyte and wide character functions
+LC_MONETARY	Affects monetary formatting information returned by localeconv.
+LC_NUMERIC	Affects the decimal-point character in formatted input/output operations and string formatting functions, as well as non-monetary information returned by localeconv.
+LC_TIME		Affects the behavior of strftime.
+
+@)
+wide char(wchar_t)  : a char with fixed size of more than one byte defined in the os(it's one of multibyte chars, usually UTF16 or UTF32);
+multibyte char(char) : any char in a specific code page; 
+
+@)
+the charset for char string in compiled file is the same as it in source code file;
+
+@)
+char s1[]="aaaa我aaaaaaa";
+wprintf(L"%S",s1);
+S: means from narrow string(multibye char);
+wprintf reads narrow string based on the environment codepage; if the char[] is based on the same codepage(source file codepage), it would work.
+
+@)getchar would only retrieve and remove the first char, others including the '\n' are left in the input buffer.
+  so, it's necessary to make sure the buffer is empty before scanf alike methods are invoked.
+  the read process stops once the char type doesn't match the format specified.
+1)scanf("%s\n",str1);
+2)
+@)scanf matches characters between format string and input string one and removes them from buffer until a mismatch.
+@)allocated memory couldn't be passed as scanf's parameter
+	var int* array=calloc(3,sizeof(int));
+w:	scanf("%d",array)	-->	scanf("%d",&array)
+
+
+@)
+printf	--	stdout
+fprintf	--	file
+sprintf	--	string buffer
+
+1.printf("%d",2==3==0)——》1
+2.printf("%d",5&&3)——》1（value not 0 is true,equal to 1;so in the logistical computing there is only 0 and not 0）;
+3.if(a=3){printf("%d",a}——》3
+4.数组声明时不赋初值（初始化），那么必须声明其长度。
+5.char以int输出，显示其ascll码
+6.int类型里可以输入输出char（字符串）。（1，当输入char,存入int,再输出int时，不会显示ascll；2，只能运行是输入，不能适合于初始化，3.输出必须以输入为前提，即输入char，才能输出char)
+7.strcpy,可以覆盖。
+8.
+   a：%c——》char——》%d：97
+   97：%d——》int——》%c：a
+   a：%c——》int——》%c：a
+9.strcmp:前面减后面，按位依次比较，后面的忽略，与长短无关。
+10.#define SQ(y) ((y)*(y))。宏代换中对实参表达式不作计算直接地照原样代换。
+11.参数列表不能连写：int *a,*b;应该:int *a,int *b;
+12.指针说明时可以赋值：int a=5,*b=&a;运算中*b应该等于a;
+13.数组首地址即第一个元素的地址，因此int a[10];int *p=&a(等价于int *p=&a[0])
+14.int a[5];
+   int *p=a;
+   printf("%d",*p++);//正确。
+   printf("%d",*a++);//错误。因为，a++即"a=a+1"，因为a是常量，所以a不能赋值。
+   printf("%d",*(a+1));正确。因为a+1并非让a的值加一，而是让指针a向下移一位。
+15.形参数组变量可以不定长度。调用时传入的实参会定好。
+16.int *p;p+3/2(正确),但是p+1.5错误。
+17.指针可以直接输出为字符串,不加*号:printf("%s",p);加*号,则printf("%c",*p)
+@).一个字节最多等于：
+　八位二进制　1 1 1 1 1 1 1 1
+　三位八进制  4 0 0
+  三位十进制  2 5 5
+  两位十六制  F F
+
+@)8 and 16 based number have prefix of "0" and "0x";
+
+@)partial initialization(other members not initialized are set to 0):
+int arr[10]={1};
+
+@)why set tag name for struct:
+typedef struct tagSth{
+} sth;
+1) for forward reference;
+2) MIDL create arbitary name for it;
+
+
+
+@@ to truncate a file, POSIX:truncate(); WIN:_chsize()
+
+@@ they are different:
+char str[]="abcde";		-- a '\0' is appended to the end; sizeof(str) is 1 more than the next;
+char arr[]={'a','b','c','d','e'};
+
+@) in x64, only the length of those data types which are related to address, is changed to 64-bit.
+
+@) if project is relocated, the PDB built previously takes no effect; breakpoints never hit;
+
+@) function name and function pointer can be used interchangably;
+	int doSth(int x, int y);
+	int (*pFun)(int x, int y)=doSth;
+		<or> int (*pFun)(int x, int y)=&doSth;
+	pFun() 
+		<or> (*pFun)();
+	
+@) pointer to array VS pointer to function 
+ *) int (*p)[2];
+ *) int (*p)(int);
+
+@) pointer to array VS array of pointer
+ *) int (*p)[2];
+ *) int *p[2];
+
+@) pointer to array VS pointer to element 
+ int arr[]={1,2};
+
+ int (*pArr)[2]=arr;
+ ASSERT(pArr[0]==1);
+
+ int *pInt=&arr[0];
+ ASSERT(*pInt==1);
+
+
+@) x64 doesn't support inline asm;
+
+*) operator +(int i){return this.m_int+i;}
+*) operator CLSNAME(){return this.m_CLSNAME;}
+@) 'expr?NULL:type' converts NULL to another type;
+@) call sibling or super constructor within another will create a temporary object and deletes it immediately after constructor returns; the right way is delegate constructor in initializer list;
+
+@) base constructor receives a pointer which is base casted;
+
+	base1 member ->		| 		<- base1 pointer / child pointer
+						|
+						|
+	base2 member ->		| 		<- base2 pointer
+						|
+						|
+	child member ->		|
+						|
+					   \ /
+						`
+@) parameter of type of reference to array: 
+ *) valid format is:
+	void fun(int (& arr)[5])
+ *) invalid format (array of reference to int): 
+	 void fun(int & arr[5])		<=>		void fun((int &)arr[5])
+ *) the size of parameter array has to match the definition;
+ *) pointer is invalid to pass;
+ *) template param as size of the array can be omited when passing; 
+ 	template<int Size> void fun(int (& arr)[Size]){};	
+	int arr[20];
+	fun(arr)		<=>		fun<20>(arr)
+
+@) parameter of type of array is equivalent to type of pointer: 
+
+@) locale has to be set explicitly by system default value before any wide char output functions (cout/putws) are called:
+ *)
+	#include <iostream>
+	std::locale::global(std::locale(""));
+ *)
+	#include <clocale>
+	setlocale(LC_ALL, "");
+
+@) managed and unmanaged:
+ *) compile with /clr, is converted to MSIL, can run in CLR environment to interact with managed codes; however, by default, they are marked as __nogc(no garbage collection);
+ *) '#pragma managed/unmanaged' is used to switch between each other in parts of a file; 
+ *) if meets the requirements of CLR, can mark as '__gc' explicitly (allocated in GC Heap);
+ *) '__value' marks a variable as CTS (Common Type Spec) value, managed by CLR;
+ *) to pass pointer to managed value to unmanaged code, mark it as '__pin' to prevent GC;
+ *) to manipulate managed data in unmanaged code, store its pointer in a handle created by System::Runtime::InteropServices::GCHandle:Alloc, then destroy it by GCHandle:Free;
+
+@) #pragma once
+  prevents loading twice in the same file;
+
+@) function pointer: star should be enclosed with name
+	typedef void (*PROP_HANDLER)(int, BOOL);
+@) multiple inheritance: modifier is needed for each
+	class PropTab : public PropBase, CPropertyPage
+ *) CPropertyPage is treated as private;
+
+ @) call the same method name inherited from multiple class:
+ 	inst.BaseClass::methd();
+
+@) in inline assembly:
+ *) variables are just symbols, memory access syntax in c++ is invalid;
+	PSP_DRVINFO_DETAIL_DATA pDet;
+	PTCSTR p=pDet->InfFileName;
+
+	__asm{
+		mov ebx, [pDet]
+		lea ebx, [pDet+SP_DRVINFO_DETAIL_DATA.InfFileName]
+		mov [p], ebx
+	}
+ *) flags should also be restored;	
+
+@) pass multiple parameters as single to macro:
+	#define m(arg) md arg
+	m((1, 2))
+@) stringizing wide char in macro: 
+#define SHOWERROR(str) 	Log(_T("Failed to ") _T(#str) _T(", for: %s"), Error().m_msg);
+I.E.
+#define SHOWERROR(str) 	Log(L"Failed to " L#str L", for: %s", Error().m_msg);
+
+@) unique_ptr holds a resource which can be owned by single owner; invalid to copy, instead to move/pass/return;
+
+@) message map:
+ *) mfc: BEGIN_MESSAGE_MAP(theClass, baseClass)
+ *) atl: BEGIN_MSG_MAP(theClass)
+
+@) onWizardNext should return TRUE to advance towards next page;
+
+@) place stdafx.h at the first line in all .h and .cpp files;
+
+@) deliver crt redistributible dll/exe(no debug version) with app or build as static;
+
+@) macro parse order starts from outer to inner;
+
+@) stringify sign '#' in macro doesn't apply escape chars, which are treated as they are;
+
+@) global 'static' in c hides the name from other modules for linker;
+
+@) 
+#define N TEXT("name")
+_putts(TEXT("AAA"N));
+
+@) builtin bool type in C is _Bool;
+

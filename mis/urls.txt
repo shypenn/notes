@@ -1,0 +1,23 @@
+* vagrant boxes
+
+	http://www.vagrantbox.es/
+
+* test the webpage performance
+
+	http://tools.pingdom.com/fpt/ 
+
+* ping host
+
+	http://www.just-ping.com/ 
+
+* chrome
+
+	https://www.chrome64bit.com/index.php/google-chrome-64-bit-for-linux
+
+* chrome extensions:
+
+	* https://www.crx4chrome.com
+	* http://www.cnplugins.com
+
+* lantern
+	* https://github.com/getlantern/forum/issues/833

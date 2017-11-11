@@ -1,0 +1,31 @@
+[core]
+	excludesfile=~/.cfg/git-exclude.txt
+---WIN_START---
+	autocrlf = true
+---WIN_END---
+---LINUX_START---
+	autocrlf = false
+	eol = lf
+
+#gnome-keyring
+#sudo apt-get install libgnome-keyring-dev
+#sudo make --directory=/usr/share/doc/git/contrib/credential/gnome-keyring
+#
+#[credential]
+#	helper = /usr/share/doc/git/contrib/credential/gnome-keyring/git-credential-gnome-keyring
+
+---LINUX_END---
+[user]
+	name = roney
+	email = ningrao@126.com
+[push]
+	default = current
+[pager]
+	show = gvim -
+[merge]
+	tool = gvimdiff
+
+# uncommet if: 
+# `fatal: unable to access '': server certificate verification failed. CAfile: /etc/ssl/certs/ca-certificates.crt CRLfile: none`
+#[http]
+#	sslVerify = false

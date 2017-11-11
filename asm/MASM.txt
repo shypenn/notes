@@ -1,0 +1,131 @@
+﻿?why msvcrt.lib has no mainCRTStartup?
+
+@) immediate address should be prefixed with segment register, however the segment override prefix is inserted:
+ mov eax, ds:[123]
+
+@)
+cl.exe selects which runtime library to include(/MD|/MDd|/MT|/MTd);
+
+@).lib maybe a static library or an import library
+
+@)C/STDCALL(in proto or in .model)
+an underscore is added to every global symbol(even imported ones declared using extern) automatically;
+(if no lantype, add the underscore in code manually)
+ 
+@)specify extern function calling convention:
+typename	typedef proto	c:dword,dword
+extern funname:ptr typename
+(_funname@8)
+@)nmake
+only make the targets in the first rule;
+
+@)masm:
+ $ is current address
+ % is expansion operator which dictates to evaluate the expression.
+ <> groups text as single.
+ ! escape special char.
+
+@)ml /coff hello.asm /link /subsystem:console
+#actually /coff is win32;
+OMF is the default, which would be converted to COFF using link, and it has a problem with that;
+
+@)link:
+the path with space should be enclosed in quoates;or:
+LINK : fatal error LNK1181: cannot open input file "F:\Program.obj"
+
+subsystem could be inferred from the start label name;
+
+/nodefaultlib	-	prevent linking the c run time library;
+
+
+@)fun TYPEDEF PROTO C :DWORD, ;DWORD	--"TYPEDEF PROTO" defines a function type;
+@)pFun TYPEDEF PTR fun			--"TYPEDEF PTR" defines a pointer;
+
+@).
+.stack
+.const	
+.data	_DATA
+.data?	_BSS
+.code	_TEXT
+@).\	continuing line mark(in every spot).
+@).Acronyms could only be used in global variables definition.
+字节					byte							 db							 1
+ 
+字					word							 dw							 2
+ 
+双字（doubleword）			dword							 dd							 4
+ 
+三字（farword）				fword							 df							 6
+ 
+四字（quadword）			qword							 dq							 8
+ 
+十字节BCD码（tenbyte）			tbyte							 dt							 10
+ 
+有符号字节（signbyte）			sbyte							  							 1
+ 
+有符号字（signword）			sword							  							 2
+ 
+有符号双字（signdword）			sdword							  							 4
+ 
+单精度浮点数				real4							  							 4
+ 
+双精度浮点数				real8							  							 8
+ 
+10字节浮点数				real10							  							 10
+ 
+@).They are different in .data and .data?:
+varName	db ?	;in .data one byte is allocated with value 0, in .data? no space is spared.
+
+@).global variable would be zeroed when declared without initializtion, whereas for local variables which are allocated in stack no action is taken, so usually we should zero
+them manually.
+
+@).It's the fastest to manipulate memory in unit of dword/8 bytes.
+
+@).read data with other lengthes rather than that defined.
+szBuffer db 1024 dup(?)
+mov eax,dword ptr szBuffer
+
+
+@).declare an array with initialized value:
+dwTest         dd           1,2,3,4
+
+
+@).sizeof: number of bytes	lengthof: number of units of type;(compiler evaluates them)
+
+@).the next codes declare two variables, where the second has no name; so sizeof szHello only counts the first line.
+szHello       db      'Hello',0dh,0ah
+              db      'World',0
+
+@).offset: get global variable address, which is fixed by compiler, so it's replaced by the real address by compiler.
+   lea eax,[ebp-4]: store the first local variable's address into eax; since ebp would vary due to runtime environment, the address could only be gotten at runtime.
+   addr: 
+@).invoke  Test,eax,addr szHello
+addr is translated to "lea eax,szHello", so the second parameter's value is overwritten.
+
+
+@).
+			C             	SysCall	        StdCall         BASIC	        FORTRAN		PASCAL
+ 
+最先入栈参数		右		右		右		左		左		左
+ 
+清除堆栈者		调用者		子程序		子程序		子程序		子程序		子程序
+ 
+允许使用VARARG		是		是		是（*）		否		否		否
+
+（*）此时用调用者清除堆栈。
+
+
+@). DllEntry（_hInstance, _dwReason, _dwReserved）
+	_hInstance:	address of this dll;
+	_dwReason:	DLL_PROCESS_ATTACH/DLL_THREAD_ATTACH	called when process or threads;
+
+@).if(eax==0) fun1();
+	test eax,eax
+	jz offset fun1;
+
+
+
+
+
+
+

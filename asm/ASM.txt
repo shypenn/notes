@@ -1,0 +1,504 @@
+@) variable and variable address:
+ *) nasm treat variable as label;
+ *) [] only work for registers in masm, since symbol has type, that cause masm ignores [];
+
+var db 2
+			NASM				 MASM
+content:	mov eax, [var]		 mov eax, var
+address:	mov eax, var		 mov eax, offset var
+
+@) operand size determines the size of registers used as direct value; address size determines the size of registers used as memory address;
+
+@) the maximum instruction length is 15 bytes;
+
+@@) format(only opcode is required):
+Prefix(1-4)------REX------opcode(1-3)------ModR/M(1)------SIB(1)------Displacement(1/2/4)-------Immediate(1/2/4)
+
+@) operation modes 
+ start up:
+	*) Real Mode 
+ in Real Mode:
+	*) PE flag in CR0 (control register): Real Mode / Protect Mode; 
+ In Protect Mode:
+	*) VM flag in FLAGS register: Virtual-8086 Mode;
+	*) LMA&LME (long mode active&enabled) flags of IA32_EFER (extended feature enable register)  of MSR: IA-32e Mode;
+ In IA-32e Mode (segment based):
+	*) L flag in code segment descriptor: compatible mode / x64 Mode.
+
+@) x64 mode only turns address to be 64 bit, operand stays the same;
+ *) 64-bit
+  *) moffset in 'mov' are 64-bit; (mov eax, [1234]);
+  *) instructions referencing RSP implicitly takes operand size of 64 (push...);
+ *) 32-bit
+  *) 32 bit result is sign extended to 64; whereas 8 and 16 bit don't;
+  *) displacements stays 8/32 bits, which are sign extended to 64.
+
+@) segment register composed of visible part and hidden part; 
+ *) visible part is what application can handle, which stores an index into a table of segment descriptors pointed by GDTR/LDTR; the index is called segment selector.
+ *) when segment selector is stored in the visible part, the data in the respective segment descriptor is stored in the hidden part as cache.
+
+@) D/B flag of segment descriptor: 
+ *) D -default, code segment, length of operand and address;
+ *) B -big, data/stack segment, upper bound or stack pointer size (two or four bytes).
+
+@)operand size determination (ordered by priority ascendingly):
+ 1) operand size bit(w) in opcode can override size as 8; (different opcode number).
+ 2) segment register(D-bit: size attribute) determines the word-length(16/32);
+ 3) REX.W overrides word-length to 64;
+ 4) operand size override prefix(66h) can switch word-length to another one (in x64/IA32e mode, size turns to 16 if REX.W is 0, or ignored);
+
+
+@) address size overriding(67h):
+ *) in x32, turns to 16;
+ *) in x64, turns to 32; no 16 supported;
+
+@) in 32 address size, displacement is 8/32-bit, no 16;
+
+@) REX (1 size + 3 register extensions):
+ 0100	+	W	+	R	+	X	+	B
+ 		   size	   REG	   INDEX   BASE
+ *) extension bits are prepended to the corresponding three registers bits to form 2^4==16 registers;
+ *) W bit selects the two groups:
+ 	.) eax-ebx, r8d-r15d
+ 	.) rax-rbx, r8-r15
+
+
+@) ModR/M and SIB encoding groups:
+ *) actual order is [Mod -- Reg -- R/M]
+Mod(2bit)	+	R/M(3bit)	+	Reg/Op(3bit)
+	|  (Operand_1)	|				| (Operand_2)(when only one operand exists, this is Opcode extension)
+	 ---------------				8R
+	 		|
+	 ---------------
+	|				|
+   8R			   8*3M			    
+					|
+			 ---------------
+			|				|
+		   1*3SIB		   7*3B(1 disp32)
+
+ *) 'ESP' cell is selected for extending to 'SIB'; so bare [ESP] has to be encoded with a SIB byte;
+ *) bare [EBP] is selected out for bare displacement(immediate offset); so it has to be encoded as [EBP+0]; 
+
+@) SIB extends R/M base register to scaled indexed base register.
+	[BASE]	->	[SS*INDEX+BASE]
+ *) only used in 32 bit addressing;
+ *) 'ESP' index position is selected to indicate no index; so 'ESP' can't be used for index register;
+ 	.) 'no index' addressing can be encoded with or without SIB byte in two ways;
+ *) scale is a power of 2(encoded in sib byte with 2 bits, so the values are 0/2/4/8);
+ *) when index is NONE, the three rows of SIB byte value corresponding to different MOD are interchangable(displacement is controled by MOD);
+ 	*) 00 -> none; 01 -> disp8; 10 -> disp32
+	*) when base is EBP, MOD 00 indicates No base, replaced by disp32;
+
+@) besides ModR/M, MOFFSET is another way to refer memory; which is an ABSOLUTE address used in MOV instruction.
+ *) the opposite side is the first register(ax/eax...);
+ *) MOFFSET has equivalents which are forms of ModR/M, when only displacement is employed.
+
+@) there are two forms of ModR/M addressing which only include displacement; one is only ModR/M with none of BASE register, the other also takes an SIB byte, with neither BASE or INDEX register.
+ *) in x64, the former one evolves to be RIP-relative, e.g. the Displacement is added to RIP; whereas the latter one stays the same as zero based; (RIP-relative addressing is only used in ModR/M with only displacement;)
+
+@) opcode special fields control: 
+ *) register operand; 
+ *) byte operand size;
+ *) direction of operation;
+ *) sign extends of immediate data;
+
+@) the corresponding registers for number 0-7 in opcode are:
+ax,	cx,	dx, bx, sp, bp, si, di
+
+@) in x64:
+ *) bytes: [al-bl,spl-dil,r8b-r15b]	(AH/BH/CH/DH are replaced by SPL/BPL/SIL/DIL)
+ *) words: [ax-bx,sp-di,r8w-r15w]
+ *) dwords: [eax-ebx,esp-edi,r8d-r15d]
+ *) qwords: [rax-rbx,rsp-rdi,r8-r15]
+
+
+
+@) high parts of 64 bit registers are not preserved when switching from x64 to x32 ( protect or compatibility);
+
+@@) base indexed addressing mode(locate the element of a structure in an array): 
+	[base+index*scale+disp]
+ *) base: start address of array;
+ *) index: index of array element(structure);
+ *) scale: length of structure;
+ *) displacement: offset of element in structure;
+
+
+@)in real addressing mode: select any one from any of the following three groups to form a combination of one to three elements added together:
+BP/BX	+	DI/SI	+	DISP8/16
+
+@@ The 32-bit registers are usable in Real mode(operand/address size prefix). 
+ *) however the offset value(effective address) can't contain a value with more than two bytes(>65535); useless actually.
+
+
+@)use16/32 controls the D-bit of code-segment descriptor in PMode.
+
+@) if no register applied in an instruction, memory size should be specified.
+
+
+@@) three segment registers can't be overridden when used with specific instrucion:
+ES	-	destination string in string instruction;
+SS	-	in stack instruction;
+CS	-	for instruction fetches;
+
+@@) Eflags:
+Bit	 Label	 EFLAGS Flag Description
+ 0	 CF(jb)	Carry Flag: Set by arithmetic instructions which generate either a carry or borrow. Set when an operation generates a carry to or a borrow from a destination operand.
+ 2	 PF(jp)	Parity flag: Set by most CPU instructions if the least significant BYTE(aka the low-order bits) of the destination operand contains an even number of 1's.
+ 4	 AF	Auxiliary Carry Flag: Set if there is a carry or borrow involving bit 4 of EAX. Set when a CPU instruction generates a carry to or a borrow from the low-order 4 bits of an operand. This flag is used for binary coded decimal (BCD) arithmetic.
+ 6	 ZF(jz/je)	Zero Flag: Set by most instructions if the result an operation is binary zero.
+ 7	 SF(js)	Sign Flag: Most operations set this bit the same as the most significant bit (aka high-order bit) of the result. 0 is positive, 1 is negative.
+ 8	 TF	Trap Flag: (sometimes named a Trace Flag.) Permits single stepping of programs. After executing a single instruction, the processor generates an internal exception 1. When Trap Flag is set by a program, the processor generates a single-step interrupt after each instruction. A debugging program can use this feature to execute a program one instruction at a time.
+ 9	 IF	Interrupt Enable Flag: when set, the processor recognizes external interrupts on the INTR pin. When set, interrupts are recognized and acted on as they are received. The bit can be cleared to turn off interrupt processing temporarily.
+10	 DF	Direction Flag: Set and cleared using the STD and CLD instructions. It is used in string processing. When set to 1, string operations process down from high addresses to low addresses. If cleared, string operations process up from low addresses to high addresses.
+11	 OF(jo)	Overflow Flag: Most arithmetic instructions set this bit, indicating that the result was too large to fit in the destination. When set, it indicates that the result of an operation is too large or too small to fit in the destination operand.
+12-13	 IOPL	Input/Output privilege level flags: Used in protected mode to generate four levels of security.
+14	 NT	Nested Task Flag: Used in protected mode. When set, it indicates that one system task has invoked another via a CALL Instruction, rather than a JMP.
+16	 RF	Resume Flag: Used by the debug registers DR6 and DR7. It enables you to turn off certain exceptions while debugging code.
+17	 VM	Virtual 8086 Mode flag: Permits 80386 to behave like a high speed 8086.
+
+@@) Privileged Level (Ring 0) Instructions
+[Instruction]				[Description]
+£þ£þ£þ£þ£þ£þ£þ£þ£þ£þ£þ£þ£þ£þ£þ£þ£þ£þ£þ£þ£þ£þ£þ£þ
+LGDT						Loads an address of a GDT into GDTR
+LLDT						Loads an address of a LDT into LDTR
+LTR							Loads a Task Register into TR
+MOV Control Register		Copy data and store in Control Registers
+LMSW						Load a new Machine Status WORD
+CLTS						Clear Task Switch Flag in Control Register CR0
+MOV Debug Register			Copy data and store in debug registers
+INVD						Invalidate Cache without writeback
+INVLPG						Invalidate TLB Entry
+WBINVD						Invalidate Cache with writeback
+HLT							Halt Processor
+RDMSR						Read Model Specific Registers (MSR)
+WRMSR						Write Model Specific Registers (MSR)
+RDPMC						Read Performance Monitoring Counter
+RDTSC						Read time Stamp Counter
+
+
+@@) b/o/h is the radix suffixed behind number, which should be prefixed with 0 if it starts with letter to avoid confusing with identifier.
+
+@@) swap two bytes:
+			-->	a^ab=b;
+a^b=ab;	--|							(a^ab <=> a^a^b <=> 0^b <=> b)
+			-->	b^ab=a; 
+
+~)the value keeps to be the same after being operated by double xor;
+~)
+a^a=0;
+a^0=a;
+
+@@) test/or eax, eax
+better equivalent to "cmp eax, 0";
+
+@@) or eax, 0x100;
+turn on the 9th bit;
+
+
+@@) segment name could be whatever;
+
+@@) no operator like +/-/* is allowed, since each one of them is processed by an instruction;
+except addressing model, that is expression wrapped in [];
+mov eax, [eax+8]	;content at address eax+8
+~)if we only wanna get the address:
+lea eax, [eax+8]	;address(offset without segment) of content stored in eax+8
+
+@@) .general register:
+AX,BX,CX,DX
+AX-->AH,AL	;high and low;one changed, the whole changed;
+
+index register:
+		;couldn't be decomposed
+SI,DI		;source and destination
+
+pointer register:
+BP,SP		;base and stack;
+
+segment register(16)(in flat memory model, they have the same value):
+CS,SS,DS,ES,FS,GS	;code, stack and data(the last 4);
+
+thread information block(TIB) / Thread Environment Block (TEB)(NT_TIB in winnt.h):
+fs
+
+instruction pointer register:
+IP
+
+FLAGS
+ZF		;zero flag(result is zero);
+CF		;carry flag(high-order bit carry or borrow);
+OF		;overflow flag(too large or small to fit in(excluding the sign bit));
+SF		;sign flag(copy from the sign bit)
+PF		;parity flag(set when even number of turned on bits)
+AF		;Adjust flag(Set on carry from or borrow to the low order four bits of AL);
+DF		;direction flag(increasing by default:cld/restore;std/reverse)
+	
+
+@@) .
+BYTE B		1
+WORD W		2
+DWORD D		4	
+QWORD Q		8
+TWORD T		10
+PARAGRAPH	16
+
+@@) generally, any two types of operands except for both memory types are allowed(immediate/register/memory);
+except:
+1)both memory in string instruction is legal;
+2)both segment registers are illegal;
+
+@@) .Data segment to allocate room for memory and store an initial value(type char prefixed with d):
+LabelName DB 1			;One byte with initial value of 1;
+LabelName times 100 DB 1,3,4	;defines 3 bytes with respective values of 1,3,4, and do this 100 times;
+
+@) bss(Block Started by Symbol) segment is just to allocate room for memory(type char prefixed with res):
+LabelName RESB 10		;10 bytes without initial value;
+
+
+@@) .defines a constant named SYMBOL with value of 10:
+SYMBOL equ 10		;couldn't be redefined
+%define SYMBOL 10
+
+@@) .operation size not specified error if without "DWORD":
+mov DWORD [LabelName], 1	
+mov eax, DWORD [LabelName]
+because assembler doesn't know how many bytes two read or write;
+
+@@) movzx(zero extended)		ffff-->0000 ffff
+  movsx(sign extended)		ffff-->ffff ffff
+
+
+@@) 
+cwd		->	movsx dx:ax, ax
+cbw/cwde	->	movsx eax, ax	(or al to ax depending on the operand-size attribute, since they use the same opcode)
+
+
+
+@@) Jump:
+JE	;jump when equal
+JNE	;jump when not equal
+JL/JNGE ;jump when less/not greater or equal
+JLE/JNG	;jump when less or equal/not greater
+JG/JNLE	;jump when greater/not less or equal
+JGE/JNL	;jump when greater or equal/not less
+(less/greater than zero.)
+JB	;jump below positive number
+JA	;jump above positive number
+(below/above positive number)
+
+@) 080h is less than 0;
+
+
+CF for unsigned/OF for signed(when add instruction results a big result that could fit in);
+@@) Loop automatically decreases CX until it's zero.
+(loop lacks effectiveness than manually jump);
+
+@@) 
+  AND	->	a&&b
+  OR	->	a||b
+  XOR	->	(a&&!b)||(!a&&b)
+
+@@) SAR	->	It keeps the sign bit untouched, and copies the sign bit to empty bits.
+
+@@) It's invalid to move a register to more narrow one(mov eax,bl).
+
+@@) XOR(dest,111111) == NOT dest
+XOR a bit with 1 is to revert it.
+XOR a bit with 0 has no effect.
+
+@@) Turn on 5th bit:
+	OR(dest,00000010000)
+Turn off:
+	AND(dest,11111101111)
+
+Compliment:NOT(dest)->XOR(dest,11111101111)
+
+@@) XOR itself is more effective than MOV 0 to it.
+
+@@) setxx could only operate on double bytes;
+
+@@) endianness is related to the order of bytes in a number unit(word/dword, it has more or less significant bytes), not bits.
+"endian" signifies the start "end" point(lowest address) contains the most(big)/least(little) significant byte in a data unit; 
+~)in cpu, bit order follows the byte order; when connected to other devices, bit order is wired correctly, so we don't have to consider it. 
+~)in network protocol, byte order is big endian, whereas bit order is little endian.
+~)when shift bits, right always indicates less significance;
+
+@@) the TOPMOST register in FPU register stack, represented by ST0, is stored in TOP field of FPU status register.
+ *) index decreasing when stack grows;
+ *) wraparound occurs;
+
+@@) pascal/stdcall pops parameters from callee;(windows api has no function with varing arguments.)
+  C standard call convention does the opposite,which makes varing parameters easy.
+  [
+	push eax
+	push ebx
+	call fun
+	add esp,8 || pop ecx;pop ecx	
+  ]
+@@) enter		--	push ebp; mov ebp,esp
+  leave		--	mov esp,ebp; pop ebp
+@@) [ebp+4] is the return address,parameters start from [ebp+8]--[ebp+12/16...](left--right).
+  [ebp] is the original ebp value, local varibles start from [ebp-4]--[ebp-8/12...].(of course when "enter" is used.)
+
+
+@@) C calling convention¡¾cdecl¡¿:
+  1)saving registers: EBX,ESI,EDI,EBP,CS,SS,ES;
+  2)parameters pushed from right to left;
+  3)returns value in register:
+	a)Integral types(char,enum,int...)	--	EAX
+	b)64 bits				--	EDX:EAX
+	c)pointer				--	EAX
+	d)floating point values			--	ST0
+  4)parameters removed by caller(¡¾stdcall¡¿does the opposite:"ret num"--"ret" add the "num" to esp after return address is poped off.);
+  5)exported function name is prepended an underscore "_name"(¡¾stdcall¡¿add another part which is parameters' size like "_name@num";
+
+@@) multiple line comment:
+%if 0...%endif
+%ifdef aaa...%endif
+
+@@) most c compilers prepend an underscore to function name and global/static variables, so when called from asm, printf is replaced by _printf;
+  correspondingly, function called from c should be prepended an underscore when defined in asm;
+  (Linux gcc does not.)
+
+@@) 
+  scasx(search)		al/ax/eax-edi against edi;
+  cmpsx		esi-edi;
+  lodsx		DS:esi->al/ax/eax
+  stosx		al/ax/eax->ES:edi
+s:string
+x:b/w/d(byte/word/dword)
+
+"x" could also be set using the explicit form(address actually doesn't have effect, always use es:[edi]):
+cmps	byte ds:[esi], es:[edi]
+
+
+@@) 10 is char code of '\n'.
+
+@@) ftst:		test st(0) is zero or not;
+  sahf:		Store ah to flags;
+  lahf:		Load flags to ah;
+  fstsw:	Store status word to word(memory or AX);
+
+  fmulp stx	multiply by st0 and then discard st0.
+
+  fchs		change sign(st0=-st0);
+f:float;
+@@) when a parameter of double float(64 bits) is passed, it's passed twice, first high-dword(var+4), then low-dword(var).
+@@)  fsubrp st1		if "p", st0 would be discarded, so then the target modified must be st1;
+   fsubr  st1		
+   fsub	  st1		st0=st0-st1	normally, no st0 specified, the target being modified would be st0;
+   fsub   st1,st0	st1=st1-st0	if specified, reversed.
+
+ps: who being modified:A)p: not st0;	B)st0 specified: not st0; C) the one being modified would also be the target of the action with another parameter, if"R" specified, reversed.
+
+@@) pusha/pushad	eax,ecx,edx,ebx,esp,ebp,esi,edi
+
+@@) mul/div(first line determine others):
+[mul]
+operand size 						1 byte 	2 bytes 	4 bytes
+other operand 						AL 		AX 			EAX
+higher part of result stored in: 	AH 		DX 			EDX
+lower part of result stored in: 	AL 		AX 			EAX
+
+[div/idiv](the upper half in the divident should be 0/sign(assuming the divisor is 1), if it's not checked that whether the quotient can fit in the result.)
+divisor size 			1 byte 	2 bytes 	4 bytes
+dividend 				AX 		DX:AX 		EDX:EAX
+remainder stored in: 	AH 		DX 			EDX
+quotient stored in: 	AL 		AX 			EAX
+
+
+@@) Comparison in Syntax:
+
+--masm--						--nasm--						--gas--
+
+include file					%include "file"
+.data							segment .data
+.data?							segment .bss
+.code							segment .text use32
+
+@@) A REP STOS instruction is the fastest way to initialize a large block of memory.
+
+@) string instructions:
+ *) don't affect flags (STOS/LODS/MOVS):
+ 	F3/F2 -> REP
+ *) affect flags (CMPS/SCAS):
+ 	F3 -> REPE
+ 	F2 -> REPNE
+ 	
+
+
+@@) imul a, b, c		--b*c->a	(c should be immediate);
+
+@@) 2 powers of 32	=	2(2)*2(10)*2(10)*2(10)	=	4GB;
+							   GB	 MB	   KB
+2(x10)=1024;
+							   
+@@) "call" does one more operation than "jump": push next address on stack;
+call/retn could substitute jump;
+
+@) complement: convert 'substraction' to 'addition', e.g. represent negative as special positive number for addition; to get magnitude:
+ *) radix complement: a radix number(in binary number system: 2, known as Two's Complement) is borrowed, then substract this positive number;
+ *) diminished radix complement: a radix number MINUS ONE(in binary number system: 2-1, known as One's Complement) is borrowed, then substract this positive number;
+	.) zero has two form(positive:0/negative:ff);
+
+@) when operate on memory, always specify length if no register involved;
+
+@) mov can't take data from memory to memory, to achieve it:
+~) use register as an interim store;
+~) use stack(push/pop)
+
+@) registers encoding value list in REG part of ModR/M byte:
+0	1	2	3	4	5	6	7
+al	cl	dl	bl	ah	ch	dh	bh
+ax	cx	dx	bx	sp	bp	si	di
+es	cs	ss	ds	fs	gs
+
+@) dwords addition in 16 bit mode:
+add [bp], ax
+adc [bp+2], dx
+
+@) push imm8
+imm8 will be sign-extended to word;
+
+@) bt works only with word.
+
+@) jmp/call relative address, relative to the next instruction.
+
+@) r8b(MASM)/r8l(Intel)	- byte of r8
+
+
+
+
+@) in Instruction Reference, the Opcode Column, signs following opcode bytes:
+ *) /digit		- digit (0-7) indicates the Reg field in Mod/RM byte is treated as opcode.
+ *) /r			- 																---register.
+ *) +cb/w/d/o	- an index of register is added to the base value to form the opcode byte
+
+@) neg eax	<==>	sub 0, eax
+ *) carry flag is set for non-zero numbers;
+ *) neg&sbb are used for converting numbers to true/1 or false/0:
+	neg eax
+	sbb eax, eax	(non-zero -> -1, zero -> 0)
+		-neg 				1			0				
+		-inc 				0			1				
+
+@) inc/dec doesn't disturb carry flag as 'add/sub'; since it's used for loop in earlly days;
+
+@) 'LOCK' used for instructions consist of both read and write;
+
+@) string operations decrement/increment pointer right after the operation;
+ *) not an action of 'rep'
+
+@) string operations can be divided to two categories; only the first set flags, which can work with REPE/REPNE;
+ *) compare (scas, cmps)
+ *) modify (movs, lods, stos)
+
+@) cmpxchg(set_when_is): check if the value is what assumed(r0), if it is, change to another value(source), if not, read that value to see what it is(r0).
+
+@) xadd: besides addition, the original value is retrieved;
+
+@) jl: sf!=of
+ *) the result is negative;
+ *) negative is not resulted from two positive numbers(127+1);
+
+@) overflow flag is affected by 'addition/subtraction' tyically, when two numbers with same signs get a result with different sign;

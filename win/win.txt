@@ -1,0 +1,199 @@
+@) view vs build command line:
+ Tools > Options > Projects and Solutions > Build and Run > MSBuild project build output verbosity
+
+@)  Win32 API is apis exposed in win32 subsystem, which is supported by Windows Native Api.
+
+@@ .All the objects created by a thread belong to it's process; except that window and hook which belong to the thread creating them would be destroyed after the thread terminates.
+
+@@ path:
+											(true)¡údevice namespace
+~~ ???? parse sequence: NT namespace ¡ú "\\.\" ¡ú
+											(false)¡úfile namespace
+											
+~~  IO Apis convert slash to backslash as NT-style if no "\\?\";
+
+~~  MAX_PATH	¡ú 260
+D:\(256-12)0	¡ú(12 is reserved for 8.3)
+
+~~ (unicode) extended path(\\?\ or \\?\UNC\):
+max length: 2^15
+max component length:255 (GetVolumeInformation().lpMaximumComponentLength)
+
+~~ no modification(API pass directly to fs):
+¡ùprefix is not part of the path;
+¡ùrelative path is now allowed;
+¡ùslash is not allowed;
+¡ùno length check;
+¡ù. is allowed for file name;
+
+~~ \\.\	goes to device namespace directly bypassing fs;
+
+@@ vc++ does not think console is unicode supported, then wcout convert unicode char to multi-byte without locale set(WideCharToMultiByte treat it as Ascii); so the char with value more than one byte can not be printed.
+instead those chars stored with char can be outputed correctly, even byte by byte.
+
+@@ SetEndOfFile v.s. SetFileValidData
+When you use SetEndOfFile to increase the length of a file, the logical file length changes and the necessary disk space is allocated, but no data is actually physically written to the disk sectors corresponding to the new part of the file. The valid data length remains the same as it was.
+
+This means you can use SetEndOfFile to make a file very large very quickly, and if you read from the new part of the file you'll just get zeros. The valid data length increases when you write actual data to the new part of the file.
+
+That's fine if you just want to reserve space, and will then be writing data to the file sequentially. But if you make the file very large and immediately write data near the end of it, zeros need to be written to the new part of the file, which will take a long time. If you don't actually need the file to contain zeros, you can use SetFileValidData to skip this step; the new part of the file will then contain random data from previously deleted files.
+
+@@) nmake don't allow spaces surrounding equal sign when passing macros:
+nmake /f makefile.mk FILE= main.cpp --incorrect
+nmake /f makefile.mk FILE=" main.cpp" --correct
+nmake /f makefile.mk "FILE= main.cpp" --correct
+
+@@) inference rules can only recognize those suffixes defined in ".SUFFIXES"; To append new ones into predefined:
+.SUFFIXES: .h .gcc
+
+@) to use DEFINE_GUID, initGuid.h is necessary. moreover, it should appear before windows.h.
+
+@) AttachVirtualDisk will cause "no longer available" error if SecurityDescriptor specified.
+
+@) OpenVirtualDisk should set vendor to MICROSOFT, or "request is not supported."
+
+@) set WINVER to the target platform to ensure functions supported.
+
+@) CSRSS.EXE(Client/Server Runtime SubSystem) is win32 server process.
+
+@) win32 subsystem APIs are exported in 4 dlls: Kernel32.dll/Advapi32.dll/User32.dll/Gdi32.dll.
+
+@) NTDLL.dll exposes Native API services to subsystem in user mode.
+
+@) software exception handling is used to switching between user mode and kernel mode(INT/Sysenter/Syscall).
+
+@) in x64 system, System32 contains 64 bit files, and 32 bit ones in SysWow64;
+
+@) in project properties, general, "Platform Toolset" controls the os version; "Target Platform version" controls SDK version, which doesn't have much significance.
+
+@) from win7, APIs are divided into categories separated in different stub DLLs with name starting from "API"; those implementation are still placed in several DLLs; the mapping table are in ApiSetShema.dll;
+
+@) AdjustWindow will trigger WM_PAINT;
+
+@) prevent window from showing in taskbar:
+ *)dialog 
+	EXSTYLE WS_EX_TOOLWINDOW
+ *)window
+	CreateWindow(...WS_EX_TOOLWINDOW...)
+ *)create a hidden window and make this hidden window the owner of your visible window.
+ *) Dynamically:
+	**) ShowWindow(hWnd, SW_HIDE);
+	**) SetWindowLong(hWnd, GWL_EXSTYLE, WS_EX_TOOLWINDOW); 
+ *)ITaskbarList::DeleteTab
+
+@) GetWindowText sends WM_GETTEXT message to get; it can only work for the current process;
+
+@) GetGuiResources returns the count of GDI objects(pens, brushes, fonts, bitmaps, palettes, regions...) in a process; 
+
+@) use resouces:
+ *) LoadResource
+ *) LoadIcon/Curosr...
+
+@) draw images:
+ *) BitBlt(BIT BLock Transfer)
+ *) SetDIBitsToDevice
+
+@) line drawn between BeginPath and EndPath is stored internally as path, instead of being rendered; 
+
+@) after path is consumed by the following functions, it's destroyed;
+StrokePath (hdc) ;
+FillPath (hdc) ;
+StrokeAndFillPath (hdc) ;
+hRgn = PathToRegion (hdc) ;
+SelectClipPath (hdc, iCombine) ;
+
+@) to build with cl.exe, set environment variables first:
+ *) x86: vcvars32.bat
+ *) x64: vcvarsall.bat (x86 also)
+
+@) mklink: symbolic link;
+
+@)debug ISAPI filter in vs:
+1) Right click your (ISAPI) project, select Properties
+2) In the dialog select Configuration Properties->Debug
+Enter:
+Command : C:\Windows\System32\inetsrv\w3wp.exe
+Command Arguments : -debug
+3) Now do "Start Debugging(F5)" for you project.
+
+@)nmake
+ *) case sensitive
+
+ *) if no file exists:
+don't kown how to make...
+
+ *) inference rules are used to check the dependent file with the same base name. (it's not the same file with the file passed in the command, of which the name can be modified based on it.)
+abc.exe: dir\abc.res
+.rc.res				#dir\abc.rc is checked;
+	rc $(*B).rc		#abc.rc is compiled;
+
+ *) directory in inference rule
+{}.cpp{$(OUT)}.obj
+1)backslash mush appear in variable; but not necessary in literal:
+not valid:
+OUT=out
+valid:
+a)OUT=.\out
+b)OUT=out\
+c){}.cpp{out}obj
+
+ *) in a variable value a space mush follow a backslash if it appears at the end of the line, or it's omited.
+OUT=out\
+$(OUT)name.cpp	--> outname.cpp
+
+ *) )$< represents file, so no modifier can be used.
+
+@)FormatMessage not always returns messages;
+
+@)Service Control Manager (SCM) is services.exe
+
+~) page fault caused by codes executing at or above IRQL of DISPATCH_LEVEL leads to bug check.
+
+@) in MFC, don't touch main win control in worker thread; use postMessage instead.
+
+@) HKEY_CURRENT_CONFIG is a link to HKLM\SYSTEM\CurrentControlSet\Hardware Profiles\Current;
+
+@) keywords in '.def' file should be all capitalized;
+
+@) "Invalid win32" throws if Version number in PE bigger than this system;
+
+@) Windows Namespace:
+ *) consists of "NT namespace" and "win32 namespace" which is based on the former;
+ *) win32 namespace:
+	 .) resides in "Global??";
+	 .) user application can only access this namespace;
+	 .) divided to "file system (\\?\)" and "device (\\.\)" namespace;
+	 .) File I/O API do several parsing(dot, slash...) on path if it doesn't start with prefix, then passes it to file system; 
+	 .) whole namespace has correspondent content in "session" directory if exists; 
+	 .) "GLOBALROOT" is a symlink to the root (\\.\GLOBALROOT... can't bypass the session version); 
+
+
+@) lParam of PROPSHEETPAGE is passed only when in WM_INITDIALOG, attach it to hwnd for later use if needed;
+
+@) in XP, if an imported item is not found, an error occurs:
+(494.49c): Unknown exception - code c0000139 (first chance)
+
+@) COM maps exported methods with their names, called by 'IUnknown->Invoke' 
+
+@) sc: control services;
+ *) if name is composed of multiple words, enclose them in parenthensis;
+ *) query: check its status;
+ *) EnumDepend: check who depends on it;
+
+@) gdi(identify by HDC):
+ *) HDC: data buffer handle;
+ *) CreateDIBSection: create bitmap buffer(then SelectObject into HDC);
+ *) ExtTextOut: draw text;
+ *) BitBlt: paint(from bitmap of one HDC to the second HDC);
+ *) GetFontData: get raw data from ttf file;
+
+@) VS:
+ *) add 'file.lib' to 'linker -> input -> additional dependencies', the directory of which in 'linker -> general -> additional library directories';
+ *) c/c++ -> treat warnings as error
+ *) linker -> treat linker warnings as error
+
+@) vs2015/win10 c runtime library has imcompatible modifications, cause errors for old codes such as 'unresolved external symbol __vsnprintf';
+ *) include 'legacy_stdio_definitions.lib'
+ *) int (WINAPIV * __vsnprintf)(char *, size_t, const char*, va_list) = _vsnprintf;
+
+@) SHGetFolderPath/SHGetKnownFolderPath use constants CSIDL/KNOWNFOLDERID to retrieve system directories; 

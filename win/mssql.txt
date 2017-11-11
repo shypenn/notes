@@ -1,0 +1,12 @@
+
+
+1.获取所有数据库名 Select Name From Master..SysDatabases order By Name
+
+2.获取所有表名 Select Name From SysObjects Where XType='U' order By Name
+
+XType='U':表示所有用户表;
+
+XType='S':表示所有系统表;
+
+3.获取所有字段名 Select Name From SysColumns Where id=Object_Id('TableName')
+

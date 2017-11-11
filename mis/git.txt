@@ -1,0 +1,198 @@
+@) curl also installed; 
+
+@) gist in github(a simple way to share codes)
+ *) edit in browser;	
+
+@) git init
+
+@) in '.gitignore', with a '!' prefix means do not ignore;
+
+@) `master` branch:
+ *) it can not be created manually
+ *) it is created when files are commited the first time;
+ *) no new branch can be created before `master` exists;
+
+@) remote
+ *) list:
+ 	git remote
+ *) add name:
+	git remote add name url
+ *) show info
+	 *) git remote show name
+	 *) git ls-remote name
+ *) url:
+	 *) git remote get/set-url name
+ *) map local branch to remote:
+	git branch [localBranchName] --set-upstream-to=remoteName/remoteBranchName
+ *) push: `git push remoteName localBranch:remoteBranch`
+ 	*) when no remoteName, default to 'origin';
+ 	*) when no remoteBranch, default to the same with local;
+
+ *) retrieve info: git fetch
+ *) `git pull` is short for 'git pull origin HEAD'
+ *) change default branch (when branch name is omited in command, has nothing to do with remote repo): git remote set-head repo branch
+ *) remote push address can contain more than one:
+ 	`git remote set-url --add remoteName url`
+ *) delete branch: 
+
+	 `git push remoteName --delete branchName`
+
+	 `git push remoteName :branchName`
+
+@) load:
+ *) get and init (as 'checkout' in svn, but including all history revision data, --depth=1 can fix this)
+	git remote clone url dir 
+ *) get new
+	git remote fetch name
+ *) fetch and merge
+	git pull
+ *) packed
+	git archive --remote=name -o file path
+
+@) branch:
+ *) just a label to a commit;
+ *) create:
+ 	.) git branch name
+ *) list
+ 	.) local: git branch [-l]
+ 	.) remote: git branch -r
+ 	.) all: git branch -a
+ *) last commit info: -v
+ *) last commit info and upstream info: -vv
+ *) switch: git checkout branch
+ *) delete: git branch -d name
+ *) move branch pointer to other commit: git reset <commit>
+
+@) fast-forward: no merge needed
+
+@) commit tree:
+
+	git log --graph --all
+
+ *) with branch:
+
+	--decorate
+
+ *) log info verbosity:
+
+ 	--pretty=oneline, short, medium, ...
+
+@) rebase: change parent;
+
+ *) hard to revert;
+
+@) revert:
+ git checkout path
+
+@) list files:
+ git ls-files
+
+@) log with changed summary:
+ git log --stat [file]
+
+@) merge:
+	git mergetool
+
+@) remove file from git only:
+ git rm --cached file
+
+@) set config on the fly:
+	git config --global core.autocrlf false
+
+@) core.eol take effect only when autocrlf=false;
+
+@) core.autocrlf
+ *) true: input as LF (** all os, ONLY if repo is LF); output as CRLF in windows (** when output, will not convert CRLF to LR in linux);
+ *) input: **Checkout as-is**, commit Unix-style
+ *) false: no transforming;
+
+@) force LF in linux(convert when checkout & commit):
+	autocrlf=false
+	eol=lf
+
+@) convert eol automatically:
+ 1) specify in .gitattributes
+ 	* text eol=lf
+ 2) remove index
+ 	del .git/index
+ 3) add index
+ 	git reset
+ now eol is converted in all files;
+
+@) "warning: LF will be replaced by CRLF" when commit, actually is a late warning, which is done when checkout;
+
+@) normalized eol is 'lf';
+
+@) show a commit changed files:
+git show <commit> --stat
+
+@) view specific revision:
+git show HEAD~3:index.html
+git show 71788f9f5d07b3a762ebba20d3bc3194fcf4bc28:index.html
+
+ **) HEAD~2	-> the second commit before the HEAD;
+
+@) in diff, each difference piece follows with a title:
+@@@ -98,20 +98,20 @@@
+ *) 98 is starting line;
+ *) 20 is lines;
+
+@) path can be prefixed with branch/commit_id:
+ *) 8af9e067f27c0d3fc5e1d19e0bc12efe910b6d21:dir/file.name
+ *) HEAD~2:file
+
+
+@) unset SSH_ASKPASS
+
+@) http.sslVerify false
+
+@) https://username:mypassword@github.com/path/to/repo.git
+
+@) wildcard for all files: 
+ *) linux: '.'; 
+ *) win: '*'
+
+@) only when remote url is of format for ssh (username@domain:path), it will take effect then; if 'http...', authentication is required always; 
+ *) github: git@github.com:username/repo.git
+
+@) HEAD~2	the second parent vertically (parent of parent);
+@) HEAD^2	the second parent horizontally (the second one of group of parents merged from);
+
+@) repository's own config file is '.git/config';
+
+@) empty repo can't be pushed; error may occurs:
+
+	`error: src refspec master does not match any.`
+
+@) when github repo has files, local repo is unrelated to it; force merge: `--allow-unrelated-histories`
+
+@) disable ssl security check: when error 
+
+		`fatal: unable to access '': server certificate verification failed. CAfile: /etc/ssl/certs/ca-certificates.crt CRLfile: none`
+
+	[http]
+        sslVerify = false
+
+@) --mirror option for full repo data;
+
+@) list remote branches:
+ *) git branch -r/a
+ *) git remote show name
+ *) git ls-remote name
+
+@) when clone with '--depth=1', only the HEAD branch is copied;
+ *) 'git branch -r/a' can't show other
+ *) 'ls-remote' does; 
+ *) --no-single-branch force copy all branches;
+
+@) checkout a remote branch:
+ *) git checkout branchName; (does the following action internally, sometimes doesn't work);
+ *) git checkout --track remoteName/branchName;
+ *) git checkout -b branchName remoteName/branchName;
+
+@) gnome-keyring
+sudo apt-get install libgnome-keyring-dev
+sudo make --directory=/usr/share/doc/git/contrib/credential/gnome-keyring
+
+[credential]
+helper = /usr/share/doc/git/contrib/credential/gnome-keyring/git-credential-gnome-keyring

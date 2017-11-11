@@ -1,0 +1,784 @@
+docs:
+https://www.kernel.org/doc
+@) sources:
+ *) http://mirrors.aliyun.com/
+ *) linuxmint, select the quickest in 'software sources' for 'main'(mint) and 'base'(ubuntu);
+
+@) system info: 
+ *) lscpu/hw/of...;
+ *) lsb_release(linux standard base);
+ *) uname(/proc/version)
+ *) cat /etc/*-release
+
+@ by 'echo -e' a special control sequence, attributes of console can be set;
+ *) man console_codes
+
+@) desktop manager name stored in $DESKTOP_SESSION;
+-------------------------------------------------------------------------------------
+PACKAGE
+-------------------------------------------------------------------------------------
+@) linux package tool
+ *) rpm(Red Hat Package Manager)	-> yum(Yellowdog Updater Modified)
+ *) dpkg(Debian Package) -> apt(Advanced Package Tool)
+ **) package name accepts glob wildcards;
+
+@) download location:
+ *) apt: /var/cache/apt/archives/
+ *) yum: /var/cache/yum
+
+@) list the packages installed/available/...;
+ *) dpkg --get-selections
+ *) apt list --installed/upgradeable/all-versions [pkg*]
+ *) yum list installed/upgradeable/all-versions [pkg*]
+
+@) apt-cache:
+ *) showpkg pkg*	(with repo)
+ *) pkgnames pkg	(only name)
+ *) search pkg
+
+@) list repo available:
+ *) yum repolist
+
+@) enable/disable repo:
+ *) temporarily:
+ 	.) yum --disablerepo repo install pkg
+ *) permanently:
+ 	.) add 'enabled=1' to repo file;
+
+@) list files for a package:
+ *) installed:
+ 	.) dpkg -L pkg
+	.) rpm -ql pkg
+	.) yum list installed
+ *) not installed:
+ 	.) apt-file list pkg
+
+@) list package information:
+ *) apt show pkg
+ *) yum info pkg
+
+@) search package:
+ *) installed:
+ 	.) yum list *pkg*
+ *) repo:
+ 	.) yum search pkg
+
+@) repo files:
+ *) /etc/yum.repo.d/*.repo
+ *) /etc/apt/sources.list.d/*.list
+
+@) update resources:
+ *) apt update
+ *) yum makecache
+
+@) package name need to be full match(get from 'search');
+
+@) yum groupinstall groupName
+ * get group names: grouplist -v
+ * get packages: groupinfo groupName
+
+@) ubuntu locked password of root; can not login as root;
+ 
+@) apt needs GPG key for third-party repo;
+	sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 0C49F3730359A14518585931BC711F9BA15703C6
+ to disable:
+ *) redhat:
+	 deb [trusted=yes] http://...
+ *) debian:
+	 gpgcheck=0
+
+@) after manually remove files that a package installed, package manager doesn't know it;
+
+@) when a package is removed, its dependencies are not touched; take another command to do it;
+ *) apt-get autoremove pkg
+
+@) newer version rpm from community:
+ *) EPEL(http://fedoraproject.org/wiki/EPEL)
+ 	centos: yum install epel-release
+ *) IUS(https://ius.io/GettingStarted/)
+ 	.) depends on EPEL;
+ 	.) download the corresponding rpm to install;
+	.) package name is different from stock one, to replace it, install yum plugin 'yum-plugin-replace'(in IUS repo)
+		yum replace vim --replace-with vim80
+ *) REMI(http://rpms.famillecollet.com/)
+
+-------------------------------------------------------------------------------------
+GENERAL
+-------------------------------------------------------------------------------------
+@) ln: when target is relative path, it's relative to the link name; if -r is set, it's relative to current directory;
+
+@) remove files in any subdirectory with pattern:
+ *) find /some/dir/ -maxdepth 1 -type f -name "*.xvg" -delete 
+ *) 
+	 shopt -s globstar
+	 rm **/*afa
+	 shopt -u globstar
+
+@) sed(stream editor): 
+ *) insert before/after or replace line(i/a/c);
+ 	set '/words_in_line_to_search/ i\new line text' file
+ *) replace text: same as vim '1,10s/src/dst/'
+	* end / is mandatory
+    * if dst has multiple lines got from file , replace them with '\\\n'
+	${txt/$'\n'/\\\n}
+    * replace '/' with '\/' in dst
+	${txt/\//\\\/}
+
+@) process monitor: 
+strace -e trace=file -o strace.log cmd args
+
+@) filesystem monitor(watch):
+inotify-tools
+
+@) get/set file handle limits per process(1024 usually): ulimit -n [number]
+
+@) sysctl set/get kernel parameters(located in /proc/sys/);
+
+@) ls 
+ *) ls link		-> link itself
+ *) ls link/	-> target linked;
+
+ *) list directory itself instead of content:
+	ls -d */
+ *) ls -F		-> indicator
+	@ means symbolic link (or that the file has extended attributes).
+	* means executable.
+	= means socket.
+	| means named pipe.
+	> means door.
+	/ means directory.
+
+ *) owner/owner_group
+ *) echo with wildcard more convenient sometimes(list files in current directory starts with somethine)
+
+@) SIGHUP(hangup) usually is used for notifying deamon to restart;
+
+@) hostname:
+ *) view: hostname
+ *) hostname, effective this session;
+ *) hostnamectl, permanently;
+ *) manually edit /etc/hosts, /etc/hostname
+
+@) script from windows may work inproperly;
+
+@) link
+ *) hard link is a reference to inode;
+ *) soft/symbolic link is a reference to hard link
+
+
+@) to change text mode resolution:
+ *) grub 0.97 
+ 	.) when value is 'ask', available values will be listed
+	.) append "vga=773" to the "kernel" line in the /boot/{grub, grub2}/grub.conf file; 
+	.) value listed is in hex, but argument assume decimal if not specified;
+ *) grub2 version 1.99
+	.) grub 'vbeinfo' command lists available; 'set pager=1' to scroll;
+ 	.) append this line to /etc/default/grub, then update-grub/grub2-mkconfig:
+		GRUB_GFXMODE=1024x768x32
+	.) when timeout no effects, add this undocumented config:
+		GRUB_RECORDFAIL_TIMEOUT=5
+
+@) control systemd target:
+ *) in boot entry: append 'systemd.unit=*.target'
+ *) cmd: sudo systemctl set-default *.target
+
+@) boot log:
+	dmesg
+
+@) log files reside in /var/log
+
+@) system log:
+ *) rsyslog: check /etc/rsyslog.conf, usually /var/log/messages is the general one;
+ *) upstart: /var/log/syslog; /var/log/upstart/
+ *) systemd: journalctl [-u unit/service]
+  
+@) grub2 builds menu-entry config file '/boot/grub/grub.cfg' by scripts in '/etc/grub.d/' and '/etc/default/grub'(custom options)
+ *) cmd to build: update-grub
+ *) add linux parameters:
+	.) GRUB_CMDLINE_LINUX_DEFAULT	--default entry
+	.) GRUB_CMDLINE_LINUX='text'		--every entry
+ *) GRUB_DEFAULT: specify default entry;
+
+@) in grub boot menu, press 'e' to edit the boot options(take effective this time);
+
+@) start x session:
+ *) startx
+ *) systemd: systemctl isolate graphical.target
+
+@) restart network:
+sudo /etc/init.d/networking restart
+
+@) logout teminal:
+ctrl+d
+
+@) lock/unlock screen session:
+ctrl+s/q
+
+
+
+
+@) CentOS network config:
+
+vi /etc/sysconfig/network-scripts/ifcfg-eth0
+
+DHCP Configuration
+
+DEVICE="eth0"
+HWADDR=MAC Address*System MAC*
+NM_CONTROLLED="no"
+ONBOOT="yes"
+BOOTPROTO="dhcp"
+
+@) httpd.conf is apache's config file;
+httpd.conf DocumentRoot specify the website directory;
+
+
+@) /	--	$HOME~/	--	$HOME~/	--	$HOME~/	--	$HOME
+
+@) locate the freetype package's installed files;
+
+@) file name prefixed with dot is hidden;
+ls -a could display it;
+
+@) get file/cmd info:
+ *) 'stat': status	
+ *) 'file': file type;
+ *) 'type': command type;
+ *) 'lsattr': attribute;
+ *) 'ls -l': permission;
+
+@) read and set environment variables:
+echo $PATH
+export PATH=${PATH}:/home/vivek/bin
+set		--		display all variables;
+unset name		--		delete a variable;
+
+@) sc+BS	--		clear the console;
+
+
+@) ctrl/alt+f/b	move forward/backward a letter/word;
+
+@) pwd	--	print name of working directory;
+
+@) Warning: DocumentRoot does not exist
+
+If you're using Red Hat Enterprise Linux (RHEL) or one of it's variants (CentOS, etc.), you may have noticed that using a non-standard document root for your Apache-based web site results in a DocumentRoot does not exist warning if the directory exists. The most likely cause of this problem is SELinux.
+
+The fix for the problem is to change the security context of your new DocumentRoot to match that of the system's original document root. Here's how:
+
+$ ls -la --context /var/www/html
+drwxr-xr-x  root root system_u:object_r:httpd_sys_content_t .
+$ chcon -R system_u:object_r:httpd_sys_content_t /new/docroot
+or just:
+chcon --reference /var/www/html /new/docroot
+Obviously, /new/docroot in the example above should be the path to your document root.
+
+@) ls --context  //SELinux context;
+
+@) disable selinux for windows directory accessiable for apache;(restart);
+
+@)  chkconfig is used for configging services(autostart);
+set httpd to auto start:
+chkconfig httpd on
+
+@) iptables(netfilter):
+ *) is activated by default in CentOS
+ *) modify manually: /etc/sysconfig/iptables
+ 	.) apply:
+		..) iptables-restore < /etc/sysconfig/iptables
+		..) /etc/init.d/iptables restart
+
+ *) modify in memory(): 
+	iptables -I INPUT -p tcp --dport 12345 --syn -j ACCEPT
+	.) save to file:
+		iptables-save > /etc/sysconfig/iptables
+
+
+@)  ctrl + pageup/down
+	scroll the screen;
+
+@) view network info
+netstat
+ifconfig
+ip a
+
+@)package names
+apache			-httpd
+mysql client	-mysql
+mysql server	-mysql-server
+
+@)mysql service is named "mysqld"
+
+@@)return a link target:
+ *) readlink linkname
+ *) readlink -f linkname: absolute/recursively
+
+@) path separtor is slash(not back slash as in windows)
+
+@) entries separator in "path" evironment variable is colon(not semicolon as in windows)
+
+@) headers for c are located in /usr/include
+
+@) libraries are located in /lib and /usr/lib.
+
+@) ~/.local/share corresponds to /usr/share
+
+@) sudo dosth | file
+ **) redirection is performed by bash under current user, instead of sudo;
+ *) sudo sh -c 'ls -hal /root/ > /root/test.out'
+ *) script file;
+ *) sudo -s
+ *) sudo ls -hal /root/ | sudo tee /root/test.out > /dev/null 
+
+
+
+@) $@ not included in double quotes, acts as $*, separate with IFS.
+
+@) $IFS print whatever char as space; only act as what it is when comparing.
+
+@) dot make scripts run in the current shell, like in cmd.
+. ./scriptName
+
+@) ctrl+\	quit; 
+
+@) find ~/note -atime 0 -type f -ok ls -l {} \;
+"\;" is necessary.
+"{}" full path found.
+
+@)view bash builtin command help, use "help cmd".
+
+@)here document can be used as multiple comment:
+<<CMT
+code
+code
+CMT
+
+@) to turn on/off a shell option:
+set -/+o verbose
+
+@)comparison:
+~)string: =/==/!=/</>(= equal with ==)
+~)arithmetic: arg1 -eq/-lt/-gt/-le/-ge arg2
+
+@)suppress further output:
+echo -e "aa\c"
+
+@) quotes will be removed automatically.
+
+@) space should always be placed between operators/strings/identifiers.
+
+@) get array length:
+${#arr[@]}
+
+@)split string to array:
+~)IFS=","; declare -a arr=(string)
+~)IFS="," read -a arr<<<"string"	(IFS only take effect in the same line; double quotes arround string is necessary)
+
+@)every thing left is stored to the last variable "rest":
+FS="," read catnum rest <<<"$line"
+
+@)create empty file:
+~)cp /dev/null fileName
+~)touch filename
+
+@)php install php* -y
+install packages with wildcard and 
+
+
+@) 'ls' color global file path is stored in shell variable $COLORS;
+ *) can be overridden `eval $(dircolors ~/.dircolors)` (format is output of `dircolors -p`)
+ *) colors take effect is in $LS_COLORS
+ *) default colors can be set/viewed by 'dircolors [-p]'
+
+@) ls -d
+ *) only one level deep
+ *) **files also included**
+
+@) device types:
+ *) hard disk: dev/hda,b,c,... (partitions: dev/hda1,2,3,...)
+ *) floppy disk: dev/fda
+ *) SATA, USB disk: dev/sda
+ *) SCSI ROM: dev/sr0
+ *) cdrom: dev/cdrom (links to SCSI ROM)
+ *) dvd-writer: dev/dvdwriter
+
+@) Ws:
+ *) whatis:	display sections from man page('NAME' section by default);
+ *) whereis: locate binary/source/man files;
+ *) which: locate binary from $PATH;
+
+@) show mounted file system spaces:
+	 df
+
+@) locate a file in partition:
+	df path
+
+@) show file/directory size
+	du path
+
+@) in CentOS, two disks located in /dev/mapper are logical ones which resides in Linux LVM partition, usually hda2/sda2;
+
+@) swap partition is used for pagefile(1.5-2RAM), at the beginning or end or disk;
+
+@) home partition contains personal data;
+
+@) LVM is Logical Volume Manager, which manages hard disks and partitions as a single volume system;
+
+@) initrd(Init RAM disk)/initramfs, temporary root file system before the real one can be mounted; 
+
+@) TTY(TeleTYpewriter), is connected to computer as user terminal in early days; 
+
+@) switch to terminal:
+ *) ctrl+alt+Fnum (F1 is X11)
+ *) shift+arrowL/R (it's eaten in X11)
+
+@) if only one screen, less will have problem;
+ less -F	(quit if one screen)
+
+@) read administrative info like password, group
+ * getent passwd (more than /etc/cat)
+ * local users: cat /etc/passwd
+
+@) /etc/sudoers
+ *) edit with command 'visudo' instead of directly
+ *) name starting with '%' indicates a group
+
+@) administer /etc/group, /etc/gshadow
+ gpasswd
+
+@) password strength rule in:
+/etc/pam.d/common-password
+
+@)wildcard:
+ *) */? don't include hidden files;
+ *) '.' does;
+
+@) use echo to see what a command line will expand;
+
+@) 
+ 'folder/' -> folder 'file'
+ 'folder/.' -> folder 'file' inode
+
+@) ps(all info are placed in /proc/<pid>/)
+ps -A	--all(same as -e)
+ps a	--include others'
+ps x	--include no tty
+ps -p	--pid
+ps -f	--full format(include args)
+ps -C	--process full name
+ps -o uid=		--format output(only uid, and header equal to empty string)
+ *) ps aux --all in readably format;
+ *) name listed only contains 15 chars;
+
+@) find pid of process by name: pgrep name
+ *) find name in 'stat' by default, '-f' for cmdline;
+
+@) /proc/<pid>/stat only contains filename with the starting 15 chars, more are truncated;
+
+@) /etc/rc... is legacy(Unix/BSD style), contains symlinks to /etc/init.d...(SysV style);
+
+@) /etc/init is used for Upstart; control service with 'initctl';
+
+@) SysV command 'service' may still works in other init system(SysV compatible);
+
+@) info ls What  -> show subtopic starting with 'What', in 'ls' manual;
+
+@) autostart:
+ *) ~/.config/autostart
+ *) /etc/xdg/autostart
+
+@ service(to run on bootup: execute 'cmd enable service', which creates symlink to start script in 'bootup script folder')
+ *) SysV(sequential)
+	cmd:				update-rc.d/chkconfig/service
+	bootup script:		/etc/init.d/	
+	autostart:			/etc/inittab
+						12:2345:respawn:/bin/sh /path/to/application/startup
+						(pid:runlevels:)
+ *) Upstart(async)
+	cmd:				initctl
+	bootup script:		/etc/init/	
+	autostart:			'respawn' in start script
+
+ *) systemd(parallel)
+	cmd:				systemctl
+	bootup script:		/{etc,lib}/systemd/system/
+	autostart:			'Restart=always' in start script
+
+@) systemd target is corresponding to SysV runlevel:
+Runlevel	Target Units	Description
+0	runlevel0.target, poweroff.target	Shut down and power off the system.
+1	runlevel1.target, rescue.target		Set up a rescue shell.
+2	runlevel2.target, multi-user.target	Set up a non-graphical multi-user system.
+3	runlevel3.target, multi-user.target	Set up a non-graphical multi-user system.
+4	runlevel4.target, multi-user.target	Set up a non-graphical multi-user system.
+5	runlevel5.target, graphical.target	Set up a graphical multi-user system.
+6	runlevel6.target, reboot.target		Shut down and reboot the system.
+
+@) systemd service
+systemctl list-units --type=service
+systemctl list-unit-files --type=service
+
+systemctl status/is-enabled/start/stop/enable/disable/reload/restart app.service
+
+@) if a service pid queried is different each time, it should have terminated in the starting process;  
+
+@) count texts:
+wc
+
+@) list open ports:
+netstat -elnopt
+lsof -i :port
+
+@) change timezone:
+ln -sf /usr/share/zoneinfo/<CONTINENT>/<CITY> /etc/localtime
+
+@) in SysV, those script with comment line specifying which runlevel to startup, will run when boot; if none, set with 'chkconfig' command;
+	chkconfig httpd on
+
+@) '*rc' global config file usually resides in '/etc/' without dot prefix;
+
+@) terminal library for compiling:
+ *) redhat: ncurses-devel
+ *) debian:	libncurses5-dev libncursesw5-dev
+
+@) grep only show file name when more than one matches;
+ *) specify -H to force adding;
+ *) -n: line number; 
+
+@) GTK,Qt is equivalent of GDI in windows;
+
+@) desktop env:
+ *) GNOME(GTK+)
+ *) KDE(Qt)
+ *) Unity(GNOME+)
+
+@) environment variables (different between OSes):
+ *) /etc/environment
+ *) /etc/bashrc
+ *) /etc/bash.bashrc
+ *) /etc/profile
+
+@) functions doing nothing:
+
+	/etc/false, /etc/true, /etc/nologin(same as 'false' except output a message defined in '/etc/nologin.txt')
+
+@) login shell: 
+ *) $0 starts with '-';
+ *) with '--login'
+
+@) non-login shell: subshell of other logined in shell or X-manager;
+
+@) non-interactive shell: invokes to execute a command 
+
+@) partition type of 'reserved BIOS boot area' for boot loader;
+
+@) default user home folder: /etc/skel
+
+@) ssh:
+ *) generating key:
+	ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
+ *) add key:
+	ssh-add ~/.ssh/file
+ *) view sshd log:
+ 	`service sshd status`
+
+@) copy files between remote systems and local or another:
+ *) scp
+ 	* follow links (contrast to 'cp'), can not be altered;
+ *) rsync
+ 	* follow links, can be turned off;
+ *) sshfs
+ *) sftp
+
+@) /boot/efi: EFI System Partition;
+ *)ls /boot/esi: output 'boot-sav  EFI  System Volume Information'; ls subdirectory instead;
+
+@) boot-repair copy grub to /EFI/Boot/bootx64.efi, /EFI/Microsoft/Boot/bootmgfw.efi, /EFI/Microsoft/Boot/bootx64.efi;
+
+@) windows force to boot from /EFI/Microsoft/Boot/bootmgfw.efi; 
+ *) backup /EFI/Microsoft/Boot/bootmgfw.efi;
+ *) replace with /EFI/ubuntu/grubx64.efi
+ *) add windows entry
+ 	*) modify /boot/grub/grub.cfg (**have to modify each time after update-grub**)
+ 	*) add new entry in /etc/grub.d/40_custom (copy 'bootentry' from grub.cfg directly and modifiy, **ignore it's not valid bash syntax**)
+	*) simply boot from /EFI/boot/bootx64.efi (which is hardware resort entry, usually boot to windows)
+
+@) ubuntu ppa: `sudo add-apt-repository ppa:gnome-desktop`
+ *) boot-repair: yannubuntu/boot-repair
+ *) vim80: jonathonf/vim
+ *) refind: rodsmith/refind
+ *) wine: ubuntu-wine/ppa
+ *) gradio: haecker-felix/gradio-daily
+
+@)LinuxMint:
+ *) cinnamon file manager is: nemo
+ *) Menu programs (*.desktop) in:
+	/usr/share/applications
+ *) screen-reader: gnome-orca;
+ *) in gvim, clipboard data is read into '*' and '+', when write into clipboard, only '+' works;
+ *) screenshot shortcut workaround with customed command: sh -c 'sleep 0.1; gnome-screenshot -a -c'; (-c to clipboard instead of dialog for selecting) 
+ *) Archive Manger: toggle hidden folder: in selection dialog: ctrl+h; 
+ *) wifi fail to connect after sleep, in /etc/modprobe.d/iwlwifi.conf, append
+ 	
+		options iwlwifi 11n_disable=1
+
+@) extract zip files: unzip;
+
+@) vim vs gvim: two different packages;
+
+@) xkill: kill by window;
+@) kill by process name: pkill name
+@) kill all instance by process name: killall name
+@) force to kill: 
+	*) kill -s SIGKILL
+	*) kill -9
+
+@) middle mouse button to paste;
+
+@) if https server has certificate problem:
+ *) none: git config --global http.sslverify false
+ *) un-identified: save its certificate in '/etc/ssl/certs/ca-certificates.crt' (path get from curl-config --ca)
+ 	.) get certificate: openssl s_client -showcerts -connect yourserver.com:YourHttpGilabPort 2>/dev/null;
+@) restart network driver:
+ *) find driver (): sudo lshw -C network
+	*) driver in 'logical name' or 'configuration'
+	*) list all class (-C) name: lshw -short
+ *) remove: sudo modprobe -r driverName
+ *) load(better wait for a moment): sudo modprobe driverName
+
+@) copy everything
+cp -rf .
+
+@) remove everything(.* -> hidden)
+rm -rf * .*
+
+@) fcitx unicode:
+ *) C+S+A+u
+ *) 0x, 123, description
+ *) TAB, ALT+num
+@) restart network-manager
+ *) service network-manager restart
+ *) 
+	service network-manager stop
+	rm /var/lib/NetworkManager/NetworkManager.state
+	service network-manager start
+@) touchpad two finger click as right click: click method: fingers
+
+@) remove interface from managing by network-manager:
+
+ in /etc/NetworkManager/NetworkManager.conf
+
+[keyfile]
+unmanaged-devices=interface-name:wlp1s0
+
+
+
+@) gnome screen rotate:
+ org/gnome/settings-daemon/peripherals/touchscreen/orientation-lock: true
+
+@) 'ibus_write_address: assertion 'pf != NULL' failed'
+ *) delete ~/.config/ibus/
+@) add input methods:
+ *) ibus-setup
+@) show all input methods:
+ *) org/gnome/desktop/input-sources/show-all-sources: true
+@) before input methods appear in 'Region & Language'/'Input Sources'/Chinese, which should be added in the selected input method manager(fcitx/ibus);
+@) select input method manager, 'Input Method';
+@) `ibus restart`
+
+@) partition uuid: blkid
+ *) uuid: filesystem
+ *) partuuid: gpt
+
+@) install deb along with dependencies: gdebi
+
+@) change tty font:
+ *) gui
+ 	`sudo dpkg-reconfigure console-setup`
+ *) manually
+ 	`setfont fontName`
+	*) stored in '/etc/vconsole.conf'
+	*) fontName is file name in '/usr/lib/kbd/consolefonts'
+
+@) hibernnate:
+ *) gnome tweek tool
+ *) systemctl hibernate
+
+@) restart gnome-shell: alt-f2, r
+
+@) global config stored in /etc/xdg/
+XDG: X Development Group (FreeDesktop.org)
+
+@) install gnome extensions: extract into '~/.local/share/gnome-shell/extensions/'
+
+@) Trash folder is located in .local/share/Trash;
+ *) ls: gvfs-ls trash://
+ *) move into: gvfs-trash file
+
+@) gvfs: Gnome Virtual File System;
+
+@) firefox 
+ * touchscreen scroll: env MOZ_USE_XINPUT2=1 firefox
+ * resolution: devPixelsPerPx
+
+@) hotspot fix:
+sudo apt install hostapd dnsmasq
+
+@) network connection inconsisitency:
+
+ /etc/NetworkManager/NetworkManager.conf
+ [device]
+ wifi.scan-rand-mac-address=no
+
+@) intel graphics update tool for linux
+ *) download: https://01.org/linuxgraphics/downloads/update-tool
+ *) NO_PUBKEY error: wget --no-check-certificate https://download.01.org/gfx/RPM-GPG-KEY-ilg-2 -O - | sudo apt-key add -
+wget --no-check-certificate https://download.01.org/gfx/RPM-GPG-GROUP-KEY-ilg  -O - | sudo apt-key add -
+
+@) sudo reserves env by default, to toggle: -d
+
+@) gksudo doesn't reserves env by default, to toggle: -k
+
+@) some zip tool in windows encode file name in locale charset (usually `gbk` in china), for correctly decoding:  
+
+	`unzip -O gbk`
+
+@) build font cache:
+
+	`fc-cache [-f]`
+
+@) schedule jobs:
+ *) once: at
+ *) periodically: cron
+
+@) '.bashrc' of root user set alias of 'cp/mv/rm' with '-i' flag;
+
+@) /etc/passwd formats (separated by ':'):
+    1. Username: It is used when user logs in. It should be between 1 and 32 characters in length.
+    2. Password: An x character indicates that encrypted password is stored in /etc/shadow file. Please note that you need to use the passwd command to computes the hash of a password typed at the CLI or to store/update the hash of the password in /etc/shadow file.
+    3. User ID (UID): Each user must be assigned a user ID (UID). UID 0 (zero) is reserved for root and UIDs 1-99 are reserved for other predefined accounts. Further UID 100-999 are reserved by system for administrative and system accounts/groups.
+    4. Group ID (GID): The primary group ID (stored in /etc/group file)
+    5. User ID Info: The comment field. It allow you to add extra information about the users such as user’s full name, phone number etc. This field use by finger command.
+    6. Home directory: The absolute path to the directory the user will be in when they log in. If this directory does not exists then users directory becomes /
+    7. Command/shell: The absolute path of a command or shell (/bin/bash). Typically, this is a shell. Please note that it does not have to be a shell.
+
+@) write permission of itself is not required to mv/rm a folder, since modification is made on its parent;
+
+@) access Windows Shared Folder: smb://address/folder
+
+@) prevent CUPS add printers automatically:
+	/etc/cups/cups-browsed.conf
+	BrowseProtocols none
+
+@) wine
+	* create new:	`WINEARCH=win32 WINEPREFIX=~/.qq winecfg`
+	* wine msiexec /i /path/to/installer.msi
+	* disable dll/exe:
+
+		$WINEPREFIX/user.reg:
+
+		[Software\\Wine\\DllOverrides] 1510041640 3647700
+		"file.exe"=""
+	* wine uninstaller
+	* hide debugging info: WINEDEBUG=-all wine...
+

@@ -1,0 +1,84 @@
+--------------------------------------------------------------
+[FAT]
+--------------------------------------------------------------
+
+@) structure
+	1) volume boot record:
+		a: standard BPB
+		b: extended BPB
+		c: boot code
+	2) file allocation table (clusters info)
+	3) root directory	--FAT12/16 only
+	4) data area
+
+@) the least significant digit of the maximum value for FAT in hex is '5';
+	FAT12	-- FFFF5
+	FAT16	-- FFFFFFF5
+
+@) then, the maximum number of clusters are (to determine FAT type):
+	FAT12	-- FFFF5 + 1 - 2 = 4084
+	FAT16	-- FFFFFFF5 + 1 - 2 = 65524
+
+@) FAT type determination rule:
+	Each type has its own cluster number range.
+	<--------4084]----------65524]---------->
+		FAT12		FAT16			FAT32
+
+@) for FAT12/16 the root entry count is usually 512 (32 sectors).
+
+@)BPB_HiddenSec: the space before this volume;
+
+@) long name stored in unicode; short name in system locale codepage(for application not supporting unicode);
+
+*)FAT12 is assumed to have a cluster of maximum of two sectors. 
+	2^12 clusters has:
+		2^12*2 = 8192 sectors; 
+		2^12*2*2^9= 2^22 = 4M
+There are two reserverd sectors at the begining of FAT, so the actual size is less than 4M.
+
+*) FAT12 entry:
+7 6 5 4 3 2 1 0, 7 6 5 4 3 2 1 0, 7 6 5 4 3 2 1 0
+|_____________|		|    |_____|		|
+	  |				|	   	|			|
+	 1-low			|	  2-high		|
+				  2-low				  2-high
+
+
+*)Relation of FAT type and SPC(sectors per cluster) with disk size(sectors):
+1)not necessary
+
+DiskSize(<=)							SPC			FAT
+
+2950			 /0B 86	/1.44M			1/512b		12(BPB_RsvdSecCnt=1, BPB_NumFATs=2, BPB_RootEntCnt=224)
+8400			 /20 D0	/4.1M			2/1k		
+
+32680			 /7F A8	/16M			2/1k		16(BPB_RsvdSecCnt=1, BPB_NumFATs=2, BPB_RootEntCnt=512)
+262144		   /4 00 00	/128M			4/2k
+524288		   /8 00 00	/256M 			8/4k 
+1048576		  /10 00 00	/512M			16/8k 
+
+16777216	/1 00 00 00	/8G				8/4k		32(BPB_RsvdSecCnt=32, BPB_NumFATs=2)
+33554432	/2 00 00 00	/16G			16/8k
+67108864	/4 00 00 00	/32G			32/16k
+		   /FF FF FF FF					64/32k
+
+@)0 in the first byte of a directory entry indicates the end of entries;
+
+@)when check long file name attr, stay away from the high two bits;
+
+@)volume label can only be stored in short name entry.
+
+@) data area starts from the third cluster.
+
+@) DIR_CrtTimeTenth records the 10 times of mili-seconds, ranging from 0 to 199(2 sec divided by 200). 
+
+@)BPB_TotSec32 can be used for 12/16; whereas FATSz32 can not;
+
+@) when file size is zero, don't allocate any FAT entry. fill zero in the DIR_FstClusLO&DIR_FstClusHI.
+
+@) extension also applied to directory name.
+
+@) when a long file name is modified, it's corresponding short name doesn't have to be changed.
+
+@) dos int 21/4e uses '*.*' as wildcard to match any files.
+

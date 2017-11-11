@@ -1,0 +1,532 @@
+@) Filename Parameter Extensions
+ *) %~f1 Expand %1 to a Fully qualified path name - C:\utils\MyFile.txt
+
+ *) %~d1 Expand %1 to a Drive letter only - C:
+
+ *) %~p1 Expand %1 to a Path only e.g. \utils\ this includes a trailing \ which will be interpreted as an escape character by some commands.
+
+ *) %~n1 Expand %1 to a file Name without file extension C:\utils\MyFile or if only a path is present (with no trailing backslash\) - the last folder in that path.
+
+ *) %~x1 Expand %1 to a file eXtension only - .txt
+
+ *) %~s1 Change the meaning of f, n, s and x to reference the Short 8.3 name (if it exists.) 
+
+ *) %~1   Expand %1 removing any surrounding quotes (")
+
+ *) %~a1 Display the file attributes of %1
+
+ *) %~t1 Display the date/time of %1
+
+ *) %~z1 Display the file size of %1
+
+ *) %~$PATH:1 Search the PATH environment variable and expand %1 to the fully qualified name of the first match found.
+
+
+ The modifiers above can be combined:
+ *) %~dp1 Expand %1 to a drive letter and path only
+
+ *) %~sp1 Expand %1 to a path shortened to 8.3 characters
+
+ *) %~nx2 Expand %2 to a file name and extension only
+
+@) encode cmd in host locale;
+
+@@) always place content of echo in quotes, or parenthesis in it will cause problem.
+
+@@) the scope of delayed expansion is line or "()" grouped lines; first parse this scope then execute it; when delayed expansion is not enabled, variables are replaced by its values; then the result text is used to execute;
+~~) the life time of scope last duration the whole cmd life from being opened to being closed; so the results of previous batch will be the context of next batches; that caused a phenomenon that the results are different among contiguous runs of the same batch.
+
+@@) setlocal (with parameters or not)
+~~) global variable is readable but not writable; append underscore to local for distinguishing;
+~~) endlocal should match to turn off
+~~) scope is within the batch file
+~~) subroutine takes effect where it appears;
+
+
+@@exit /b 0
+exit from a batch routine with error code set to %errorlevel%;
+
+@) append text:
+	echo aaaaaaaa >> filename
+
+@@
+c:\a\b\c.txt\..\..\d.txt
+equal to-->
+c:\a\d.txt
+
+@@if defined aaa (set "aa=faf9(dfa;aff")
+wraped in parenthesis to prevent special character causing syntax error;
+
+@) spaces after '=' is part of content;
+
+@) if errorlevel:	not work in delayed expansion, !errorlevel! instead;
+
+@@display text file content('cat' in linux):
+type/more
+
+
+@@nested variable:
+1) call:(rather slow for searching disk, whereas call label is fast)
+set the10th=123
+set num=10
+call echo ^%the%num%th^% 	-command line
+call echo %%the%num%th%% 	-batch file
+2) setlocal enableDelayedExpansion
+ *) echo !the%num%th! (not applicable: %the!num!th%)
+ *) '!' in '!':
+	 for /f %%a in ("^!b:~!a!^!") do ( echo %%a)
+
+
+
+@) list files:
+for /r . %a in (*) do echo %a
+
+@) list folders:
+for /d %a in (*) do echo %a
+
+@@ list file content
+for /f "eol=; tokens=1,2* delims=\;" %%a in ("%pth%") do () 
+ *) "%pth%" is file content, when no quotes, its file name;
+ *) 'eol' sets the comment char, everything after it is ignored; default is ';', to disable it(and delims):
+	for /f delims^=^ eol^= %%l in (%inputfil%) do ...
+ *) empty line is omitted; use find/findstr to fill empty line with special pattern and remove it later;
+ *) in an iteration, the line is splited by 'delims' and stored in sequence of chars started from '%%a', 'tokens' determine which elements are stored;
+ *) tokens:
+ 	"tokens=1,3*"/"tokens=1,3,*"	a:1, b:3, c:left
+ 	"tokens=1-3*"	a:1, b:2, c:3, d:left
+~~set:
+	for in(set)    filenames
+         ("set")  string
+         ('set')  command
+	for "usebackq" (when file name contains space)
+         ("set")  filename
+         ('set')  string
+		(`set`)  command
+~~file parsing: reading the output, string, or file content, and then breaking it into individual lines of text and parsing each line into zero or more tokens. 
+for /f ["<ParsingKeywords>"] {%%|%}<Variable> in (<Set>) do <Command> [<CommandLineOptions>]
+
+ *) parenthesis is necessary after 'in': ("%pth%");
+
+ *) for /l	-> as 'for(;;;)'
+FOR /L %%parameter IN (start,step,end) DO command 
+
+
+@) for without '/f' treats everything as string;
+
+@@command combiner(can't be used for logical test):
+&	-all
+&&	-if exit with zero
+||	-if exit with non-zero
+
+@@;/,	parameters separator;
+
+@@CALL :my_sub 2468
+variable are not local.
+
+@@.to escape characters using ^
+%	-> %%
+^^! when delayed expansion is active; 
+
+@@.dir /s  full path
+   dir /b  only filename
+ 
+@@.space should be trimmed behind variable name:
+   set varname=aaaaa
+
+@@.when variable value has trailing spaces:
+   set "varname=aaaaa "
+
+@@substring:
+      %variable:~start,keep%
+start:(+/-): count from left/right;
+keep:(+/-): (length to keep from left)/(all ramainder chars except those with length of "keep" from right)
+ *) if any is omitted, 0 is assumed.
+ *) keep the remainder, omit it along with ',';
+
+%var:~-20,-5% 
+	|------------20----------------|
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+							|---5--|
+	|-----------return------|
+
+%var:~-20,5% 
+	|------------20----------------|
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+	|--5(return)--|
+
+@@replace
+	%variable:*StrToFind=NewStr%
+ *) *: optional, all before StrToFind after replaced;
+ *) * doesn't work at right; take two steps;
+
+
+
+@@.System envirionment variables:
+[static]
+%SystemDrive% 	C:
+%SystemRoot% 	C:\WINDOWS
+C:\WINNT
+%WinDir% 	C:\WINDOWS
+C:\WINNT
+%SystemDirectory% 	C:\WINDOWS\System32
+C:\WINNT\System32
+%ComSpec% 	C:\WINDOWS\system32\cmd.exe
+The path including the command interpreter program.
+%programfiles% 	C:\WINDOWS\Program Files
+%Temp% 	C:\Users\W\AppData\Local\Temp on Windows Vista & 2008
+C:\DOCUME~1\Usr\LOCALS~1\Temp (compressed form of)
+C:\Documents and Settings\Usr\Local Settings\Temp
+%Tmp%
+%HOMEDRIVE% 	C: The drive letter associated with the user's home directory
+%HOMEPATH% 	The path to the user's home directory as defined in UMD/AD (excluding drive):
+\Users\<USERNAME> on Windows Vista & 2008
+\Documents and Settings\Guest on Windows XP
+%OS% 	Windows_NT (even on Windows Vista & XP machines
+The operating system the user is running
+%USERDOMAIN% 	The name of the domain that contains the user's account. On a stand-alone machine, the same as the machine name.
+%USERNAME% 	The user's name
+%USERPROFILE% 	C:\Users\<USERNAME> — The user's root folder
+%USERPROFILE%\Desktop 	The user's desktop folder 
+
+[dynamic]
+%CD% 	The current directory.
+%DATE% 	Current date in the format set by the Date command
+%TIME% 	Current time in the format set by the Time command
+%ERRORLEVEL% 	A number defining exit status of a previous command or called executable.
+%RANDOM% 	A random number between 0 and 32767. 
+@@use goto for flow control instead of parentheses;
+
+
+@@c:			>>"cd" shouldn't be applied when enter another drive;
+   cd /d f:\ddd		>>if the directory is under another drive, "/d" should be added.
+
+@@set var=%cd%		>>preserve result of command to variable(command could be considered as a varible).
+  set var=		>>equal followed by nothing clear this variable;	
+  set /p var=print value of var:
+			>>input string as value of variable "var";
+  set /a var=2*8+a+9 	>>set var with value equal to the expression,non-enumeric char(a) is variable,if it's not defined,0 is used.
+The scope of these variables is current opened window.			
+
+@@start /min notepad BKUP.BAT
+			>>open BKUP.BAT in notepad with window minimized.
+@@%0-%9 		>>parameters passed on command-line; the first is the command itself (whole line excluding the parameters).
+
+@@cls			>>clear the console;
+
+@@) @cd			>>the command line wouldn't show;"echo off" turn off all;
+~~ echo on/off set in a batch file affects the current cmd session.
+
+@@print a blank line:
+echo.
+
+@@if (%var%)==() set var=aaaaaa
+			>>test if var=="",no parenthesis should be wrapped around the test expression;
+@@echo afaf^>afafa
+			>>"^" escapes ">"
+  start "title" "c:\faff(af)d dd\f>af.exe"
+			>>place blankspace,< and other special characters in "", each of which as a whole;
+  start ""  "D:\TDDOWNLOAD\radasm(2)\Nasm\Projects\test\build.bat"
+			>>???weird:this path is truncated by (2);any character added or removed in the path eradicates the problem;
+			  or place( in "" like 
+			  start ""  "D:\TDDOWNLOAD\radasm"("2)\Nasm\Projects\test\build.bat"
+
+@@) start in current window:
+start /b n.exe
+~~ title can't be omited.
+
+@@"::" or "rem" 	>>comment a line;
+Note: "::" in parenthesis grouped commands incurs error;
+
+@@start "" "F:\新建 文本文档.txt"
+			>>open a file with space in it's path;
+@@start title command parameters;
+   title      : Text for the CMD window title bar (required)
+   command    : The command, batch file or executable program to run
+   parameters : The parameters passed to the command;
+
+@@for %%c in (%filesPath%) do (
+	:: afafaf(afaf)afaf
+)
+			>>"do (" must be in the same line with the command,and separated by space;
+			>>"::" may leave part of the whole line following a curved bracket;"rem" works still.
+			>>"%%c" % must be doubled in batch file.
+
+@@^% or ^		>>in batch file,it means to escape linefeed;
+Note: 1) two empty line must follow.
+~~% is char of nul
+
+@@ctrl+c 		>>exit from  batch file execution;
+
+@@delayed expansion:
+when multiple commands combined in a single line, parse the variable each time after a command executed, instead of parse all before the whole line is executed;
+like in "for" or "&"
+
+~~use !var!, while %var% acts like normal)
+
+~~to turn on it:
+1)SetLocal EnableDelayedExpansion
+2)Open batch file with "CMD /V:ON /C aaa.bat" 
+
+~)pushd also is affected(popd is not necessary).
+
+@@To group commands we could place them into parenthesis or combine with &;
+  a command line could be separated only in parenthesis(if--else-- is considered as one);
+IF test (
+command
+) ELSE (		>>parenthesis should be separated from other characters;
+command
+)
+
+
+@@IF /i [NOT] test command ELSE command
+1) Digits/string test(/i case insensitive): 
+Operator:	Meaning(invalid for use)
+equ/==	:		==
+neq     :    	!=		
+lss     :    	<		
+leq     :    	<=		
+gtr     :    	>		
+geq     :    	>=		
+2) File test:
+	exist fileName			file;
+	exist c:\mydir\nul	directory(nul is used);
+3) Error test:
+	defined variable
+	errorlevel number		means %errorlevel% is greater than or equal to  number;(logical operator and % around errorlevel are invald)
+	cmdextversion number
+
+@@goto:eof
+	 returns a batch file execution;
+
+@@use quotes to group a single string seperated by whitespace;
+
+@@command	> filename/nul
+redirect output to file with name "filename" / nowhere;
+
+@@command	2 > &1
+redirect error output to standard output;
+
+@@each drive has its respective current directory stored(root by default);
+cd /d C:\dir
+cd f:
+C:f.txt		→ f.txt in the current directory of drive C(C:\dir\f.txt);	
+C:\f.txt	→ f.txt in the root of drive C;
+
+@@call subfunction(colon is used to distingish with program name):
+call :fun %a%, b
+:fun
+%2=aaaa;
+~~b is a referenced variable;
+ *) called batch execute in another context, or it runs in the called batch;
+
+@ random number(0-32767):
+%RANDOM%
+
+@@findstr accepts piped input:
+echo "abc" | findstr "b"
+
+@@%~zI in 'for' or as parameter to represent file name, returns the file length.
+
+@@doskey /history
+list all commands.
+
+@@ipconfig | clip
+output to clipboard.
+
+@) string in multiple lines:
+set arr=aaaaaaaaaaaaaa ^
+		bbbbbbbbbbbbbb ^
+		cccccccccccccc
+
+@) nested variables:
+ *) substr: !var:~start, %len%!
+ *) replace: %var:str=!tar!%
+
+@@)split a string and iterate them:
+1) replace the delimiter with linefeed:
+ ::the two empty line is indispensible
+ ::the replaced result can't be stored in a variable(only the first line stored)
+ set str=a b c d
+ set LF=^
+ 
+ 
+ for /f %%i in ("%str:DELIM=!LF!%") do (echo %%i)
+
+2) retrieve the first part until the end:
+:LOOP
+for "tokens=1*,delims=DELIM" %%i in (...) do (
+	if not "%%i"=="" (goto LOOP) 
+)
+
+@@) linux grep equivalent is findstr;
+
+@@) to prevent echo for parenthesis grouped commands, it's enough to add @ preceding the left bracket.
+~~it's ineffective for those codes inside of it, which are jumped in by "call/goto/do"; to prevent all echos in a batch:
+	@(
+			for %%i in () do @(
+				)
+			:lbl
+			@(
+				exit /f	
+			)
+	 )
+~~)"cls" placed in @() will cause variable malfunction;
+
+@@) if "if ... else .." is in the same line, separate them in parenthesis even only one command.
+
+@)redirection can be placed at the start of line:
+<nul set /p "=0"
+<"file.txt" (
+	set /p line1=
+	set /p line2=
+)
+
+@)"shift" takes no effect in ();
+
+*)only support ascii;
+*) reg query
+项: key, 是一个容器，
+它构成一个树的一级，其下有值和子项；值也有自己的名字（除了默认）、类型、数据。
+/f value	-匹配关键字
+/v valueName	-值名
+/k 			-只在项名中搜索
+/d 			-只在值的数据中搜索
+/ve			-查询默认值(不受关键字的限制）
+/s			-递归
+/t			-数据类型
+/e			-全字匹配
+/c			-区分大小写
+
+
+@)after setlocal enableDelayedExpansion, the directory changed by cd only applied in this file, even "echo %cd%" can not show the result.
+
+@) parse-unit is a line;
+ *) parenthesis grouped lines are treated a single line;
+
+@@)execute other program/batch within a batch:
+filename	--the host batch give control to the called one, and never get it back again;
+call filename	--return control to the calling batch;
+start filename	--execute it another process;
+~~dos from win7 added Timeout (like sleep);
+
+@@)runtime output goes in stderr;
+~~redirect it to a file like this:
+	java -jar compiler.jar --? 2>file.txt
+~~to stdout:
+	2>&1
+
+@@)no logical operators; however it's valid to combine several if together:
+if "" if "" (do someting)
+
+@@)variables appearing between the "setlocal ***" and "endlocal" are only visible in the scope;
+Note: *** means even other parameters are used.
+ *) a subscope is what is called: batch file; subroutine
+ *) 'endlocal' can be omited in a subscope; stop at the end; mismatched call has no effect;
+
+@) return string in subroutine(pass var name in):
+	endlocal & set "%1=%l_var%"
+ *) don't use !;
+ *) don't group "setlocal" and "endlocal" in one parse-unit
+ *) 'var' is only visible in the calling routine
+
+@@)to add "@" before a parse-unit will prevent this parsed text to appear on screen(echo off on this unit);
+~~)"@()" can only be recognized in parse time, it will be treated as a command when nested in another group; so reparse should be triggered; which means: we can't go to a nested group directly, instead goto or call in.
+@(
+	echo aaa
+	goto:subr	::necessary
+	:subr
+	@(
+	)
+)
+
+@@) the following will trigger another parse:
+~~) call:label
+~~) goto:lable
+~~) do ()
+
+@@)exchange values between global and local variables:
+SETLOCAL & SET LTEMP=%TEMP%& SET PATH=%PATH% 
+SET LPATH=C:\BAT;%PATH% 
+SET L1=valueL1 
+SET P1=valueP1 
+ENDLOCAL&SET G1=%L1%&SET P1=%P1%&SET PATH=%LPATH%
+
+@@)errorlevel is different with the variable %errorlevel%
+~~if errorlevel 1 (do something)
+~~if %errorlevel% equ 1 (do something)
+%errorlevel% will first retrieve the value of variable that's named "errorlevel", if none then fall back to errorlevel;
+
+~~set errorlevel=1
+set value of the variable;
+
+~~to reset the errorlevel:
+1)ver >nul
+any command of batch that will exit with code 0;
+2)cmd /c "exit /b 0"
+
+@@)exit
+~~)variable can't be used as exit code:
+	exit /b $(var)	--illegal
+~~)if no exit code specified, errorlevel stays untouched.
+
+@@)use parameter for set /p as prompt, whitespace between = and % is necessary:
+set /p var= %1: 
+
+@@)separate "call" from other parts with parenthesis.
+if defined var (call subr) else ....
+
+@@) set /p var=abc <nul
+
+@@) dir can't only accept one parameter whether to specify the target directory or the pattern to search.
+
+@) create new file or clear content of a file(use any command with empty output):
+	break>file.txt (equivalent to 'touch')
+
+@) enableDelayedExpansion takes effect all along.
+ *) subroutine can be used to escape delayedExpansion.
+ *) turn off temporarily: disableDelayedExpansion 
+
+@) copy
+ the source and destionation should both have quotes or not; or syntax error occurs.
+
+@) when executed as admin, the start directory changes to %system%
+
+@) delete:
+ *) file: del
+ *) directory: rmdir/rd
+
+@) set environment variable:
+ *) session: set
+ *) registry: setx
+
+@) 'move' will succeed silently if run in batch when file exists; prompt when in cmd;
+
+@) where: equivalent of whereis in linux
+
+@) link
+ *) mklink
+ *) del: link or target if directory
+ *) rmdir: directory link itself
+
+@) move fail:
+ *) folder exists
+ *) between volumes;
+
+@) /dev/null > nul
+	echo abc > nul
+
+@) echo special chars:
+	echo(string
+
+@) string between '!' and ':' are omited by echo;
+	echo(aaa!bbb:ccc	-> aaaccc
+ *) echo(aaa^!bbb:ccc
+ *) if string is read from outside:
+ 	for /f "tokens=1* delims=!" %%a in (file) do echo %%a^^!%%b
+@) remove special char for parsing:
+ *) set that as 'delims'; loop again after marked if necessary;
+ *) replace with another one;
+@) the left parts indicated by '*' of 'tokens' is not separated by 'delims'; 
+ *) range: 1-50
+@) append to a line:
+  set /p="TextHere" <nul >>C:\Test.txt 

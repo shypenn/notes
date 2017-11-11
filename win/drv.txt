@@ -1,0 +1,393 @@
+D:\work\RoneyIO\RoneyIO\XP\RoneyIOCaller.exe \\Vboxsvr\d_drive\work\RoneyIO\RoneyIO\Win7Debug\RoneyIO.sys
+bp RoneyIOCaller!runner::read
+***********************************************************************
+* Setup
+***********************************************************************
+@) PROPSHEETPAGE data is passed to the dialog procedure when INIT_DIALOG as lParam;
+
+@)	setup class -- install and configuration (devguid.h) -- HKLM\SYSTEM\CurrentControlSet\Control\Class
+	interface class -- characteristics
+
+@) HKLM\SYSTEM\CurrentControlSet\Enum
+	*) [Hardware]
+	*) [buses	->	models(from devices hardware id: vendor id + product id)	->	instances]
+	*) Generic Identifiers are placed under Root
+	*) Instance/hardware key: hardwares(instances of model of device) enumerated from the system(history devices were not removed).
+	*) "driver" -- instance in setup class(driver key)
+	*) "service" -- installed driver
+	*) in Kernel:
+		readonly from IoGetDeviceProperty.
+		Device Parameters from IoOpenDeviceRegistryKey(PLUGPLAY_REGKEY_DEVICE)
+	*) in UMode:
+		SetupDiGet/SetDeviceRegistryProperty
+	*) SetupDiCreateDeviceInfo(,model, classGUID, , ,[DICD_GENERATE_ID], ) creates 'hardware key' from 'model' into registry;
+		.) the 'model' name can be set to whatever;
+		.) if it is not registered by SetupDiCallClassInstaller(DIF_REGISTERDEVICE, ...), SetupDiDestroyDeviceInfoList will remove it;
+	*) SetupDiCallClassInstaller(DIF_REMOVE...) to remove;
+
+@) non-PNP/Hardware-less device is installed by registering to PNP manager (under root bus);
+ *) create hardware id:
+ 	SetupDiCreateDeviceInfo(,model, classGUID, , ,[DICD_GENERATE_ID], )
+ *) register:
+ 	SetupDiCallClassInstaller(DIF_REGISTERDEVICE, ...)
+
+@) root bus detects devices from registry records;
+
+@) HKLM\SYSTEM\CurrentControlSet\Control\Class	(IoGetDeviceProperty)		->Setup Classes
+	*) [Class&(Driver/Software)] - DDInstall
+	*) [class	->	instance(driver package)]
+	*) "CoInstallers32" -- device specific co-installer
+	*) registered classes and specific driver packages preinstalled(INF files infomaton).
+	*) class installer and filter driver(class co-installers in CoDeviceInstallers); 
+	*) in Kernel:
+		classes are inaccessible.
+		specific drivers from IoOpenDeviceRegistryKey(PLUGPLAY_REGKEY_DRIVER option).
+	*) in UMode:
+		classes from SetupDiGet/GetClassRegistryProperty.
+		specific drivers from SetupDiOpenDevRegKey(DIREG_DRV).
+
+@) HKLM\System\CurrentControlSet\Services 
+	drivers configuration for loading such as image path.
+	in Kernel:
+		accessible from ZwOpenKey.
+	in UMode:
+		QueryServiceConfig, ChangeServiceConfig;
+
+@) HKLM\SYSTEM\CurrentControlSet\Control\DeviceClasses	->interface Classes
+
+@) HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\DevicePath	->INF directory
+
+@) co-installer location:
+ *) class co-installer:
+	HKLM\System\CurrentControlSet\Control\CoDeviceInstallers
+ *) device co-installer:
+	HKLM\SYSTEM\CurrentControlSet\Control\Class\INSTANCE_NUM
+
+@) coinstallers dll should be placed in system32;
+
+@) if files are is use when setup, the substitution will complete at next reboot;
+
+@) co-installer and install app should not call default DIF code handlers (call installer does).
+
+DIF code						Default DIF code handler function
+---------------------------------------------------------------------
+DIF_PROPERTYCHANGE				SetupDiChangeState
+DIF_FINISHINSTALL_ACTION		SetupDiFinishInstallAction
+DIF_INSTALLDEVICE				SetupDiInstallDevice
+DIF_INSTALLINTERFACES			SetupDiInstallDeviceInterfaces
+DIF_INSTALLDEVICEFILES			SetupDiInstallDriverFiles
+DIF_REGISTER_COINSTALLERS		SetupDiRegisterCoDeviceInstallers
+DIF_REGISTERDEVICE				SetupDiRegisterDeviceInfo
+DIF_REMOVE						SetupDiRemoveDevice
+DIF_SELECTBESTCOMPATDRV			SetupDiSelectBestCompatDrv
+DIF_SELECTDEVICE				SetupDiSelectDevice
+DIF_UNREMOVE					SetupDiUnremoveDevice
+
+@) Generic Identifier: *aaa1111
+ *) appear in many buses;
+ *) three chars is vendor id, registered from EISA;
+ *) the four hex chars are type id;
+ *) 'PNP' is windows reserved for lagacy device or compatibleIds.
+
+
+@) device can be added in to an interface by inf with 'AddInterface' directive in DDInstall.Interfaces section or API 'IoRegisterDeviceInterface' called in AddDevice. 
+
+@) device specific parameters can store both in 'Device Parameters' of 'Enum' and in instance of class.
+
+@) drivers loading order:
+device lower filter -> class lower filter -> function driver (service key in device key) -> device upper filter -> class upper filter.
+
+
+@) install driver and install device are two different phases.
+
+@) interface is the bridge between devices and applications.
+
+
+@) Driver Install Frameworks (DIFx) abstract SetupAPI operations, providing a high level tool.
+
+@) Preinstall: copy package to an arbitrary location in target system, then call SetupCopyOEMInf(OEMSourceMediaLocation=NULL, OEMSourceMediaType=SPOST_PATH), which copies 'inf' file to %systemroot%/inf, and stores the package location somewhere.
+
+@) Install process first copy package to %system%/driverStore/FileRepository if there is none, which acts as the source for installing; if package already exists in FileRepository, it will not be renewed; 
+
+@) pnp-device driver is found by its electronic signature which forms a hardware id,
+   non-pnp driver is stored in registry(HKLM\SYSTEM\CurrentControlSet\ENUM) under its bus manually(SetupDiCallClassInstaller(DIF_REGISTERDEVICE...)), with prefix 'LEGACY_'.
+
+@) device manager displays devices listed in Hardware Key;
+
+@) Uninstall entries:
+HKLM\software\microsoft\windows\currentVersion\uninstall
+
+@) HKLM/HKCU\software\microsoft\windows\currentVersion\app paths
+ @) WIN+RUN search pathes;
+ @) "default": full path;
+ @) "path": directory prepended to environment PATH;
+
+@) SetupGetStringField 
+part <--> index
+[SomeModel]
+Device1 = DDInstall1, devId1, devId2
+	|			|		|		|
+	0			1		2		3
+
+
+@) INF: 
+ *) [manufacturer]
+	mfcName = modelName
+ *) [modelName]
+	driverDesc = DDInstallName, deviceId, compatId1,...
+ *) [SourceDisksNames] 
+	.) relative to application root;
+	.) 'desciption' is used for user tips;
+ *) [DDInstall.HW]
+ 	.) Enum\"Device Parameters"
+	.) SetupDiOpenDevRegKey(DIREG_DEV); (seems the key should be created in INF first);
+ *) SourceDisksNames and SourceDisksFiles specify files location;
+
+@) Device Information Sets is a list of Device Information Element. 
+
+@)SetupApi writes log in %SystemRoot%/inf/ as 'setupapi.app.log' and 'setupapi.dev.log';
+
+@) SetupDiGetClassDevs with enumerator:
+ *) SetupDiGetClassDevs(NULL, "ROOT", NULL, DIGCF_ALLCLASSES)
+ *) SetupDiGetClassDevs(NULL, "ROOT\*ISATAP", NULL, DIGCF_ALLCLASSES)
+ *) SetupDiGetClassDevs(NULL, "ROOT\*ISATAP\0000", NULL, DIGCF_ALLCLASSES)
+
+@) path in inf is relative to inf its self called "installation root";
+ *) win7 can't recognize '..\' as xp does;
+
+@) whatever ClassGUID can be set in inf for a class install dll;
+
+@) SetupDiCallClassInstaller calling sequence:
+ class co-installers	->		device co-installers		->		Class Installer
+
+@) ERROR_DI_POSTPROCESSING_REQUIRED, post 'class' installer processing;
+
+@) create a device information set for all classes: 
+	HDEVINFO hSet = SetupDiGetClassDevs(NULL, NULL, NULL, DIGCF_ALLCLASSES);
+
+
+***********************************************************************
+* Driver
+***********************************************************************
+@) a device is corresponding to a stack of 'DEVICE_OBJECT', each one is an abstract of the device being managed by a different driver;
+	FiDO <- filter driver
+	^
+	^
+	FDO <- function driver
+	^
+	^
+	PDO <- bus driver
+
+@) if a driver is not registered by SetupDiCallClassInstaller(DIF_REGISTERDEVICE,...) instead maybe by CreateService, 'AddDevice' will not be called;
+
+@) IRP -- I/O request packet ; not interrupt.
+
+@) the first(highest-level driver) dispatch routine receiving an IRP originating from user mode, is guaranteed to run in the same thread context;
+ *) if this driver queues the IRP, then other drivers in the stack will run in arbitrary threads from now on;
+
+@) arbitrary thread should not be blocked; except called from a dedicated system thread or application.
+
+@) asynchronous IRP is not tied to the thread creating it, whereas sync IPR is, which will be canceled when thread terminates; so don't create snyc IRP in arbitrary thread;
+
+@) system thread:
+ *) DriverEntry
+ *) AddDevice
+ *) IRP_MJ_PNP
+
+@) Block a thread:
+ *) that originates the request;
+ *) IRQL < DISPATCH_LEVEL (KeWaitForSingleObject should set timeout to 0);
+
+@) monolithic driver is against to class driver + minidriver;
+
+@) the combination of class driver and minidriver acts as function driver;
+
+@) legacy (non-pnp) device can't be enumerated on startup by root bus, so restart is needed after driver preinstalled;
+
+@) flags persisted in hardware key has precedence to class key;
+
+@) section with name beginning with 'PAGE'/'.EDA'(case sensitive) is placed in pagable memory;
+
+@) driver entry point is "GSDriverEntry";
+
+@) manually start a device: disable then enable it in device manager;
+
+@) device namespace prefix in windows application '\\.\' is converted to '\??' in kernel;
+ *) '\??' checks for 'DosDevices' in session, then 'Global??';
+ *) '\\.\' can't be used in kernel;
+
+@) network drive mapping is bypassed in kernel, so it can't be used;
+
+@) UNC path(with prefix '\\') is converted to 'UNC\'(also an device) in kernel;
+
+@) symbolic link is placed in session when called in user space by 'DefineDosDevice' (starting with '\DosDevices' implicitly);
+ *) '\DosDevices' stands for 'Global??' when used in kernel, such as IoCreateSymbolicLink and IoCreateDevice;
+
+@) Device Extension is allocated in non-paged memory by IoCreateDevice;
+
+@) custom data:
+ *) device specific: PDEVICE_OBJECT->DeviceExtension 
+ *) file object specific: PIO_STACK_LOCATION->FileObject->FsContext/2
+
+@) FILE_OBECT life cycle:
+ *) CreateFile :	IRP_MJ_CREATE
+ *) CloseHandle :	[IRP_MJ_CLEANUP(if 'handle' references drop to 0) -> IRP_MJ_CLOSE(if all references drop to 0)] 
+
+@) FILE_OBECT is locked when irp is pending and calling is blocked;
+
+@ clean-up event:
+ *) device scope (pnp): IRP_MJ_PNP -> IRP_MN_REMOVE_DEVICE / DriverUnload
+ *) file scope (pnp, non-pnp): IRP_MJ_CLEANUP / IRP_MJ_CLOSE
+
+@) name is unique for each device instance in IoCreateDevice;
+
+@) RtlFreeUnicodeString is used only for RtlAnsiStringToUnicodeString or RtlUpcaseUnicodeString.
+ *) the initial string still exists;
+
+
+@) native api runs in the same thread context of calling function;
+
+@) PASSIVE_LEVEL:
+ *) User mode code;
+ *) DriverEntry
+ *) AddDevice
+ *) IRP (can be set to run at DISPATCH_LEVEL)
+
+@) DISPATCH_LEVEL:
+ *) StartIO
+ *) DPC
+
+@) in hardware IRQL, those interrupts corresponding are masked on this processor;
+ *) for multiprocessor synchronization, the hardware instruction 'lock' is used, along with spinlock;
+
+@) the rule that higher only IRQL can interrupt the one lower only applies to Level equal to or above the DISPATCH_LEVEL;
+ *) PASSIVE_LEVEL can interrupt LPC_LEVEL;
+
+@) it's a mistake to lower IRQL even raise back again later;
+
+@) Page fault interrupt handler runs in DISPATCH_LEVEL; (thread schedular 'DISPATCH' thread to run.)
+ *) codes run in DISPATCH_LEVEL and above should be placed in paged memory;
+
+@) three ways to process an IRP:
+ *) complete it;
+ *) pass to next driver;
+ *) queue it;
+
+@) spin lock (in DISPATCH_LEVEL; interrupt enabled;)
+ *) KSPIN_LOCK data and code acquiring it should reside in non-page memory
+ *) code running above DISPATCH_LEVEL shouldn't acqure it;
+
+@) KeAcquireInterruptSpinLock raises IRQL to DIRQL for an interrupt;
+
+@) queued spinlock stores processors acquiring it in a queue; which can only be used in internal system;
+
+@) place KSPIN_LOCK and data which protected in non-paged memory;
+ *) IRP is allocated from nonpaged memory by system;
+
+@) completion routine may be called at any level equal to or below DISPATCH_LEVEL;
+
+@) when a completion routine returns STATUS_MORE_PROCESSING_REQUIRED, the rewinding is halted; and restarted by IoCompleteRequest called by that driver;
+ 
+@) irp statck location is an object which is the one corresponding to the driver stack, to store respective data; 
+
+@) if a queued irp completes(Irp->PendingReturned==true), the completion routine should set its stack location's flag 'SL_PENDING_RETURNED', for IoCompleteRequest to signal event, by IoMarkIrpPending;
+
+@) APC/DPC interrupt:
+ *) if current IRQL is at or above the APC/DPC level, it's hold until the IRQL be lowered to the corresponding level or below;
+ *) if current IRQL is below the APC/DPC level, it interrupts the normal execution immediately;
+ *) if APC interrupt occurs, when thread is waiting, it only interrupts if the wait is alertable;
+
+@) APC is used to asynchronously execute a procedure in the context of a particular thread;
+ *) in driver, it is usually used to finish an asynchronous IRP;
+ *) only special kernel APC runs at APC level; others run at PASSIVE_LEVEL; 
+ *) in kernel mode, KeEnterGuardedRegion disabled all APC;
+ *) in user mode, KeEnterCriticalRegion disable normal kernel APC delivery;
+
+@) DPC is processor specific;
+ *) DPC is executed on arbitrary thread by thread dispatcher(fired when DPC queue meets certain criteria);
+ *) in driver, it is usually used to service an ISR; since arbitrary thread should not be blocked.
+
+@) remove-lock takes reference counting, usable not only for device-remove;
+
+@) 'FILE_FLAG_OVERLAPPED' for CreateFile indicates operation on this handle is async;
+
+@) user mode action with corresponding irp: 
+ *) CreateFile -> IRP_MJ_CREATE;
+ *) CloseHandle -> IRP_MJ_CLOSE;
+
+@) Buffering mode:
+ *) METHOD_BUFFERED: system buffer is used both for input and output; make sure input data is read completely before writing to it;
+ *) METHOD_IN_DIRECT/METHOD_OUT_DIRECT(write&read): input data is read the same as buffered mode, output data is written througth MDL;
+ *) METHOD_NEITHER: no address translation is taken; the address passed can be used in the same process context;
+
+@) physical address can't be accessed directly, instead through virtual address via MDL;
+
+@) ZwCreateFile:
+ *) IoStatusBlock: when failed, check this;
+ *) if runs in a non-system thread, 'OBJ_KERNEL_HANDLE' should be set in OBJECT_ATTRIBUTES, or the handle can be accessed by the user process in which it's running;
+
+
+@) DICS_PROPCHANGE cause device to restart;
+
+@)NTSTATUS codes are defined in ntstatus.h;
+
+@) IRP_MN_STOP_DEVICE only is sent for rebalancing resources in win2k and later;
+
+@) the next stack location is set by the upper driver;
+
+@) after calling next driver, the data of current stack location may be changed;
+
+@) .kdfiles succeed to update:
+MmLoadSystemImage: Pulled ....sys
+
+@) IRP_MJ_PNP and IoAttachDeviceToDeviceStack should be paired;
+ *) without IRP_MJ_PNP, 'device can't be started' yellow sign appears in devmgmt;
+ *) without IoAttachDeviceToDeviceStack, IRP_MJ_PNP will never be called; 
+
+@) it's not mandatory to call next driver if not necessary;
+
+@) DriverUnload should be supplied, or IRP_MN_REMOVE_DEVICE will not be called and service can not stop;
+
+@) to set irp's IoStatus.Status to STATUS_SUCCESS before calling next driver, is to tell it already processed in this level;
+
+@) if a CompletionRoutine is needed tI set on irp, then call IoCopyCurrentIrpStackLocation to create a new location to the next driver, or just call IoSkipCurrentIrpStackLocation to pass this one;
+
+@) IO_NO_INCREMENT: don't increment the calling threads priority, since request is complete and no waiting is needed;
+
+@) in DeviceIoControl, irp.relatedIrp.SystemBuffer is copied to user out buffer with size of IoStatus.Information, which is then set in lpBytesReturned;
+ *) if an error is specified(not warn), copy would not happen, then lpBytesReturned is zero;
+
+@) 'ERROR_INVALID_FUNCTION' often caused by missing callback functions in driver;
+
+@) control codes placement:
+ *) code_seg/data_seg
+ *) alloc_text(only for function)
+
+@) DO_DEVICE_INITIALIZING is cleared by I/O Manager when device is created in DriverEntry; if created in AddDevice, it should be cleared there;
+
+@) buffering method:
+ *) IRP_MJ_READ/IRP_MJ_WRITE 
+ 	DEVICE_OBJECT.Flags 
+ *) IRP_MJ_DEVICE_CONTROL/IRP_MJ_INTERNAL_DEVICE_CONTROL
+ 	IOCTL -> method
+
+@) the builtin DPC of DEVICE_OBJECT can be added by IoRequestDpc only at DIRQL; it serves for interrupt only;
+
+@) DPC can be queued only once for each CPU; it can happen that multiple instances run the same time at differenct cpu;
+
+
+@) when ExAllocatePool is called at DISPATCH_LEVEL, only NonpagedPool is allowed; 
+
+@) IoAcquireRemoveLock just increases the reference count;
+
+@) system time unit is equal to 100-nanosecond; 1ms=1e4 system-time-unit
+
+@) if 'ERROR_SERVICE_MARKED_FOR_DELETE' occurs when control service, reopen/close 'services.msc' would solve it;
+
+@) for delayed processing, to create System Worker Threads by 'IoAllocateWorkItem';
+
+@) compete with ISR, call 'KeAcquireInterruptSpinLock' to raise irql to that of the interrupt;
+
+@) when a variable/memory is read then written, 'Interlock-'('lock' opcode) API is used to achieve shynchronization;
+
+@) IoCompleteRequest may be long running, since multiple CompletionRoutine may exist;

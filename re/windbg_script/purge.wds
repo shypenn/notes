@@ -1,0 +1,12 @@
+$$preserve args in calling program
+ad /q *
+*
+ad /q aName
+.foreach ( alias {al} ){
+	$$replace once
+	aS aName alias 
+	.if($spat("alias", "$arg?")==0){
+		ad /q aName
+	}
+	ad aName
+}

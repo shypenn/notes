@@ -1,0 +1,144 @@
+´úÂëÒ³(CodePage) 	Ãû³Æ(CharSet) 		ÏÔÊ¾Ãû³Æ(ÖĞÎÄ) 			ÏÔÊ¾Ãû³Æ£¨Ó¢ÎÄ£©
+Info.CodePage 		Info.Name(CharSet) 	Info.DisplayName(cn) 		Info.DisplayName(en)
+
+37 			IBM037 			IBM EBCDIC£¨ÃÀ¹ú - ¼ÓÄÃ´ó£© 	IBM EBCDIC (US-Canada)
+437 			IBM437 			OEM ÃÀ¹ú 			OEM United States
+500 			IBM500 			IBM EBCDIC£¨¹ú¼Ê£© 		IBM EBCDIC (International)
+708 			ASMO-708		°¢À­²®×Ö·û (ASMO 708) 		Arabic (ASMO 708)
+720 			DOS-720 		°¢À­²®×Ö·û (DOS) 		Arabic (DOS)
+737 			ibm737 			Ï£À°×Ö·û (DOS) 			Greek (DOS)
+775 			ibm775 			²¨ÂŞµÄº£×Ö·û (DOS) 		Baltic (DOS)
+850 			ibm850 			Î÷Å·×Ö·û (DOS) 			Western European (DOS)
+852 			ibm852 			ÖĞÅ·×Ö·û (DOS) 			Central European (DOS)
+855 			IBM855 			OEM Î÷Àï¶ûÓï 			OEM Cyrillic
+857 			ibm857 			ÍÁ¶úÆä×Ö·û (DOS) 		Turkish (DOS)
+858 			IBM00858	 	OEM ¶àÓïÑÔÀ­¶¡Óï I 		OEM Multilingual Latin I
+860 			IBM860 			ÆÏÌÑÑÀÓï (DOS)		 	Portuguese (DOS)
+861 			ibm861 			±ùµºÓï (DOS) 			Icelandic (DOS)
+862 			DOS-862 		Ï£²®À´×Ö·û (DOS)	 	Hebrew (DOS)
+863 			IBM863 			¼ÓÄÃ´ó·¨Óï (DOS) 		French Canadian (DOS)
+864 			IBM864 			°¢À­²®×Ö·û (864) 		Arabic (864)
+865 			IBM865 			±±Å·×Ö·û (DOS)	 		Nordic (DOS)
+866 			cp866 			Î÷Àï¶û×Ö·û (DOS)	 	Cyrillic (DOS)
+869 			ibm869 			ÏÖ´úÏ£À°×Ö·û (DOS) 		Greek, Modern (DOS)
+870 			IBM870 			IBM EBCDIC£¨¶àÓïÑÔÀ­¶¡Óï 2£© 	IBM EBCDIC (Multilingual Latin-2)
+874 			windows-874 		Ì©Óï (Windows) 			Thai (Windows)
+875 			cp875 			IBM EBCDIC£¨ÏÖ´úÏ£À°Óï£© 	IBM EBCDIC (Greek Modern)
+932 			shift_jis	 	ÈÕÓï (Shift-JIS) 		Japanese (Shift-JIS)
+936 			gb2312 			¼òÌåÖĞÎÄ (GB2312) 		Chinese Simplified (GB2312)
+949 			ks_c_5601-1987	 	³¯ÏÊÓï 				Korean
+950 			big5 			·±ÌåÖĞÎÄ (Big5)		 	Chinese Traditional (Big5)
+1026 			IBM1026 		IBM EBCDIC£¨ÍÁ¶úÆäÀ­¶¡Óï 5£© 	IBM EBCDIC (Turkish Latin-5)
+1047 			IBM01047	 	IBM À­¶¡Óï 1 			IBM Latin-1
+1140 			IBM01140	 	IBM EBCDIC£¨ÃÀ¹ú - ¼ÓÄÃ´ó - Å·ÖŞ£©IBM EBCDIC (US-Canada-Euro)
+1141 			IBM01141	 	IBM EBCDIC£¨µÂ¹ú - Å·ÖŞ£© 	IBM EBCDIC (Germany-Euro)
+1142 			IBM01142	 	IBM EBCDIC£¨µ¤Âó - Å²Íş - Å·ÖŞ£©IBM EBCDIC (Denmark-Norway-Euro)
+1143 			IBM01143	 	IBM EBCDIC£¨·ÒÀ¼ - Èğµä - Å·ÖŞ£©IBM EBCDIC (Finland-Sweden-Euro)
+1144 			IBM01144	 	IBM EBCDIC£¨Òâ´óÀû - Å·ÖŞ£© 	IBM EBCDIC (Italy-Euro)
+1145 			IBM01145	 	IBM EBCDIC£¨Î÷°àÑÀ - Å·ÖŞ£© 	IBM EBCDIC (Spain-Euro)
+1146 			IBM01146	 	IBM EBCDIC£¨Ó¢¹ú - Å·ÖŞ£© 	IBM EBCDIC (UK-Euro)
+1147 			IBM01147	 	IBM EBCDIC£¨·¨¹ú - Å·ÖŞ£© 	IBM EBCDIC (France-Euro)
+1148 			IBM01148	 	IBM EBCDIC£¨¹ú¼Ê - Å·ÖŞ£© 	IBM EBCDIC (International-Euro)
+1149 			IBM01149	 	IBM EBCDIC£¨±ùµºÓï - Å·ÖŞ£© 	IBM EBCDIC (Icelandic-Euro)
+1200 			utf-16 			Unicode 	Unicode
+1201 			UnicodeFFFE 		Unicode (Big-Endian) 		Unicode (Big-Endian)
+1250 			windows-1250	 	ÖĞÅ·×Ö·û (Windows)   	  	Central European (Windows)
+1251 			windows-1251	 	Î÷Àï¶û×Ö·û (Windows) 		Cyrillic (Windows)
+1252 			Windows-1252	 	Î÷Å·×Ö·û (Windows)   	   	Western European (Windows)
+1253 			windows-1253	 	Ï£À°×Ö·û (Windows)   	   	Greek (Windows)
+1254 			windows-1254	 	ÍÁ¶úÆä×Ö·û (Windows) 		Turkish (Windows)
+1255 			windows-1255	 	Ï£²®À´×Ö·û (Windows) 		Hebrew (Windows)
+1256 			windows-1256	 	°¢À­²®×Ö·û (Windows) 		Arabic (Windows)
+1257 			windows-1257	 	²¨ÂŞµÄº£×Ö·û (Windows)	 	Baltic (Windows)
+1258 			windows-1258	 	Ô½ÄÏ×Ö·û (Windows)   	   	Vietnamese (Windows)
+1361 			Johab 			³¯ÏÊÓï (Johab) 			Korean (Johab)
+10000 			macintosh 		Î÷Å·×Ö·û (Mac) 			Western European (Mac)
+10001 			x-mac-japanese	 	ÈÕÓï (Mac) 			Japanese (Mac)
+10002 			x-mac-chinesetrad 	·±ÌåÖĞÎÄ (Mac) 			Chinese Traditional (Mac)
+10003 			x-mac-korean	 	³¯ÏÊÓï (Mac) 			Korean (Mac)
+10004 			x-mac-arabic	 	°¢À­²®×Ö·û (Mac)	 	Arabic (Mac)
+10005 			x-mac-hebrew	 	Ï£²®À´×Ö·û (Mac)	 	Hebrew (Mac)
+10006 			x-mac-greek 		Ï£À°×Ö·û (Mac) 			Greek (Mac)
+10007 			x-mac-cyrillic 		Î÷Àï¶û×Ö·û (Mac)	 	Cyrillic (Mac)
+10008 			x-mac-chinesesimp 	¼òÌåÖĞÎÄ (Mac) 			Chinese Simplified (Mac)
+10010 			x-mac-romanian 		ÂŞÂíÄáÑÇÓï (Mac)	 	Romanian (Mac)
+10017 			x-mac-ukrainian 	ÎÚ¿ËÀ¼Óï (Mac) 			Ukrainian (Mac)
+10021 			x-mac-thai 		Ì©Óï (Mac) 			Thai (Mac)
+10029 			x-mac-ce	 	ÖĞÅ·×Ö·û (Mac) 			Central European (Mac)
+10079 			x-mac-icelandic 	±ùµºÓï (Mac) 			Icelandic (Mac)
+10081 			x-mac-turkish 		ÍÁ¶úÆä×Ö·û (Mac)	 	Turkish (Mac)
+10082 			x-mac-croatian	 	¿ËÂŞµØÑÇÓï (Mac)	 	Croatian (Mac)
+20000 			x-Chinese-CNS 		·±ÌåÖĞÎÄ (CNS) 			Chinese Traditional (CNS)
+20001 			x-cp20001     		TCA Ì¨Íå 			TCA Taiwan
+20002 			x-Chinese-Eten	 	·±ÌåÖĞÎÄ (Eten) 		Chinese Traditional (Eten)
+20003 			x-cp20003     	  	IBM5550 Ì¨Íå 			IBM5550 Taiwan
+20004 			x-cp20004     	  	TeleText Ì¨Íå 			TeleText Taiwan
+20005 			x-cp20005     	  	Wang Ì¨Íå 			Wang Taiwan
+20105 			x-IA5 			Î÷Å·×Ö·û (IA5) 			Western European (IA5)
+20106 			x-IA5-German 		µÂÓï (IA5) 			German (IA5)
+20107 			x-IA5-Swedish 		ÈğµäÓï (IA5) 			Swedish (IA5)
+20108 			x-IA5-Norwegian 	Å²ÍşÓï (IA5) 			Norwegian (IA5)
+20127 			us-ascii 		US-ASCII 			US-ASCII
+20261 			x-cp20261 		T.61 	T.61
+20269 			x-cp20269 		ISO-6937 			ISO-6937
+20273 			IBM273 			IBM EBCDIC£¨µÂ¹ú£© 		IBM EBCDIC (Germany)
+20277 			IBM277 			IBM EBCDIC£¨µ¤Âó - Å²Íş£© 	IBM EBCDIC (Denmark-Norway)
+20278 			IBM278 			IBM EBCDIC£¨·ÒÀ¼ - Èğµä£© 	IBM EBCDIC (Finland-Sweden)
+20280 			IBM280 			IBM EBCDIC£¨Òâ´óÀû£© 		IBM EBCDIC (Italy)
+20284 			IBM284 			IBM EBCDIC£¨Î÷°àÑÀ£© 		IBM EBCDIC (Spain)
+20285 			IBM285 			IBM EBCDIC£¨Ó¢¹ú£© 		IBM EBCDIC (UK)
+20290 			IBM290 			IBM EBCDIC£¨ÈÕÓïÆ¬¼ÙÃû£© 	IBM EBCDIC (Japanese katakana)
+20297 			IBM297 			IBM EBCDIC£¨·¨¹ú£© 		IBM EBCDIC (France)
+20420 			IBM420 			IBM EBCDIC£¨°¢À­²®Óï£© 		IBM EBCDIC (Arabic)
+20423 			IBM423 			IBM EBCDIC£¨Ï£À°Óï£©   	 	IBM EBCDIC (Greek)
+20424 			IBM424 			IBM EBCDIC£¨Ï£²®À´Óï£© 	        IBM EBCDIC (Hebrew)
+20833 			x-EBCDIC-KoreanExtended IBM EBCDIC£¨³¯ÏÊÓïÀ©Õ¹© 	IBM EBCDIC (Korean Extended)
+20838 			IBM-Thai	 	IBM EBCDIC£¨Ì©Óï£©     	 	IBM EBCDIC (Thai)
+20866 			koi8-r 			Î÷Àï¶û×Ö·û (KOI8-R)    	 	Cyrillic (KOI8-R)
+20871 			IBM871 			IBM EBCDIC£¨±ùµºÓï£©   	 	IBM EBCDIC (Icelandic)
+20880 			IBM880 			IBM EBCDIC£¨Î÷Àï¶û¶íÓï© 	IBM EBCDIC (Cyrillic Russian)
+20905 			IBM905 			IBM EBCDIC£¨ÍÁ¶úÆäÓï£© 	    	IBM EBCDIC (Turkish)
+20924 			IBM00924	 	IBM À­¶¡Óï 1 	IBM Latin-1
+20932 			EUC-JP 			ÈÕÓï£¨JIS 0208-1990 ºÍ 0212-1990£©Japanese (JIS 0208-1990 and 0212-1990)
+20936 			x-cp20936	 	¼òÌåÖĞÎÄ (GB2312-80) 		Chinese Simplified (GB2312-80)
+20949 			x-cp20949 		³¯ÏÊÓï Wansung 			Korean Wansung
+21025 			cp1025 			IBM EBCDIC£¨Î÷Àï¶ûÈû¶ûÎ¬ÑÇ - ±£¼ÓÀûÑÇÓï£© IBM EBCDIC (Cyrillic Serbian-Bulgarian)
+21866 			koi8-u 			Î÷Àï¶û×Ö·û (KOI8-U) 		Cyrillic (KOI8-U)
+28591 			iso-8859-1 		Î÷Å·×Ö·û (ISO) 			Western European (ISO)
+28592 			iso-8859-2 		ÖĞÅ·×Ö·û (ISO)	 		Central European (ISO)
+28593 			iso-8859-3 		À­¶¡Óï 3 (ISO) 			Latin 3 (ISO)
+28594 			iso-8859-4 		²¨ÂŞµÄº£×Ö·û (ISO)	 	Baltic (ISO)
+28595 			iso-8859-5 		Î÷Àï¶û×Ö·û (ISO) 		Cyrillic (ISO)
+28596 			iso-8859-6 		°¢À­²®×Ö·û (ISO) 		Arabic (ISO)
+28597 			iso-8859-7 		Ï£À°×Ö·û (ISO) 			Greek (ISO)
+28598 			iso-8859-8 		Ï£²®À´×Ö·û (ISO-Visual) 	Hebrew (ISO-Visual)
+28599 			iso-8859-9 		ÍÁ¶úÆä×Ö·û (ISO) 		Turkish (ISO)
+28603 			iso-8859-13	 	°®É³ÄáÑÇÓï (ISO) 		Estonian (ISO)
+28605 			iso-8859-15	 	À­¶¡Óï 9 (ISO) 			Latin 9 (ISO)
+29001 			x-Europa		Å·ÂŞ°Í 				Europa
+38598 			iso-8859-8-i	 	Ï£²®À´×Ö·û (ISO-Logical) 	Hebrew (ISO-Logical)
+50220 			iso-2022-jp	 	ÈÕÓï (JIS) 			Japanese (JIS)
+50221 			csISO2022JP	 	ÈÕÓï£¨JIS- ÔÊĞí 1 ×Ö½Ú¼ÙÃû£© 	Japanese (JIS-Allow 1 byte Kana)
+50222 			iso-2022-jp	 	ÈÕÓï£¨JIS- ÔÊĞí 1 ×Ö½Ú¼ÙÃû - SO/SI£©Japanese (JIS-Allow 1 byte Kana - SO/SI)
+50225 			iso-2022-kr	 	³¯ÏÊÓï (ISO) 			Korean (ISO)
+50227 			x-cp50227		¼òÌåÖĞÎÄ (ISO-2022) 		Chinese Simplified (ISO-2022)
+51932 			euc-jp 			ÈÕÓï (EUC) 			Japanese (EUC)
+51936 			EUC-CN 			¼òÌåÖĞÎÄ (EUC) 			Chinese Simplified (EUC)
+51949 			euc-kr 			³¯ÏÊÓï (EUC) 			Korean (EUC)
+52936 			hz-gb-2312	 	¼òÌåÖĞÎÄ (HZ) 			Chinese Simplified (HZ)
+54936 			GB18030			¼òÌåÖĞÎÄ (GB18030) 		Chinese Simplified (GB18030)
+57002 			x-iscii-de 		ISCII èóÎÄ 			ISCII Devanagari
+57003 			x-iscii-be 		ISCII ÃÏ¼ÓÀ­Óï 			ISCII Bengali
+57004 			x-iscii-ta 		ISCII Ì©Ã×¶ûÓï 			ISCII Tamil
+57005 			x-iscii-te 		ISCII Ì©Â¬¹ÌÓï 			ISCII Telugu
+57006 			x-iscii-as 		ISCII °¢ÈøÄ·Óï 			ISCII Assamese
+57007 			x-iscii-or 		ISCII °ÂÀïÑÅÓï 			ISCII Oriya
+57008 			x-iscii-ka 		ISCII ¿¨ÄÉ´ïÓï 			ISCII Kannada
+57009 			x-iscii-ma 		ISCII ÂíÀ­ÑÅÀ­Ä·Óï 		ISCII Malayalam
+57010 			x-iscii-gu 		ISCII ¹Å¼ªÀ­ÌØÓï 		ISCII Gujarati
+57011 			x-iscii-pa 		ISCII ÅÔÕÚÆÕÓï 			ISCII Punjabi
+65000 			utf-7 			Unicode (UTF-7) 		Unicode (UTF-7)
+65001 			utf-8 			Unicode (UTF-8) 		Unicode (UTF-8)
+65005 			utf-32 			Unicode (UTF-32) 		Unicode (UTF-32)
+65006 			utf-32BE		Unicode (UTF-32 Big-Endian) 	Unicode (UTF-32 Big-Endian)
+

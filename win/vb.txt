@@ -1,0 +1,4 @@
+@) when the return value of a called function isn't used(stored in variable or passed to another function), its treated as a Sub.
+
+@) "call" should be used when call a Sub with parentheses, when there are more than one arguments.
+

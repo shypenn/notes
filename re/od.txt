@@ -1,0 +1,35 @@
+---------------------------------------------------
+https://sethioz.com/mediawiki/index.php5?title=Olly_Debugger
+---------------------------------------------------
+@@ go to expression accepts address;
+
+@@ memory breakpoint:
+	could be set on code line;
+	could be set on a block of memory in the memory window;
+	couldn't be remembered;
+  
+@@ watch uses hex for number;
+
+@@ in memory window, it would traverse all the memory to find a string;
+
+@@ search binary string accepts bytes from high order to low, that is the opposite from seen in the stack and dump window;
+
+@@ ways to locate dialog:
+~~ string table(different phase different result);
+~~ intermodular call(DialogParamA);
+~~ call stack(after dialog showed, pause-->WaitMessage);
+~~ Resource Hacker to get its ID(string-->string table;number-->Search For/Command/Push ID);
+
+@@ type keys to search in "name window".
+
+@@ "analyze this!" in CPU windows before find references to certain function.
+
+@@) before hit/run trace:
+analysis->analyse code
+
+@) font settings is the first char in Apperance;
+
+@) 'Set break-on-access'/F2: single-shot break on memory access
+ *) only in 'Memory' window;
+ *) only in XP and below;
+ *) especially for catching executing into a module; 

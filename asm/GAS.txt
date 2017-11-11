@@ -1,0 +1,32 @@
+@) base indexed addressing mode:
+disp(base, index, scale)		-		base+index*scale+disp
+
+@) var dd 1
+$var		-		address
+(var)		-		content
+
+@) immediate operand:
+$5	-decimal
+$0x5	-hex
+
+@) register:
+%eax
+
+@) instruction suffix indicating memory operand size:
+b/w/l/q		-long is equavalent to dword
+
+@) variable type:
+.long, .int, and .byte 
+.ascii, .asciz, and .string
+
+@) far jump:
+lcall/ljmp/lret
+
+@) assembler directives is prefixed with dot.
+.segment text
+
+@)comments:
+C style (/* */), C++ style (//), and shell style (#) 
+
+@) parenthesis replaces brackets.
+

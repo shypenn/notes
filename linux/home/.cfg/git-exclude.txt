@@ -1,0 +1,9 @@
+*.swn
+*.swo
+*.swp
+
+*.log
+
+*.pyc
+
+node_modules/

@@ -1,0 +1,35 @@
+@) 极点状态栏显隐：
+ctrl+←
+专家模式可设置打开时置英文；
+
+@) eccmd.exe	-express cache(ssd cache)
+
+@) shift + restart	- startup menu
+
+@) win+x	quick menu
+@) win+w	search apps
+@) win+c	open right side charm
+@) win+i	settings menu
+
+shift+alt	switch between eng/chn
+
+@) diskpart	-uncover hidden partition(list/select/assign|remove)
+
+@)fn+b	break
+
+@) a partition is hidden if its letter is removed;
+
+@) hold 'shift' and right click in Explorer, a new item is added:
+ 'open commandn window here'
+
+@) rename a file with only dot plus extension: append a dot at the end;
+
+@) photoshop may takes esc exclusively, then use 'shift+esc' in other programs;
+
+@) if 'default program' has an invalid value, it will fail to change, remove it in:
+HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.ext\UserChoice
+
+@) to hide partition in explorer, remove its letter; via 'diskpart' if 'disk manager' doesn't work;
+
+@) no hibernate options appear even in power settings:
+	powercfg.exe /hibernate off

@@ -1,0 +1,226 @@
+Library types			compiler switches	Basic C Runtime library / Standard C++ library
+Single-threaded 		(/ML)				LIBC.LIB / LIBCP.LIB
+Debug Single-threaded 	(/MLd)				LIBCD.LIB / LIBCPD.LIB
+Multithreaded 			(/MT)				LIBCMT.LIB / LIBCPMT.LIB
+Debug Multithreaded 	(/MTd)				LIBCMTD.LIB / LIBCPMTD.LIB
+Multithreaded DLL 		(/MD)				MSVCRT.LIB / MSVCPRT.LIB
+Debug Multithreaded		/DLL (MDd)			MSVCRTD.LIB / MSVCPRTD.LIB
+
+Note MSVCPRT.lib and MSVCPRTD.lib are static libraries and do not have any dynamic link libraries (DLLs) directly related to them. These libraries are also dependent on MSVCRT.lib and MSVCRTD.lib, respectively. If you have any applications that use MSVCPRT.lib or MSVCPRTD.lib and you use the "Ignore Default Library" (/NOD or NODEFAULTLIB) option, be sure to link MSVCPRT.lib (or MSVCPRTD.lib) and MSVCRT.lib (or MSVCRTD.lib) with your application. Otherwise, you will get linker errors (LNK2001: unresolved externals in MSVCPRT.lib or MSVCPRTD.lib) when linking your application.) Depending on the headers you use in your code, a library from the Standard C++ library may also be linked.
+
+The header file <use_ansi.h> contains #pragma statements that force the Standard C++ library to be linked in. All Standard C++ headers include <use_ansi.h>: if you include any Standard C++ header in your application, the Standard C++ library will be linked by default.
+
+@@ default member accessibility(this is the olny difference between them)
+	class	:	private
+	struct	:	public
+@@ 
+<string.h>	-	c header files;
+<cstring>	-	when used in c++; which places symbols under "std" namespace(also global);
+cl.exe treats source files according to their extensions; or specify it explicityly using /TP or /TC;
+@@ IOStream Library
+
+													-->		ofstream	
+												   |
+								-->		ostream		-->		ostringstream
+ios_base	-->		ios		-->|
+								-->		istream		-->		istringstream
+												   |
+													-->		ifstream
+							   					   |
+													-->		iostream	-->		stringstream
+																	   |
+																		-->		fstream
+				
+				 -->	stringbuf
+streambuf(a)	|
+				 -->	filebuf
+
+
+@@  inheritance:
+~~ all members are dumped into derived class;
+~~ private: can be accessed from other members within the same class(includes static and friend);
+~~ protected: can also be accessed from the members of its derived class;
+~~ public: plus being accessible from outside;
+~~ class derived: protected baseCls
+	protected: is the most accessible level for all members inherited from base class(means those members with more accessible level are limited to this level);
+
+@@ typename (relating to template):
+~~ alternative of "class" in template<class T>;
+~~ before template-parameter dependent name to distinguish type from value;
+	template<class T>				struct A						struct B
+	class C							{                               {
+	{									typedef int bar;            	int bar=10; 
+		typename T::bar x;			}			                    }			
+	}
+	T::bar maybe a type or a value when A or B passed in;
+
+@@ template parameter could be omited for function template; 
+
+@@ template class's member functions are implemented in the same header file;
+
+	template <class A_Type> class calc													-----declare
+	{
+	  public:
+		A_Type multiply(A_Type x, A_Type y);
+	};
+	template <class A_Type> A_Type calc<A_Type>::multiply(A_Type x,A_Type y)			-----implement(type after class name is needed)
+	{
+	  return x*y;
+	}
+	calc <double> a_calc_class;															-----use
+
+@@ comparison between template class and its specialization:
+template <class T> class mycontainer { ... };
+template <> class mycontainer <char> { ... };
+	(if char is passed, use the second definition);
+
+@@ template class specialization doesn't apply inheritance:
+
+@@ whatever you got from heap is a pointer;
+int num(5);				--	stack(destroyed automatically);
+int* num=new int();		--	heap(call delete);
+
+@) array is not allowed to be initialized from heap;
+int *i=new i(1);				-valid;
+int *iArr=new iArr[]({1,2});	-invalid
+
+@@ cls::fun(arg1,arg2) const;
+ constant member function doesn't modify its host object;
+
+@@ const: look the immediate follower:
+const int* pNum / int const* pNum		--		content is constant(*pNum=10 is invalid);
+int* const pNum							--		address is constant(pNum=&n is invalid);
+
+@@ non-constant value could be passed in for const parameter(converted implicitly), but not vice versa(use const_cast explicitly);
+
+@@ volatile could prevent compiler optimizing with cache or something;
+
+@@ extern is like in asm, indicating that symbol is in another library;
+
+@@ false parameter value couldn't be omited;
+
+@@ 
+int (&iArr)[2]	--reference to array;
+int &iArr[2]	--(int&) iArr[2]	--array of int reference[ILLEGAL];
+
+@@ stringstream converts bool to 1 and 0;
+
+@@ pointer has to be initialized before use(make it point somewhere).
+
+@@ wcout<<char	--widen internally.
+
+@@ when pointer/address sign used with array and function can be omited;
+
+@@ a function type variable is a pointer variable pointing to a function;
+void (*pFun)(int) = funName;		-- & before "funName" is omited
+~~ or use type constructor:
+typedef void (*pFun)(int) = funName;
+pFun(funName);		-- funName is an address; so pFun(200) is also valid;
+
+
+@@ shift:
+~~ not for immediate value (5<<2);
+~~ should be assigned to a variable (a=b>>3);
+
+@@ bitfield: int fld:4
+ *) bits specify the maximum value(when a number is assigned, the bits beyond are removed);
+ *) only adjacent same types can be packed together, although spare space exist; 
+ 	int fld1:3		--four bytes taken;
+	short fld2:3	--two bytes taken;
+ *) if another field with the same type overrun the type boundary when packed togehter, it's pushed to next type boundary:
+ 	short fld1:7		--two bytes taken;
+	short fld2:10		--two bytes taken;
+
+@@ {} can only be used when declare with initialization:
+~~ SomeStructure s={1,3,5};	-- valid;
+~~ SomeStructure s;
+   s={1,3,5};				-- invalid;
+
+@@ integers division omits the remainder;
+
+@@ tellg/p always give a value relative to the beginning.
+
+@@ ios::binary can prevent certain translations like \n to \r\n;
+
+@@ ifstream::<< assume the target of char array type as string, will read a array of char until a 0 is met.
+
+@@ logical operaters are valid in preprocessors.
+
+@@ generic_category is an instance of error_category, wrapping for predefined c errnos.
+
+@@ print char as hex, by converting it to unsigned int;
+
+@@) reference parameter doesn't allow empty object, whereas pointer does.
+~~Use references when you can, and pointers when you have to.
+
+@@) reference type member must be initialized in constructor initializer.
+
+@@) goto can't bypass any variable declaration, or erorr occurs：
+
+@@) derived class can't initialize base members in constructor's initializer-list; instead initialize them in base constructor's initializer-list and pass them to the base constructor.
+
+@@) assignment operators have association from right to left
+
+@@) the execution order of initializer list corresponds to the member declaration order within the class, not as they appear in the list.
+
+@@) it's illegal to call member function in initializer-list;
+
+@@) variable declarion without parameters has to omit the parenthesis, or it's treated as a function forward declartion;
+
+@@) vector should contain object instead of pointer;
+
+@@) inline
+do:
+~~)use inline instead of #define
+~~)very small functions are good candidates for inline: faster code and smaller executables (more chances to stay in the code cache)
+~~)the function is small and called very often
+don't:
+
+~~)large functions: leads to larger executables, which significantly impairs performance regardless of the faster execution that results from the calling overhead
+~~)inline functions that are I/O bound
+~~)the function is seldom used
+~~)constructors and destructors: even when empty, the compiler generates code for them
+~~)breaking binary compatibility when developing libraries:
+inline an existing function
+change an inline function or make an inline function non-inline: prior version of the library call the old implementation
+
+@@) tellg returns absolute position(frome the start), seekg has overloads to specify position or offset;
+
+@@) seekg(offset, ios:end)
+when offset if positive, the position is set beyond the end;
+
+@@)integer literal requires suffix to indicate its type:
+long long llNum=1<<32;	--invalid;
+
+@@) arithmetic expression decides its result type according to the first number;
+long long llNum=233*3333999*333999*33999;  --a negative number;
+long long llNum=233LL*3333999*333999*33999;  --a positive number;
+
+@) preprocessor operators: (prevent the argument to expand as a macro identifier)
+#/#@	- to wrap the argument with "/' forming a string/char.
+##		- as a separator from other text without modification.
+
+#define A "aaa"
+#define M1(b) printf(b)
+#define M2(b) printf(#b)
+#define M3(b) printf(#@b)
+#define M4(b) printf(var##b)
+M1(A)	-	printf("aaa")
+M2(A)	-	printf("A")
+M3(A)	-	printf('A')
+M4(A)	-	printf(varA)
+
+@) white space separated text wrapping in double quotes will be concatenated to be a single string:
+printf("aa" "bb")	-	printf("aabb")
+printf(TEXT("aa") TEXT("bb"))	-	printf(L"aabb")
+
+@) constant variable can't invoke methods which are not modified with "const".
+
+
+@) c++11, inherit enum from other type to specify its size;
+
+@) escape number in string:
+\ + up to 3 octal digits
+\x + any number of hex digits(separate: "0xffffff""fast")
+\u + 4 hex digits (Unicode BMP, new in C++11)
+\U + 8 hex digits (Unicode astral planes, new in C++11)

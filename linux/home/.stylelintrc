@@ -1,0 +1,9 @@
+{
+---WIN_START---
+	"extends":"C:\Users\roney\AppData\Roaming\npm\node_modules\stylelint-config-recommended"
+---WIN_END---
+
+---LINUX_START---
+	"extends":"/usr/lib/node_modules/stylelint-config-recommended"
+---LINUX_END---
+}

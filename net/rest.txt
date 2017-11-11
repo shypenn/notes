@@ -1,0 +1,15 @@
+REST(REpresentational Stateless Transfer)
+@) Use HTTP methods conformingly(do what the method defines).
+ *) safe methods(retrieval: GET/HEAD) should not take other actions more significant;
+ *) idempotent methods(GET, HEAD, PUT and DELETE) take constant side effects no matter how many times it executes continually;
+ 	.) OPTIONS/TRACE should not have side effects; 
+ 	.) a sequence of different idempotent methods can be not idempotent;
+
+@) Use HTTP methods explicitly.
+	*)To create a resource on the server, use POST.
+	*)To retrieve a resource, use GET.
+	*)To change the state of a resource or to update it, use PUT.
+	*)To remove or delete a resource, use DELETE.
+Be stateless.
+Expose directory structure-like URIs.
+Transfer XML, JavaScript Object Notation (JSON), or both.

@@ -1,0 +1,83 @@
+Overview
+
+Windows 95 and Windows NT support a robust approach to handling exceptions, called Structured Exception Handling, which involves cooperation of the operating system but also has direct support in the programming language. An ¡°exception¡± is an event that is unexpected or disrupts the ability of the process to proceed normally. Exceptions can be detected by both hardware and software
+
+You can write more reliable code with Structured Exception Handling. You can ensure that resources, such as memory blocks and files, are properly closed in the event of unexpected termination. A distinctive feature of Structured Exception Handling is that after an exception handler is installed, it can handle the exception no matter how many other functions are called. Thus, function A can handle an exception raised inside a function called by A.
+
+The following macros make it easy to include Structure Exception Handling in your Assembly programs. Each assembly statement has comments describing the operation being performed.
+
+SEH Macros
+01	@TRY_BEGIN MACRO Handler
+02	    pushad                          ;;Save Current State
+03	    mov esi, offset Handler         ;;Address of New Exception Handler
+04	    push esi                        ;;Save Old Exception Handler
+05	    push dword ptr fs:[0]           ;;Install New Handler
+06	    mov dword ptr fs:[0], esp
+07	ENDM
+08	@TRY_EXCEPT MACRO Handler
+09	    jmp NoException&;Handler         ;;No Exception Occured, so jump over
+10	Handler:
+11	    mov esp, [esp + 8]              ;;Exception Occured, Get old ESP
+12	    pop dword ptr fs:[0]            ;;Restore Old Exception Handler
+13	    add esp, 4                      ;;ESP value before SEH was set
+14	    popad                           ;;Restore Old State
+15	ENDM
+16	@TRY_END MACRO Handler
+17	    jmp ExceptionHandled&;Handler    ;;Exception was handled by @TRY_EXCEPT
+18	NoException&;Handler:                ;;No Exception Occured
+19	    pop dword ptr fs:[0]            ;;Restore Old Exception Handler
+20	    add esp, 32 + 4                 ;;ESP value before SEH was set. 32 for pushad and ...
+21	ExceptionHandled&;Handler:           ;;...4 for push offset Handler. (No Restore State)
+22	                                    ;;Exception has been handled, or no exception occured
+23	ENDM
+Using SEH Macros
+1	@TRY_BEGIN HandlerName
+2	    ;Code in this place will be checked for exceptions.
+3	@TRY_EXCEPT HandlerName
+4	    ;Code in this place will be executed if an exception occurs.
+5	@TRY_END HandlerName
+6	    ;Normal execution path
+Sample Program
+01	;Structured Exception Handling in Assembly
+02	;(c) 2000, Rohitab Batra
+03	;rohitab@rohitab.com
+04	;
+05	;To Compile this program, you need the 32-bit version of Turbo Assembler
+06	;
+07	;TASM32 /ml SEH
+08	;TLINK32 SEH,SEH,,IMPORT32.LIB
+09	 
+10	.386p
+11	.model flat ,stdcall
+12	 
+13	EXTRN ExitProcess:PROC
+14	EXTRN MessageBoxA:PROC
+15	 
+16	;Define the @TRY_BEGIN, @TRY_EXCEPT and @TRY_END Macros Here
+17	 
+18	.data
+19	    szCaption       db 'SEH in Assembly', 0
+20	    szException     db 'Exception has been handled !!', 0dh, 0ah
+21	                    db 'Press OK to terminate gracefully', 0
+22	    szNoException   db 'No Exception occured', 0
+23	 
+24	.code
+25	 
+26	WinMain:
+27	 
+28	@TRY_BEGIN Zero_Address_Access
+29	    mov     ebx, 0          ;Prepare to write to address 0
+30	    mov     [ebx], ebx      ;Write to address 0 (Access Violation)
+31	                            ;Comment the above line if to remove the exception
+32	@TRY_EXCEPT Zero_Address_Access
+33	    ;This code will get executed if an exception occurs.
+34	    call MessageBoxA, 0, offset szException, offset szCaption, 0
+35	    jmp ExitProgram
+36	@TRY_END Zero_Address_Access
+37	    ;Normal Execution Path.
+38	ExitProgram:
+39	    call MessageBoxA, 0, offset szNoException, offset szCaption, 0
+40	    call ExitProcess, 0
+41	END WinMain
+
+
