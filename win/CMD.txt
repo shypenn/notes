@@ -530,3 +530,5 @@ if defined var (call subr) else ....
  *) range: 1-50
 @) append to a line:
   set /p="TextHere" <nul >>C:\Test.txt 
+@) list cmd history: F7
+@) search history with starting keyword in the promp: F8
