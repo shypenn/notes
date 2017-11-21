@@ -1,0 +1,11 @@
+menuentry '**GENUINE Windows Boot Manager (on /dev/nvme0n1p1)' --class windows --class os $menuentry_id_option 'osprober-efi-E472-D3DD' {
+	insmod part_gpt
+	insmod fat
+	if [ x$feature_platform_search_hint = xy ]; then
+		search --no-floppy --fs-uuid --set=root  E472-D3DD
+	else
+		search --no-floppy --fs-uuid --set=root E472-D3DD
+	fi
+	chainloader /EFI/Microsoft/Boot/bkpbootmgfw.efi
+}
+

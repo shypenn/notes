@@ -27,6 +27,7 @@ sudo pkg install -y \
 
 log config grub
 cat .grub_cfg.txt >> /etc/default/grub
+cat .grub_win_entry.txt >> /etc/grub.d/40_custom
 cp -f /boot/efi/EFI/Microsoft/Boot/bootmgfw.efi /boot/efi/EFI/Microsoft/Boot/bkpbootmgfw.efi
 cp -f /boot/efi/EFI/ubuntu/grubx64.efi /boot/efi/EFI/Microsoft/Boot/bootmgfw.efi
 update-grub

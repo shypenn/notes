@@ -185,3 +185,7 @@ U+02Ax	ʠ	ʡ	ʢ	ʣ	ʤ	ʥ	ʦ	ʧ	ʨ	ʩ	ʪ	ʫ	ʬ	ʭ	ʮ	ʯ
 @) jenkins 
 	* runs in user named after as its name by default;
 	* PATH is set internally as a constant;
+
+@) add certificates to browser: open it
+
+

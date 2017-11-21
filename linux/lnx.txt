@@ -148,8 +148,8 @@ inotify-tools
 	> means door.
 	/ means directory.
 
- *) owner/owner_group
- *) echo with wildcard more convenient sometimes(list files in current directory starts with somethine)
+ *) owner, group ( **is not owner's group**)
+ *) echo with wildcard more convenient sometimes(list files in current directory starts with something)
 
 @) SIGHUP(hangup) usually is used for notifying deamon to restart;
 
@@ -782,3 +782,6 @@ wget --no-check-certificate https://download.01.org/gfx/RPM-GPG-GROUP-KEY-ilg  -
 	* wine uninstaller
 	* hide debugging info: WINEDEBUG=-all wine...
 
+@) install certificates:
+ * copy *.crt to /usr/share/ca-certificates/**
+ * sudo dpkg-reconfigure ca-certificates
