@@ -1,9 +1,9 @@
 "let &verbose=1
 set lines=55 columns=150
 
-# <<don't work in .gvimrc
+" <<don't work in .gvimrc
 set go-=m
-# >>
+" >>
 
 set nobk
 set tabstop=4

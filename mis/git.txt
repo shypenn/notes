@@ -26,10 +26,18 @@
 	git branch [localBranchName] --set-upstream-to=remoteName/remoteBranchName
  *) push: `git push remoteName localBranch:remoteBranch`
  	*) when no remoteName, default to 'origin';
- 	*) when no remoteBranch, default to the same with local;
+ 	*) when no remoteBranch, consult 
+
+```
+[remote "origin"]
+	push = refs/heads/master:refs/heads/master
+```
+(set by `git config remote.origin.push refs/heads/master:refs/heads/master`)
+
+if none, then consult `push.default`; 
+
 
  *) retrieve info: git fetch
- *) `git pull` is short for 'git pull origin HEAD'
  *) change default branch (when branch name is omited in command, has nothing to do with remote repo): git remote set-head repo branch
  *) remote push address can contain more than one:
  	`git remote set-url --add remoteName url`
@@ -45,9 +53,20 @@
  *) get new
 	git remote fetch name
  *) fetch and merge
-	git pull
+	git pull	-> git fetch; git merge
  *) packed
 	git archive --remote=name -o file path
+
+@) git pull repo refs
+
+if 'repo' & 'refs' is not specified, it consults:
+```
+[branch "master"]
+	remote = origin
+	merge = refs/heads/master
+```
+which is set by `git branch --track newBranch` / `git branch --set-upstream-to=repo/branch existingBranch` / `git push --set-upstream` 
+
 
 @) branch:
  *) just a label to a commit;
@@ -199,3 +218,9 @@ sudo make --directory=/usr/share/doc/git/contrib/credential/gnome-keyring
 
 [credential]
 helper = /usr/share/doc/git/contrib/credential/gnome-keyring/git-credential-gnome-keyring
+
+@) multi-user
+ *) windows: credential manager, different urls
+ *) linux: 
+ 	* ssh domain alias
+	* user@domain in url
