@@ -6,4 +6,9 @@
 ---LINUX_START---
 	"extends":"/usr/lib/node_modules/stylelint-config-recommended"
 ---LINUX_END---
+
+
+	"rules":{
+		"string-quotes":"single"
+	}
 }

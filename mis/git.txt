@@ -103,9 +103,6 @@
 
 @) core.autocrlf
  *) true: input as LF (** all os, ONLY if repo is LF); output as CRLF in windows (** when output, will not convert CRLF to LR in linux);
- 	
- 	** assume LF in repo **;
- 
  *) input: **Checkout as-is**, commit Unix-style
  *) false: no transforming;
 
@@ -199,3 +196,7 @@ sudo make --directory=/usr/share/doc/git/contrib/credential/gnome-keyring
 
 [credential]
 helper = /usr/share/doc/git/contrib/credential/gnome-keyring/git-credential-gnome-keyring
+
+@) when `username@` exists in `http`, ssh will not be used.
+
+	https://shypenn@github.com/shypenn/notes

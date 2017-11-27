@@ -138,8 +138,8 @@ inotify-tools
  *) ls link		-> link itself
  *) ls link/	-> target linked;
 
- *) list directory itself instead of content:
-	ls -d */
+ *) list file itself (content is omited if directory):
+	ls -d 
  *) ls -F		-> indicator
 	@ means symbolic link (or that the file has extended attributes).
 	* means executable.
@@ -149,7 +149,12 @@ inotify-tools
 	/ means directory.
 
  *) owner, group ( **is not owner's group**)
- *) echo with wildcard more convenient sometimes(list files in current directory starts with something)
+ *) echo with wildcard is more convenient sometimes(list files in current directory starts with something)
+
+	hidden files only:
+
+	`echo .?*`
+	`ls -d .?*`
 
 @) SIGHUP(hangup) usually is used for notifying deamon to restart;
 
@@ -390,10 +395,6 @@ install packages with wildcard and
  *) colors take effect is in $LS_COLORS
  *) default colors can be set/viewed by 'dircolors [-p]'
 
-@) ls -d
- *) only one level deep
- *) **files also included**
-
 @) device types:
  *) hard disk: dev/hda,b,c,... (partitions: dev/hda1,2,3,...)
  *) floppy disk: dev/fda
@@ -544,6 +545,7 @@ ln -sf /usr/share/zoneinfo/<CONTINENT>/<CITY> /etc/localtime
 @) grep only show file name when more than one matches;
  *) specify -H to force adding;
  *) -n: line number; 
+ *) when keywords start with `-`, add leading `-- `;
 
 @) GTK,Qt is equivalent of GDI in windows;
 

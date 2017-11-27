@@ -112,11 +112,8 @@
 @) http2/SPDY
  *) push data that client didn't request;
  *) most client only support in https;
- *) header compression
- *) stream priority;
- *) multiplex connection (single for a domain): async both requests and responses;
 
-@) http pipleline doesn't wait the previous request got response(responses still are ordered by requests got); --asyn requests, sync responses
+@) http pipleline doesn't wait the previous request got response(responses still are ordered by requests got);
  *) don't apply to non-idempotent requests such as 'post';
 
 @) MAC: media access control;

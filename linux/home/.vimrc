@@ -29,7 +29,7 @@ colorscheme solarized
 " open if no file specified;
 autocmd StdinReadPre * let s:std_in=1
 autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
-noremap <F3> :NERDTreeToggle<CR>
+noremap <F2> :NERDTreeToggle<CR>
 
 
 packadd! matchit
@@ -58,9 +58,11 @@ nmap <F5> :TagbarToggle<CR>
 let g:ale_linters = {'javascript': ['eslint']}
 let g:ale_fixers = {
 \   'javascript': ['eslint'],
+\   'css': ['stylelint'],
 \}
 nmap <silent> <C-k> <Plug>(ale_previous_wrap)
 nmap <silent> <C-j> <Plug>(ale_next_wrap)
+noremap <F3> :ALEFix<CR>
 
 " autoformat
 " names defined in auto-format/plugin/defaults.vim
