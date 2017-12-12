@@ -481,3 +481,5 @@ put *
 
 @) set filetype for a specific file, append this modeline at the footer;
 	// vim: set ft=text:
+
+@) convert tab to spaces: retab

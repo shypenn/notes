@@ -13,6 +13,9 @@
 	 2. `./`
 	 *) the interpreter is specified by the first line starting with '#!';
 	 *) a single parameter may be supplied, then the text file becomes the second param;
+
+	 ** only one param is allowed in `#!` **
+
  *) $BASH_SOURCE always contains this script file path;
 
 @) no & as in cmd;
@@ -29,10 +32,6 @@
 @) no ternary operator, instead:
 
 	cond && op1 || op2
-
-@) run command through 'env'
- *) bypass shell alias;
- *) search command in 'PATH';
 
 @) line separator is ';' or newline;
 

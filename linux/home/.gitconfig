@@ -1,3 +1,5 @@
+[user]
+	name = Roney
 [core]
 	excludesfile=~/.cfg/git-exclude.txt
 	safecrlf=true
@@ -16,9 +18,6 @@
 #	helper = /usr/share/doc/git/contrib/credential/gnome-keyring/git-credential-gnome-keyring
 
 ---LINUX_END---
-#[user]
-#	name = roney
-#	email = ningrao@126.com
 [push]
 	default = current
 [pager]

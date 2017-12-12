@@ -226,3 +226,11 @@ helper = /usr/share/doc/git/contrib/credential/gnome-keyring/git-credential-gnom
  *) linux: 
  	* ssh domain alias
 	* user@domain in url
+
+@) diff waht's changed:
+  `git diff HEAD file`
+@) `pushurl` and `fetch` in `[remote]` overrides `url`;
+  * add `--push` to manipulate `pushurl`
+  ```
+  git remote set-url --add --push origin url
+  ```

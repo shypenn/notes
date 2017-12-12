@@ -36,6 +36,9 @@ PACKAGE
  *) pkgnames pkg	(only name)
  *) search pkg
 
+@) config file:
+/etc/apt/apt.conf
+
 @) list repo available:
  *) yum repolist
 
@@ -153,8 +156,12 @@ inotify-tools
 
 	hidden files only:
 
-	`echo .?*`
-	`ls -d .?*`
+  `echo .[a-z0-9A-Z]*`
+
+  of just omit two letters:
+
+	`echo .??*`
+	`ls -d .??*`
 
 @) SIGHUP(hangup) usually is used for notifying deamon to restart;
 
@@ -347,8 +354,10 @@ mysql server	-mysql-server
 @) ctrl+\	quit; 
 
 @) find ~/note -atime 0 -type f -ok ls -l {} \;
-"\;" is necessary.
-"{}" full path found.
+ * command should end with ` \;`, to indicate terminating and prevent expansion by shell. **leading space is mandatory**
+ * `-expr` are filtering expressions, should be placed after path. 
+ * `{}` is placeholder as in `find`.
+ * when more than one file found with wildcard in '-name', sorrounding it with quotes, or error occurs: `paths must precede expression`.
 
 @)view bash builtin command help, use "help cmd".
 
@@ -437,8 +446,11 @@ install packages with wildcard and
  less -F	(quit if one screen)
 
 @) read administrative info like password, group
- * getent passwd (more than /etc/cat)
+ * getent passwd (more than /etc/passwd)
  * local users: cat /etc/passwd
+
+@) view user info:
+	`id username`
 
 @) /etc/sudoers
  *) edit with command 'visudo' instead of directly
@@ -559,6 +571,13 @@ ln -sf /usr/share/zoneinfo/<CONTINENT>/<CITY> /etc/localtime
  *) /etc/bashrc
  *) /etc/bash.bashrc
  *) /etc/profile
+
+@) proxy will work if env 'http_proxy'/'https_proxy' exists;
+
+@) run command through 'env'
+ *) bypass shell alias;
+ *) search command in 'PATH';
+
 
 @) functions doing nothing:
 
@@ -787,3 +806,8 @@ wget --no-check-certificate https://download.01.org/gfx/RPM-GPG-GROUP-KEY-ilg  -
 @) install certificates:
  * copy *.crt to /usr/share/ca-certificates/**
  * sudo dpkg-reconfigure ca-certificates
+@) build command and executes:
+
+  `xargs -I '{}' cp '{}' ./`
+
+  * '{}' is an example of placeholder.

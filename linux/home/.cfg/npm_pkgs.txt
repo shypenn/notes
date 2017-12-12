@@ -7,11 +7,15 @@ instant-markdown-d
 ---LINUX_END---
 
 js-beautify
-eslint
 jsonlint
 babel-eslint
+jsdoc-to-markdown
 
+eslint
+eslint-plugin-import
 eslint-plugin-react
+eslint-plugin-jsx-a11y
+eslint-plugin-jsdoc
 
 stylelint
 stylelint-config-recommended

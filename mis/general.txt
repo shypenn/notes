@@ -76,6 +76,7 @@ VBoxManage.exe setextradata global GUI/Customizations noMenuBar,noStatusBar
 
 @) glob(global command) rules:
 *		matches any number of any characters including none
+	`/` is not included, use `**` instead
 ?		matches any single character
 [abc]	matches one character given in the bracket	
 [a-z]	matches one character from the range given in the bracket
