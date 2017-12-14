@@ -1,4 +1,7 @@
- @) R/CISC: Reduced/Complex Instruction Set Computing
+@) endianness indicates which end of significance is sent/stored first (with lower address in memory).
+  * TCP/IP use Big endian, so its also called Network byte order.
+
+@) R/CISC: Reduced/Complex Instruction Set Computing
 
 @) i686 is 32bit
 @) x86_64 is 64bit;
