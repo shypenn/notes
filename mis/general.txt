@@ -107,9 +107,9 @@ linux/posix, also:
 @) vmware;
  *) shared file is locked caused by bug, fix: open preoperty dialgo then close;
 
-@) in utf16 text file, at the start, a BOM(byte order mark) number may appear:
- *) 0xfeff/0xff0xfe: little endian 
- *) 0xfffe/0xfe0xff: big endian 
+@) in unicode text file, at the start, a BOM(byte order mark) number may appear:
+ *) 0xfffe/0x0000fffe: little endian 
+ *) 0xfeff/0x0000feff: big endian 
 
 @) 'NAT loopback' should be supported in router for accessing public IP inside the network;
 
