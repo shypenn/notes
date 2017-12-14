@@ -4,12 +4,27 @@
 
 @) debug
  *) debug mode:
-	.) no ':gui' command executed, startup debug doen't work properly;
+   * vim -D
+   * :debug command
+   * :breakadd 
+	** no ':gui' command executed, startup debug doen't work properly;
+ *) write log messag: 
+    * `echoerr` & `:mes`
+    * setqflist([{'text':'message'}])
+    * setloclist(0, [{'text':'message'}])
+  ** `echo` when only show at startup and in logfile.
  *) log verbosely:
- 	vim -V9LogFile file
+ 	vim -V9FILENAME.log file
  *) let &verbose=1
  *) show log: :message
  *) plugin specific;
+ *) list loaded scripts:
+  `:scriptnames`
+
+@) list: []
+@) dict: {}
+@) call system command: `system`, `systemlist`
+@) call inner functions in Ex: call fun()
 
 @) when '~/.viminfo' is owned by root somehow, history doesn't work;
 

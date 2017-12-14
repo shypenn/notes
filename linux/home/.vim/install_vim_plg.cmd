@@ -5,4 +5,6 @@ for /f %%a in (..\vim_plg.txt) do (
 )
 popd
 
+call ./post_process_plg.cmd
+pause
 :: instant-markdown needs curl(https://curl.haxx.se/download.html), already available if git is installed; (in v2.10 curl misfunction; in v2.14, curl.cmd contains false path;

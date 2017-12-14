@@ -488,6 +488,7 @@ if defined var (call subr) else ....
 
 @) copy
  the source and destionation should both have quotes or not; or syntax error occurs.
+@) `xcopy -s` recursively copy
 
 @) when executed as admin, the start directory changes to %system%
 

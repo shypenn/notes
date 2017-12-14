@@ -17,6 +17,8 @@ eslint-plugin-react
 eslint-plugin-jsx-a11y
 eslint-plugin-jsdoc
 
+prettier-eslint-cli
+
 stylelint
 stylelint-config-recommended
 

@@ -56,11 +56,14 @@ nmap <F5> :TagbarToggle<CR>
 
 
 " async lint enging
-let g:ale_linters = {'javascript': ['eslint']}
-let g:ale_fixers = {
+let g:ale_linters = {
 \   'javascript': ['eslint'],
+\   'css': ['stylelint']}
+let g:ale_fixers = {
+\   'javascript': ['prettier-eslint'],
 \   'css': ['stylelint'],
 \}
+let g:ale_javascript_eslint_options="--ignore-pattern '!.*'"
 nmap <silent> <C-k> <Plug>(ale_previous_wrap)
 nmap <silent> <C-j> <Plug>(ale_next_wrap)
 noremap <F3> :ALEFix<CR>

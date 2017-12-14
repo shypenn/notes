@@ -24,7 +24,10 @@
     "jsdoc/require-param-type": 1,
     "jsdoc/require-returns-description": 1,
     "jsdoc/require-returns-type": 1,
-		"no-console":'off'
+
+    "global-require":0,
+    "no-underscore-dangle":0,
+		"no-console":0
 	}
   ,"plugins": [
     "jsdoc"

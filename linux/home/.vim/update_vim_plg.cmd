@@ -6,4 +6,7 @@ for /d %%a in (*) do (
 	git pull
 	popd
 )
+
+call ./post_process_plg.cmd
 pause
+

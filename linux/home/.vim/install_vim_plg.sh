@@ -8,3 +8,5 @@ while read line; do
 done < "../vim_plg.txt"
 
 popd
+
+source ./post_process_plg.sh

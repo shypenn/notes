@@ -7,3 +7,5 @@ for dir in `ls -d */`; do
 	popd
 done
 popd
+
+source ./post_process_plg.sh
