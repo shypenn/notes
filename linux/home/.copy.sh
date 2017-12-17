@@ -33,10 +33,10 @@ cp -rf . ~/ || quit
 log cd to ~ 
 cd ~
 
-rm install.cmd .copy.sh
+rm *.cmd .copy.sh
 
-file=.cfg/xsys_files.txt
 log  parsing os specific files in $file 
+file=.cfg/xsys_files.txt
 if [ -a $file ]; then
 	while read -r line; do
 		if [ -z "$line" ]; then continue; fi

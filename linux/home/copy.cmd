@@ -1,78 +1,31 @@
 @echo off
-copy.cmd
-echo returned
-exit /b
-:: install none	none
-:: @param {('none'|'update')} [vimPlugin] - how to treat vim plugins, install by default; 'none': no installing; 'update': update them; 
-:: @param {bool} [ifNpmPkg] - if install npm packages, install by default; true: install; false:no-install
-
 setlocal enableDelayedExpansion
 
-mklink aaaa aaaa
-if errorlevel 1 (
-	call:log Elevated priviledge is required
-	goto :end
-)
-del aaaa
-
-:: step 1: copy files to user directory [
-call:log **** copy files to user directory **** 
-if not "%cd%"=="%userprofile%" ( call copy.cmd )
-:: step 1 ]
+call:log coping...
+call:pushd "%~dp0"
+xcopy /EY * %userprofile%
 
 call:pushd %userprofile%
 
-:: step 2: whether to install or update vim plugins [
-call:log **** parsing vim plugins **** 
-if '%1' == 'none' (
-	rd /q /s .vim
-	call:log bypass install vim plugins
-	popd
-	goto:parseNpmPkgs
-)
+call:log delete used files
+del *.sh .*.txt
 
-:: update
-if '%1' == 'update' (
-	rd /q /s .vim
-	call:log updating plugins
-	call:pushd vimfiles
-	call update_vim_plg.cmd
-	popd
-	goto:parseNpmPkgs
-)
-
-:: install
-call:log installing vim plugins
-call:log change .vim to vimfiles...
-if exist vimfiles rd /q /s vimfiles
-move .vim vimfiles
-call:pushd vimfiles
-
-call:log make link autoload -- bundle\vim-pathogen\autoload
-mklink /d autoload "bundle\vim-pathogen\autoload"
-
-mkdir bundle
-call install_vim_plg.cmd
-popd
-:: step 2 ]
-
-
-# step 3: whether to install npm packages [
-:parseNpmPkgs
-call:log **** parsing npm packages ****
-if '%2' == 'false' (
-	call:log bypass install node packages
+call:log parsing os specific files in %file% 
+set "file=.cfg\xsys_files.txt"
+if exist %file% (
+	for /f %%a in (%file%) do (
+		call:log paring %%a
+		call:parseSys %%a
+	)
 ) else (
-	call install_npm_pkgs.cmd
+	call:log ERRORRRRRRRRRR: %file% doesn't exist
 )
-:: step 3 ]
 
-call:log finished
-goto:end
 
 :: **** sub functions*************************************************************
 
 :end
+	popd
 	popd
 	pause
 exit /b

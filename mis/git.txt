@@ -144,7 +144,7 @@ which is set by `git branch --track newBranch` / `git branch --set-upstream-to=r
 @) normalized eol is 'lf';
 
 @) show a commit changed files:
-git show <commit> --stat
+git show <commit> --stat/name-only
 
 @) view specific revision:
 git show HEAD~3:index.html

@@ -4,3 +4,8 @@ for /f %%a in (!file!) do (
 	call:log npm i -g %%a
 	call npm i -g %%a
 )
+
+:log
+	echo.
+	echo %*
+exit /b
