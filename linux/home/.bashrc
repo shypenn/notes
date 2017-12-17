@@ -20,7 +20,7 @@ export PS1='\
 
 
 #start ssh-agent automatically
-if [ -f "$HOME/.ssh" ]; then
+if [ -d "$HOME/.ssh" ]; then
 	SSH_ENV="$HOME/.ssh/env"
 	function start_sshagent {
 		echo starting ssh-agent
@@ -30,12 +30,10 @@ if [ -f "$HOME/.ssh" ]; then
 		. "${SSH_ENV}" > /dev/null
 		ssh-add
 	}
-	if [ -f "${SSH_ENV}" ] 
-	then
+	if [ -f "${SSH_ENV}" ]; then
 		. "${SSH_ENV}" > /dev/null
 		echo SSH_AGENT_PID: $SSH_AGENT_PID
-		if [ -z $(ps -p $SSH_AGENT_PID -o pid=) ]
-		then
+		if ! ps -p $SSH_AGENT_PID >/dev/nul; then
 			echo no ps
 			start_sshagent
 		fi
@@ -43,4 +41,3 @@ if [ -f "$HOME/.ssh" ]; then
 		start_sshagent
 	fi
 fi
-

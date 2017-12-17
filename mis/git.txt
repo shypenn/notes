@@ -222,11 +222,9 @@ helper = /usr/share/doc/git/contrib/credential/gnome-keyring/git-credential-gnom
 	https://shypenn@github.com/shypenn/notes
 
 @) multi-user
- *) windows: credential manager, different urls
- *) linux: 
  	* ssh domain alias
 	* user@domain in url
-
+@) bash command line: `git-bash.exe` (prefer shortcut in start menu) 
 @) diff waht's changed:
   `git diff HEAD file`
 @) `pushurl` and `fetch` in `[remote]` overrides `url`;

@@ -33,7 +33,7 @@ cp -rf . ~/ || quit
 log cd to ~ 
 cd ~
 
-rm *.cmd .copy.sh
+rm *.cmd *.reg .copy.sh
 
 log  parsing os specific files in $file 
 file=.cfg/xsys_files.txt

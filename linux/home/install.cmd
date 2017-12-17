@@ -1,19 +1,16 @@
 @echo off
-copy.cmd
-echo returned
-exit /b
 :: install none	none
 :: @param {('none'|'update')} [vimPlugin] - how to treat vim plugins, install by default; 'none': no installing; 'update': update them; 
 :: @param {bool} [ifNpmPkg] - if install npm packages, install by default; true: install; false:no-install
 
 setlocal enableDelayedExpansion
 
-mklink aaaa aaaa
+mklink test_priviledge aaaa
 if errorlevel 1 (
 	call:log Elevated priviledge is required
 	goto :end
 )
-del aaaa
+del test_priviledge
 
 :: step 1: copy files to user directory [
 call:log **** copy files to user directory **** 
@@ -22,12 +19,16 @@ if not "%cd%"=="%userprofile%" ( call copy.cmd )
 
 call:pushd %userprofile%
 
-:: step 2: whether to install or update vim plugins [
+:: step 2: config os [
+regedit /s solarized-dark.reg
+:: step 2 ]
+
+:: step 3: whether to install or update vim plugins [
 call:log **** parsing vim plugins **** 
 if '%1' == 'none' (
 	rd /q /s .vim
 	call:log bypass install vim plugins
-	popd
+	call:popd
 	goto:parseNpmPkgs
 )
 
@@ -37,7 +38,7 @@ if '%1' == 'update' (
 	call:log updating plugins
 	call:pushd vimfiles
 	call update_vim_plg.cmd
-	popd
+	call:popd
 	goto:parseNpmPkgs
 )
 
@@ -47,17 +48,16 @@ call:log change .vim to vimfiles...
 if exist vimfiles rd /q /s vimfiles
 move .vim vimfiles
 call:pushd vimfiles
-
-call:log make link autoload -- bundle\vim-pathogen\autoload
+ 
 mklink /d autoload "bundle\vim-pathogen\autoload"
 
 mkdir bundle
 call install_vim_plg.cmd
-popd
+call:popd
 :: step 2 ]
 
 
-# step 3: whether to install npm packages [
+:: step 4: whether to install npm packages [
 :parseNpmPkgs
 call:log **** parsing npm packages ****
 if '%2' == 'false' (
@@ -68,12 +68,11 @@ if '%2' == 'false' (
 :: step 3 ]
 
 call:log finished
-goto:end
 
 :: **** sub functions*************************************************************
 
 :end
-	popd
+	call:popd
 	pause
 exit /b
 
@@ -88,8 +87,12 @@ exit /b
 
 :pushd
 	pushd %*
-	echo.
-	echo CWD: %cd%
+	call:log [PUSHD] CWD: %cd%
+exit /b
+
+:popd
+	popd
+	call:log [POPD] CWD: %cd%
 exit /b
 
 :parseSys

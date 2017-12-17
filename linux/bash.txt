@@ -79,7 +79,13 @@
 
 @) [[]] is expansion to [], not posix;
 
+@) `if` test command return value;
+
+@) `[` is command.
+
 @) if...then are two lines;
+
+@) `!` to negate expression.
 
 @) in sense of bash:
  *) parameter is a name/number/special char, which stores value;

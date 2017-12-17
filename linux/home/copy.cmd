@@ -7,14 +7,14 @@ xcopy /EY * %userprofile%
 
 call:pushd %userprofile%
 
-call:log delete used files
+call:log delete unused files
 del *.sh .*.txt
 
 call:log parsing os specific files in %file% 
 set "file=.cfg\xsys_files.txt"
 if exist %file% (
 	for /f %%a in (%file%) do (
-		call:log paring %%a
+		call:log parsing %%a
 		call:parseSys %%a
 	)
 ) else (
@@ -27,7 +27,6 @@ if exist %file% (
 :end
 	popd
 	popd
-	pause
 exit /b
 
 :getTmpFile
