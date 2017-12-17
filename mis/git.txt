@@ -123,6 +123,9 @@ which is set by `git branch --track newBranch` / `git branch --set-upstream-to=r
 @) core.autocrlf
  *) true: input as LF (** all os, ONLY if repo is LF); output as CRLF in windows (** when output, will not convert CRLF to LR in linux);
  	** assume LF in repo **;
+  * if safecrlf=true, files have to be dos in windows, or error occurs when add and commit
+    `fatal: LF would be replaced by CRLF in linux/home/.bashrc`
+
  *) input: **Checkout as-is**, commit Unix-style
  *) false: no transforming;
 
