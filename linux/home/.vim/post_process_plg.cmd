@@ -1,1 +1,1 @@
-copy -s .overrides/* bundle/
+xcopy /EY .overrides\* bundle\
