@@ -25,12 +25,20 @@
     "jsdoc/require-returns-description": 1,
     "jsdoc/require-returns-type": 1,
 
+		"no-console":0,
     "global-require":0,
     "no-underscore-dangle":0,
-		"no-console":0
+    "import/no-unresolved": [
+      "error",
+      {
+        "commonjs": true,
+        "caseSensitive": true
+      }
+    ]
 	}
   ,"plugins": [
-    "jsdoc"
+    "jsdoc",
+    "import"
   ]
-	,"extends":["airbnb"]
+	,"extends":["airbnb/legacy"]
 }
