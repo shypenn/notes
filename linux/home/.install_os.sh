@@ -19,7 +19,7 @@ fi
 log install packages:
 sudo pkg install -y \
 	ibus-table-wubi ibus-pinyin gvim gdebi thunderbird \
-	git 
+	git editorconfig
 
 #sudo pkg install libgnome-keyring-dev
 #sudo make --directory=/usr/share/doc/git/contrib/credential/gnome-keyring
