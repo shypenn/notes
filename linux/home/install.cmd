@@ -20,7 +20,12 @@ if not "%cd%"=="%userprofile%" ( call copy.cmd )
 call:pushd %userprofile%
 
 :: step 2: config os [
+call:log apply solarized cmd theme 
 regedit /s solarized-dark.reg
+call:log install chocolatey
+"%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command "iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))" && SET "PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin"
+call:log install editorconfig
+choco install editorconfig.core
 :: step 2 ]
 
 :: step 3: whether to install or update vim plugins [
@@ -54,7 +59,7 @@ mklink /d autoload "bundle\vim-pathogen\autoload"
 mkdir bundle
 call install_vim_plg.cmd
 call:popd
-:: step 2 ]
+:: step 3 ]
 
 
 :: step 4: whether to install npm packages [
@@ -65,7 +70,7 @@ if '%2' == 'false' (
 ) else (
 	call install_npm_pkgs.cmd
 )
-:: step 3 ]
+:: step 4 ]
 
 call:log finished
 
@@ -74,10 +79,6 @@ call:log finished
 :end
 	call:popd
 	pause
-exit /b
-
-:getTmpFile
-	set "%1=tmp%random%"
 exit /b
 
 :log
@@ -94,66 +95,3 @@ exit /b
 	popd
 	call:log [POPD] CWD: %cd%
 exit /b
-
-:parseSys
-	setlocal
-	call:getTmpFile tmp
-
-	set lines=
-	set /a ix=0
-	set _start=
-	for /f tokens^=1-20^*^ delims^=^!^&^"^|^> %%a in (%1) do (
-		set "ln=%%a%%b%%c%%d%%e%%f%%g%%h%%i%%j%%k%%l%%m%%n%%o%%p%%q%%r%%s%%t%%u"
-		set /a ix=!ix!+1
-		set valid=0
-
-		echo(!ln! | find "WIN_START" >nul
-		if errorlevel 1 (
-			echo(!ln! | find "WIN_END" >nul
-			if errorlevel 1 (
-				echo(!ln! | find "LINUX_START" >nul
-				if errorlevel 1 (
-					echo(!ln! | find "LINUX_END" >nul
-					if errorlevel 1 (
-						if not defined _start (
-							set valid=1
-						)
-					) else (
-						set _start=
-					)
-				) else (
-					set _start=1
-				)
-			)
-		)
-		if !valid!==0 set "lines=!lines!,!ix!"
-	)
-
-	set /a ix=0
-	for /f "tokens=*" %%a in (%1) do (
-		set /a ix=!ix!+1
-		call:strLen !ix!
-		set /a err=!errorlevel!+1
-		for /f %%A in ("^!lines:~0,!err!^!") do ( set prefix=%%A)
-		if "!prefix!" == ",!ix!" (
-			for /f %%I in ("^!lines:~!err!^!") do ( set lines=%%I)
-		) else (
-			echo(%%a>> %tmp%
-		)
-	)
-	move %tmp% %1
-	endlocal
-exit /b
-
-
-:strLen
-	if "%1"=="" exit 0
-
-	set str=%~1
-	set /a len=0
-
-	:loop
-		set /a len=len+1
-		set str=%str:~1%
-		if defined str goto:loop
-exit/b %len%
