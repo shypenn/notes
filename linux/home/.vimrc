@@ -19,6 +19,8 @@ set showcmd
 syntax enable
 filetype plugin indent on
 
+" turn off Ex mode
+nnoremap Q <Nop>
 
 " solarized color
 set t_Co=16
