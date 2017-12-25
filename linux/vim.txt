@@ -1,3 +1,5 @@
+## [Learn Vimscript the Hard Way](http://learnvimscriptthehardway.stevelosh.com/)
+
 @) mistakes 936 for utf-8;
 
 @) .vim directory is named in 'vimfiles' in windows;
@@ -9,10 +11,11 @@
    * :breakadd 
 	** no ':gui' command executed, startup debug doen't work properly;
  *) write log messag: 
-    * `echoerr` & `:mes`
+    * `echom` & `:mes`
     * setqflist([{'text':'message'}])
     * setloclist(0, [{'text':'message'}])
   ** `echo` when only show at startup and in logfile.
+  ** `echoerr` shows the first one.
  *) log verbosely:
  	vim -V9FILENAME.log file
  *) let &verbose=1
@@ -110,12 +113,14 @@ C/S+<left>	move one word left/right;
 C+l	-	complete the longest unambiguous string;
 C+D	-	list the completion matches;
 
-@@ command history window
- *) open: q: / : Ctrl+f
+@@ `command history` window
+ *) open: 
+  * q:
+  * : Ctrl+f
  *) apply: ctrl+c -> enter
  *) close: ctrl+c twice
 
-@) search histroy window (replace 'q' with '/' in that for command);
+@) `search histroy` window (replace 'q' with '/' in that for command);
 
 @@ .:history :
 search a command history starting with :

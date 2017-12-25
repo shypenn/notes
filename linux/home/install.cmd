@@ -14,51 +14,17 @@ del test_priviledge
 
 :: step 1: copy files to user directory [
 call:log **** copy files to user directory **** 
-if not "%cd%"=="%userprofile%" ( call copy.cmd )
+if not "%~dp0"=="%userprofile%\" ( call copy.cmd )
 :: step 1 ]
 
 call:pushd %userprofile%
 
 :: step 2: config os [
-call:log apply solarized cmd theme 
-regedit /s solarized-dark.reg
-call:log install chocolatey
-"%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command "iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))" && SET "PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin"
-call:log install editorconfig
-choco install editorconfig.core
+call install_os.cmd
 :: step 2 ]
 
 :: step 3: whether to install or update vim plugins [
-call:log **** parsing vim plugins **** 
-if '%1' == 'none' (
-	rd /q /s .vim
-	call:log bypass install vim plugins
-	call:popd
-	goto:parseNpmPkgs
-)
-
-:: update
-if '%1' == 'update' (
-	rd /q /s .vim
-	call:log updating plugins
-	call:pushd vimfiles
-	call update_vim_plg.cmd
-	call:popd
-	goto:parseNpmPkgs
-)
-
-:: install
-call:log installing vim plugins
-call:log change .vim to vimfiles...
-if exist vimfiles rd /q /s vimfiles
-move .vim vimfiles
-call:pushd vimfiles
- 
-mklink /d autoload "bundle\vim-pathogen\autoload"
-
-mkdir bundle
-call install_vim_plg.cmd
-call:popd
+call:parseVimPlugins
 :: step 3 ]
 
 
@@ -75,6 +41,39 @@ if '%2' == 'false' (
 call:log finished
 
 :: **** sub functions*************************************************************
+
+:parseVimPlugins
+  call:log **** parsing vim plugins **** 
+  if '%1' == 'none' (
+    rd /q /s .vim
+    call:log bypass install vim plugins
+    call:popd
+    goto:parseNpmPkgs
+  )
+
+  :: update
+  if '%1' == 'update' (
+    rd /q /s .vim
+    call:log updating plugins
+    call:pushd vimfiles
+    call update_vim_plg.cmd
+    call:popd
+    goto:parseNpmPkgs
+  )
+
+  :: install
+  call:log installing vim plugins
+  call:log change .vim to vimfiles...
+  if exist vimfiles rd /q /s vimfiles
+  move .vim vimfiles
+  call:pushd vimfiles
+   
+  mklink /d autoload "bundle\vim-pathogen\autoload"
+
+  mkdir bundle
+  call install_vim_plg.cmd
+  call:popd
+exit /b
 
 :end
 	call:popd

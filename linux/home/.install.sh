@@ -50,7 +50,7 @@ fi
 
 #####################################################
 # step 1: copy files to user directory [
-if [ "$(dirname `realpath $pth`)" != "$HOME" ]; then
+if [ "$(dirname `realpath $BASH_SOURCE`)" != "$HOME" ]; then
 	source ./.copy.sh
 fi
 # step 1 ]
