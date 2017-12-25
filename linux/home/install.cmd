@@ -55,7 +55,7 @@ call:log finished
   if '%1' == 'update' (
     rd /q /s .vim
     call:log updating plugins
-    call:pushd vimfiles
+    call:pushd .vim
     call update_vim_plg.cmd
     call:popd
     goto:parseNpmPkgs
@@ -63,10 +63,11 @@ call:log finished
 
   :: install
   call:log installing vim plugins
-  call:log change .vim to vimfiles...
-  if exist vimfiles rd /q /s vimfiles
-  move .vim vimfiles
-  call:pushd vimfiles
+
+  call:log link vimfiles to .vim
+  mklink vimfiles .vim
+
+  call:pushd .vim
    
   mklink /d autoload "bundle\vim-pathogen\autoload"
 

@@ -5,7 +5,7 @@ lang messages en_US.utf-8
 set langmenu=en_US.utf-8
 set go-=T
 
-set novb
+set noeb vb t_vb=
 
 let g:instant_markdown_slow = 1
 let g:instant_markdown_autostart = 0

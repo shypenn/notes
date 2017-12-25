@@ -5,7 +5,7 @@ set lines=55 columns=150
 set go-=m
 " >>
 
-set noeb novb
+set noeb vb t_vb=
 set nobk
 set tabstop=2
 set expandtab
