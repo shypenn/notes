@@ -182,6 +182,8 @@ git show 71788f9f5d07b3a762ebba20d3bc3194fcf4bc28:index.html
 
 @) HEAD~2	the second parent vertically (parent of parent);
 @) HEAD^2	the second parent horizontally (the second one of group of parents merged from);
+ * 1 can be omited.
+ * if only one parent, `HEAD^` is the same to `HEAD~`
 
 @) repository's own config file is '.git/config';
 
@@ -236,4 +238,22 @@ helper = /usr/share/doc/git/contrib/credential/gnome-keyring/git-credential-gnom
   * add `--push` to manipulate `pushurl`
   ```
   git remote set-url --add --push origin url
+  ```
+@) cancel previous commit, and create a new one from current work tree (add/remove new files, change messages...):
+
+  * 
+  ```
+# add new file
+    [git add .]                   
+# remove a file
+    [git reset HEAD^ file]
+# leave message; new message; edit previous one (no flag)
+    git commit --amend [--no-edit | -m'new message']
+  ```
+  *
+  ```
+# move head backward
+    git reset --soft HEAD^
+# commit
+    git commit [-a] -c ORIG_HEAD
   ```
