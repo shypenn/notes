@@ -82,6 +82,8 @@ which is set by `git branch --track newBranch` / `git branch --set-upstream-to=r
  *) delete: git branch -d name
  *) move branch pointer to other commit: git reset <commit>
 
+@) push with rebased HEAD: --force
+
 @) fast-forward: no merge needed
 
 @) commit tree:

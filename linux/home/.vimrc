@@ -5,6 +5,7 @@ set lines=55 columns=150
 set go-=m
 " >>
 
+set noeb vb t_vb=
 set nobk
 set tabstop=2
 set expandtab
@@ -84,6 +85,11 @@ let g:instant_markdown_autostart = 0
 
 " jsx
 let g:jsx_ext_required = 0
+
+---WIN_START---
+" editorconfig
+let g:EditorConfig_exec_path = 'C:\ProgramData\chocolatey\lib\editorconfig.core\tools\editorconfig.exe'
+---WIN_END---
 
 execute pathogen#infect()
 " call :Helptags to init all docs;

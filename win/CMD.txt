@@ -1,3 +1,5 @@
+@) %0 always is script file, no matter executed directly or by `call`.
+
 @) Filename Parameter Extensions
  *) %~f1 Expand %1 to a Fully qualified path name - C:\utils\MyFile.txt
 

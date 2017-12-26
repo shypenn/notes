@@ -11,7 +11,7 @@ jsonlint
 babel-eslint
 jsdoc-to-markdown
 
-eslint
+eslint-config-airbnb-base
 eslint-plugin-import
 eslint-plugin-react
 eslint-plugin-jsx-a11y

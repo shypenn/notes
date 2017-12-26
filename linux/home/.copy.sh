@@ -1,4 +1,6 @@
 #!bash
+[ "$BASH_SOURCE" = "$0" ] && alias quit=exit || alias quit=return
+
 parseSys(){
 	log parsing: $1
 	if [ -a $1 ]; then
