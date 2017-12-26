@@ -33,7 +33,12 @@
 @) search help for function instead of 'Ex command':
  :h fun()
 
-@) Ex command should not be used in expression;
+@) Ex command
+ * `Q`
+ * `gQ`
+ * should not be used in expression;
+
+@) when one of operands is float, float alrithematic is applied.
 
 @) to check where are the options(textwidth/wrapmargin) set last:
 :verbose set tw? wm?
