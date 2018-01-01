@@ -2,7 +2,6 @@
 	name = Roney
 [core]
 	excludesfile=~/.cfg/git-exclude.txt
-	safecrlf=true
 ---WIN_START---
 	autocrlf = true
 ---WIN_END---

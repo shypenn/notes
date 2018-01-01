@@ -151,6 +151,9 @@ which is set by `git branch --track newBranch` / `git branch --set-upstream-to=r
 @) show a commit changed files:
 git show <commit> --stat/name-only
 
+@) show a commit all files:
+git ls-tree --name-only -r <commit>
+
 @) view specific revision:
 git show HEAD~3:index.html
 git show 71788f9f5d07b3a762ebba20d3bc3194fcf4bc28:index.html
