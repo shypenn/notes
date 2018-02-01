@@ -356,7 +356,7 @@ mysql server	-mysql-server
 @) find ~/note -atime 0 -type f -ok ls -l {} \;
  * command should end with ` \;`, to indicate terminating and prevent expansion by shell. **leading space is mandatory**
  * `-expr` are filtering expressions, should be placed after path. 
- * `{}` is placeholder as in `find`.
+ * `{}` is predefined placeholder as in `xargs`.
  * when more than one file found with wildcard in '-name', sorrounding it with quotes, or error occurs: `paths must precede expression`.
 
 @)view bash builtin command help, use "help cmd".
