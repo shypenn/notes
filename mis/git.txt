@@ -251,7 +251,7 @@ helper = /usr/share/doc/git/contrib/credential/gnome-keyring/git-credential-gnom
 # remove a file
     [git reset HEAD^ file]
 # leave message; new message; edit previous one (no flag)
-    git commit --amend [--no-edit | -m'new message']
+    git commit --amend [--no-edit | -m"new message"]
   ```
   *
   ```
@@ -260,3 +260,9 @@ helper = /usr/share/doc/git/contrib/credential/gnome-keyring/git-credential-gnom
 # commit
     git commit [-a] -c ORIG_HEAD
   ```
+
+# git commit -m"adfaf"
+
+  **double quotes are mandatory in windows when more than one chars in the message**. or error occurs:
+
+  `error: pathspec 'publishing'' did not match any file(s) known to git.`
