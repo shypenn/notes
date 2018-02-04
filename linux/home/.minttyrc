@@ -26,3 +26,5 @@ BellType=0
 FontHeight=11
 Transparency=low
 CursorType=block
+Locale=en_US
+Charset=UTF-8

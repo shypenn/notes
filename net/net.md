@@ -107,7 +107,7 @@
 * most client only support in https;
 * header compression
 * stream priority;
-* multiplex connection (single for a domain): async both requests and responses;
+* multiplex streams in a single connection;
 
  
 ## stateless
