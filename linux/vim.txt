@@ -508,3 +508,5 @@ put *
 	// vim: set ft=text:
 
 @) convert tab to spaces: retab
+
+@) ale is async, not work in batch commands, such as 'argdo'.

@@ -82,6 +82,18 @@ let g:closetag_xhtml_filenames = '*.htm,*.html,*.xhtml,*.phtml,*.js,*.jsx'
 
 " vim-instant-markdown
 let g:instant_markdown_autostart = 0
+let g:javascript_plugin_flow = 1
+
+" flow
+" 
+" call this manually in case being stopped abruptly
+" au VimLeave javascript !flow stop
+"
+" enable check on write: FlowToggle
+let g:flow#enable = 0
+let g:flow#autoclose = 1
+let g:flow#errjmp = 1
+
 
 " jsx
 let g:jsx_ext_required = 0

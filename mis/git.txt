@@ -260,3 +260,5 @@ helper = /usr/share/doc/git/contrib/credential/gnome-keyring/git-credential-gnom
 # commit
     git commit [-a] -c ORIG_HEAD
   ```
+# push/pull all in 'refs/heads': `--all`
+# push/pull all in 'refs/': `--mirror`
