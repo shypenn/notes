@@ -263,6 +263,6 @@ helper = /usr/share/doc/git/contrib/credential/gnome-keyring/git-credential-gnom
 
 # git commit -m"adfaf"
 
-  **double quotes are mandatory in windows when more than one chars in the message**. or error occurs:
+  **double quotes are mandatory in windows when spaces appear in the message**. or error occurs:
 
   `error: pathspec 'publishing'' did not match any file(s) known to git.`
