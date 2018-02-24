@@ -260,9 +260,12 @@ helper = /usr/share/doc/git/contrib/credential/gnome-keyring/git-credential-gnom
 # commit
     git commit [-a] -c ORIG_HEAD
   ```
-
 # git commit -m"adfaf"
 
   **double quotes are mandatory in windows when spaces appear in the message**. or error occurs:
 
   `error: pathspec 'publishing'' did not match any file(s) known to git.`
+
+# push/pull all in 'refs/heads': `--all`
+
+# push/pull all in 'refs/': `--mirror`

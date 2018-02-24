@@ -356,7 +356,7 @@ mysql server	-mysql-server
 @) find ~/note -atime 0 -type f -ok ls -l {} \;
  * command should end with ` \;`, to indicate terminating and prevent expansion by shell. **leading space is mandatory**
  * `-expr` are filtering expressions, should be placed after path. 
- * `{}` is placeholder as in `find`.
+ * `{}` is predefined placeholder as in `xargs`.
  * when more than one file found with wildcard in '-name', sorrounding it with quotes, or error occurs: `paths must precede expression`.
 
 @)view bash builtin command help, use "help cmd".
@@ -540,7 +540,7 @@ wc
 
 @) list open ports:
 netstat -elnopt
-lsof -i :port
+lsof -i :80
 
 @) change timezone:
 ln -sf /usr/share/zoneinfo/<CONTINENT>/<CITY> /etc/localtime
@@ -653,6 +653,10 @@ ln -sf /usr/share/zoneinfo/<CONTINENT>/<CITY> /etc/localtime
 @) force to kill: 
 	*) kill -s SIGKILL
 	*) kill -9
+@) kill by group:
+  `kill -- -1234`
+  * '--' default signal
+  * '-' indicates group id
 
 @) middle mouse button to paste;
 
@@ -815,3 +819,6 @@ wget --no-check-certificate https://download.01.org/gfx/RPM-GPG-GROUP-KEY-ilg  -
  * full: cat
  * forward: head
  * backward: tail
+
+@) process group id is the root process id of the descending tree.
+  * 'detach' can break this tree.

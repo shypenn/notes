@@ -18,7 +18,7 @@ fi
 
 log install packages:
 sudo pkg install -y \
-	ibus-table-wubi ibus-pinyin gvim gdebi thunderbird \
+	gparted ibus-table-wubi ibus-pinyin gvim gdebi thunderbird \
 	git editorconfig
 
 #sudo pkg install libgnome-keyring-dev
