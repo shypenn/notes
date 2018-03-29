@@ -2,13 +2,11 @@
 	name = Roney
 [core]
 	excludesfile=~/.cfg/git-exclude.txt
----WIN_START---
-	autocrlf = true
----WIN_END---
----LINUX_START---
+	safecrlf = true
 	autocrlf = false
 	eol = lf
 
+---LINUX_START---
 #gnome-keyring
 #sudo apt-get install libgnome-keyring-dev
 #sudo make --directory=/usr/share/doc/git/contrib/credential/gnome-keyring
