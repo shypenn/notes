@@ -9,7 +9,7 @@ instant-markdown-d
 js-beautify
 jsonlint
 babel-eslint
-jsdoc-to-markdown
+documentation
 
 eslint-config-airbnb-base
 eslint-plugin-import

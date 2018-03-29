@@ -237,6 +237,7 @@ helper = /usr/share/doc/git/contrib/credential/gnome-keyring/git-credential-gnom
 @) bash command line: `git-bash.exe` (prefer shortcut in start menu) 
 @) diff waht's changed:
   `git diff HEAD file`
+  **HEAD should be in the front**
 @) `pushurl` and `fetch` in `[remote]` overrides `url`;
   * add `--push` to manipulate `pushurl`
   ```
@@ -262,3 +263,16 @@ helper = /usr/share/doc/git/contrib/credential/gnome-keyring/git-credential-gnom
   ```
 # push/pull all in 'refs/heads': `--all`
 # push/pull all in 'refs/': `--mirror`
+
+# create an empty branch
+  * git checkout —orphan new_branch_name
+  * git rm -rf
+
+# ls untracked files:
+  ```
+    git ls-files --others
+  ```
+# ls untracked files excluding node_modules:
+  ```
+    git ls-files --others --exclude-standard
+  ```

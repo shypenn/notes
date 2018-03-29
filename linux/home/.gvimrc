@@ -6,6 +6,7 @@ set langmenu=en_US.utf-8
 set go-=T
 
 set noeb vb t_vb=
+set guitablabel=%N\ %f\ %M\ %R
 
 let g:instant_markdown_slow = 1
 let g:instant_markdown_autostart = 0

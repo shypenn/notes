@@ -129,6 +129,7 @@ GENERAL
 
 @) process monitor: 
 strace -e trace=file -o strace.log cmd args
+-p: attach to process
 
 @) filesystem monitor(watch):
 inotify-tools
@@ -542,6 +543,9 @@ wc
 netstat -elnopt
 lsof -i :80
 
+@) kill process which listens on a port:
+kill -9 `lsof -t -i :5858`
+
 @) change timezone:
 ln -sf /usr/share/zoneinfo/<CONTINENT>/<CITY> /etc/localtime
 
@@ -822,3 +826,9 @@ wget --no-check-certificate https://download.01.org/gfx/RPM-GPG-GROUP-KEY-ilg  -
 
 @) process group id is the root process id of the descending tree.
   * 'detach' can break this tree.
+
+@) gnome window tool: `xdotool`
+http://www.semicomplete.com/projects/xdotool/xdotool.xhtml
+* xdotool selectwindow
+* xdotool getwindowpid
+* xdotool getwindowname
