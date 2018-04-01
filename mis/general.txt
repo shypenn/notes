@@ -189,4 +189,4 @@ U+02Ax	ʠ	ʡ	ʢ	ʣ	ʤ	ʥ	ʦ	ʧ	ʨ	ʩ	ʪ	ʫ	ʬ	ʭ	ʮ	ʯ
 
 @) add certificates to browser: open it
 
-
+@) TL:DR  means if the previous text are too long that you didn't read, then check the following summary.

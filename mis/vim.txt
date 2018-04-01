@@ -517,3 +517,9 @@ put *
 
 @) remove message history:
 :mes clear
+
+@) execute command on matched lines
+:global/pat/cmd
+
+  - list matched search pattern (when pattern omitted, previous search pattern is adopted)
+    :g//p
