@@ -182,3 +182,7 @@ dword, 4-bytes, can be any form of:
 	2071818896
 
 
+## socks5
+* It resides between transport and application layers.
+* So it adopts **TCP** to negotiate and **TCP/UDP** to transport.
+* It's invoked directly by application.

@@ -1,5 +1,13 @@
 ## [Learn Vimscript the Hard Way](http://learnvimscriptthehardway.stevelosh.com/)
 
+- open font selection dialog:
+
+`set guifont=*`
+
+- display font setting command
+
+`set guifont?`
+
 @) mistakes 936 for utf-8;
 
 @) .vim directory is named in 'vimfiles' in windows;

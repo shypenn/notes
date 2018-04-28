@@ -189,4 +189,6 @@ U+02Ax	ʠ	ʡ	ʢ	ʣ	ʤ	ʥ	ʦ	ʧ	ʨ	ʩ	ʪ	ʫ	ʬ	ʭ	ʮ	ʯ
 
 @) add certificates to browser: open it
 
+- apply zoom to all sites:
 
+`browser.zoom.siteSpecific: false`
