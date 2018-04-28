@@ -191,4 +191,6 @@ U+02Ax	ʠ	ʡ	ʢ	ʣ	ʤ	ʥ	ʦ	ʧ	ʨ	ʩ	ʪ	ʫ	ʬ	ʭ	ʮ	ʯ
 
 - apply zoom to all sites:
 
-`browser.zoom.siteSpecific: false`
+  `browser.zoom.siteSpecific: false`
+
+@) TL:DR  means if the previous text are too long that you didn't read, then check the following summary.
