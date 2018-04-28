@@ -1,1 +1,0 @@
-@) CPA(Chosen Plaintext Attack): arbitrary input to get its output, then deduce the methodology of translating;

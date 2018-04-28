@@ -182,3 +182,362 @@ dword, 4-bytes, can be any form of:
 	2071818896
 
 
+## Data netwowk
+
+built on top of existing physical networks, such as phone netwok, television network and even power network.
+
+## Dial-up
+- through a voice connection to Internet Service Provider (ISP), by calling its phone number.
+- use the same frequency that phone uses, which expands in the low area of spectrum called Baseband.
+
+## Digital subscriber line (DSL)
+- use higher frequency than voice, called Broadband
+- connection is permanent without calling.
+- data and phone can transmit simultaneously.
+- ADSL (asymmetrical DSL), has high downstream speed and lower upstream.
+
+## Repeater
+
+replicates data to all receivers.
+
+## Switcher
+
+pass data to its destination according to address.
+
+## Hub, repeater
+
+connecting multiple computers via twisted-pair cables, forming a star-shaped LAN.
+
+## Physical Layer
+
+- unit: Bit
+
+- DTE (Data Terminal Equipment): computer, router;
+
+
+- DCE (Data Circuit-terminating Equipment): modem, multiplexer;
+
+## Data Link Layer (LAN)
+
+communicate between neighboring DTEs.
+
+- Frame: header + payload + trailer(checksum)
+- link address -  6 bytes, unique in LAN
+- Maximum Transfer Unit (MTU): the data length limit in a single frame;
+
+## Network layer (WAN)
+
+communicate between terminals belonging to different LAN. (IP, ICMP...)
+
+- Packet: header + payload, acts as payload of data link frame
+- Router is required, it acts as a translater between Link Layer protocols (unpack and pack datagram into different types of frames). Routers communicating with each other become a LAN.
+- network address - IP, ...
+
+## Transport layer 
+
+communicate between two Applications residing on different DTEs
+
+- Segment (TCP), Datagram (UDP)
+- Transport address - port
+
+## TCP/IP family
+
+Application protocols (user + service)
+
+  ↑
+
+TCP/UDP [transport layer]
+
+  ↑
+
+Internet Protocol [network layer]
+
+  ↑
+
+[link layer + physical layer]
+
+## Internet (best-effort network) 
+- is not synchronous as phone; 
+- stable bandwidth is achieved by over-dimensioning/over-provisioning or Quality of Service (QoS), which adopts Packet Prioritizing.
+
+## IP is connectionless
+
+- CLNS - Connectionless network service.
+- CONS - connection oriented network service
+
+## IPTV
+
+adopts UDP transportation.
+
+## Packet driver
+
+gets only frames that are valid, damaged ones are dropped by hardware, so to catch them a specific device is needed.
+
+## Network interface card
+
+drops frames which are destined to other target, to receive all, turn on its Promiscuous mode. (** switch connected LAN doesnot work**)
+
+## LAN
+
+- stations linked via shared medium, the medium has specific Link Protocol.
+- divided into MAC (media access control) and LLC (logical link control); 
+- MAC half belongs to L1 and half to L2.
+
+## Extended LAN 
+
+multiple LANs linked via a Switch, which translates frames between different link protocols.
+
+## serial/parallel transmision 
+
+refers to bits of word/s.
+
+## asyncronous arrhythmic data transport 
+
+refers to chars, bits within a char are transported syncly.
+
+## parity bit 
+
+acts as checksum.
+
+## window
+
+a number counting time or others, within the coverage of which, data items sent are cached before receiver confirms.
+
+
+## 10base5, 10base2, 100baseT... 
+- prefix number indicating frequency 
+- suffix indicating media (thick/thin coaxial cable, twisted-pair...)
+
+## IP packet
+- Header length
+  * count of dword
+  * basic header length is 5
+  * optional header should also be multiple of dword;
+
+- ICMP,IGMP are encapsulated in payload of IP.
+
+- IP payload can contain whatever data besides higher level protocol data.
+
+- Protocol id/number: 
+
+http://www.iana.org./numbers.html
+
+- fragments can be reassembled only by receipient (shouldn't by router), since routes may change.
+
+- A complete IP datagram has its "fragment offset" set to 0 and "last fragment" flaged.
+
+
+## ICMP
+- `redirect` usually is used for dynamic config to assign routers.
+
+- router solicitation is active router querying.
+
+## Ping
+
+adopts ICMP echo.
+
+## Trace route
+- tracert.exe: adopts ICMP echo;
+- traceroute in unix: unused UDP port, with increasing TTL from 1, trying three times each.
+- time sync calcs Round Trip Time (RTT), then deduced the time in counterpart
+> Network Time Protocol assumes a Symmetric network, that is the times are equal between tow sides of the round trip.
+
+RTT = reply-got - request-sent - ( reply-sent - request-got )  
+ServerNow = reply-sent + RTT/2
+
+## source routing
+if the router in a route has its IP matching the one in the IP list pointed by "ptr", it sends this datagram to the next IP. 
+
+the last one in the list would be the final destination.
+
+_in this way, data may be routed through evil server or to unreachable intranet destination._
+
+## ARP,RARP 
+- in the same level of IP.
+
+- ARP (address resolution protocol) is for querying MAC address for a specific IP in LAN.
+
+- RARP functions as DHCP, but is superseded by it.
+
+## IP group address [224 - 240)
+(http://www.iana.org/assignments/multicast-addresses)
+
+- LAN (dedicated): 224.0.0.0 - 224.0.0.255;
+```
+224.0.0.1 - All stations (computer + router) within LAN 
+224.0.0.2 - All routers within LAN
+...
+```
+- WAN: 224.0.1.0 - 239.255.255.255;
+
+## IP address 
+`network addr + computer addr`
+
+* special forms
+
+  - 0s + 0s: this computer in this network
+
+  - 0s + computer: the computer in this network
+
+  - network + 0s: the network
+
+  - network + 1s: broadcast to _the_ network (direct broadcast)
+
+  - 1s + 1s: broadcast to _this_ network (limited broadcast)
+
+* standard network classes
+
+network mask for them are called `standard network mask` (no subnetwork).
+
+always minimum one zero is present to prevent colliding with limited broadcast address.
+
+  - A: 1-byte (the first bit is 0), 0-127
+
+  - B: 2-byte (the first two bits are 10), 128-191
+
+  - C: 3-byte (the first three bits are 110), 192-223
+
+  - D (multicast): 4-byte (the four three bits are 1110), 224-239
+
+  - D (reserved): 240-
+
+* Intranet IP addresses:
+  - 10.0.0.0/8  
+    site local
+
+  - 172.16.0.0/12 (- 172.31)
+
+  - 192.168.0.0/16
+
+  - 169.254.0.0/16  
+    link local address, assigned automatically by OS when no IP is assigned by DHCP server;
+
+* RFC  3330  (Special-Use  IPv4 Addresses)
+
+## IPv6
+  `001 + RIR(20) + LIR(9) + site(16) + network(16) + interface ID`
+
+* RIR
+  - 2001:0000::/23 IANA
+  - 2001:0200::/23 APNIC (Asia and Pacific)
+  - 2001:0400::/23 ARIN (America)
+  - 2001:0600::/23 RIPE NCC (Europe)
+
+* interface ID: MAC address with `FFFE` inserted between third and four byte.
+
+* multicast
+   `FF + 000T + scope(4bits) + group address(6bytes)`
+  - T
+    0: permanent/well-known
+    1: temporary/transient
+  - scope
+    + 1: Interface-local scope
+    + 2: Link-local scope
+    + 5: Site-local scope
+    + 8: Organization-local scope
+    + E: Global scope
+  - special (T is 0)
+    + ::1 - all stations
+    + ::2 - all routers
+    + ::9 - all routers using RIP
+
+* loopback: ::1
+
+* 6to4: 2002:V4ADDR:SLA ID:Interface ID
+
+* link local: 1111 1110 10.../10  FE8-FEB
+
+* site local: 1111 1110 11.../10  FEC-FEF
+
+## Dynamic Address Assignment:
+DHCP - LAN
+PPP - point to point
+
+## Unnumbered interface:
+- A router has two interfaces, onr for LAN is ethernet, another for other router is serial.
+- An network interface should have an IP address.
+- Any connected interfaces forms a network, so in the case of the two connected routers.
+- To save up this tiny network IPs, let their Serial interfaces borrow its ethernet address without its own.
+- The two connected routers are combined virtually with only two interfaces connecting two LANs.
+
+## Route table
+- lists networks, masks and its gateway address, along with metrics.
+- it is processed descendingly, from most specific (mask has more ones) to less.
+- the last item is 0.0.0.0, its next hop is another router. unmatched ip is sent to it.
+- metrics is hops to the destination network.
+
+## Hop
+is also called gateway.
+
+## TCP
+- is duplex, two directions are independent, data can be sent when ACK is received no matter what state is of the other.
+
+- Connection state regards two way connections as a whole.
+
+- 3 steps are required to establish both ways TCP connections
+
+- whereas 4 are needed for closing. since ACK can not be combined with the other FIN when closing. data sending may be continuing the other way.
+
+- in `TIME_WAIT` state, e.g. after the last ACK is sent, the sender will wait for a pre-configed period of time before closing, in case the ACK gets lost.
+
+- Response delay is feasible only for tiny data and non-real-time service.
+
+- ISN (initial sequence number) is random, instead of 0 or 1.
+
+- ACK number indicates the length of data received.
+
+- data length is deduced from `IP-data-length - TCP-header-length`
+
+- ACK is sent immediately when received.
+
+## DNS 
+- records are called RR (resource record)
+
+- Reverse translation applys Pointer Record, which converts IP into plain domain form with the top level of in-addr.arpa/addr.arpa (ip4/6).
+
+## FTP 
+* active/passive mode indicates the role (client/server) of server in data channel.
+
+## telnet 
+* can mimic raw tcp client (alike netcat socat), when 8-bit clearness problem is prevented.
+
+> gopher is predecessor of www.
+
+## Proxy 
+
+- client -> [proxy server -> proxy client] -> server
+
+- when send to http proxy, "path" contains full URL in http header.
+
+- http proxy adopts CONNECT method.
+
+> gateway converts protocol to another.
+
+## file:///c|/windows
+- domain/host name is omited after the second slash
+- `|` is replacement of colon(:)
+
+## certificate
+* contains public key, bound to a domain, verified by CA with its own root certificate.
+
+* root certificates of public CAs are preinstalled.
+
+* CA verify domain owner by email when issue certificate, or even more strict checking offline.
+
+## forward secrecy
+prevent from decrypting by later diaclousure of key.
+
+## VPN 
+* divides to two types:
+  - Point-to-point
+  - Router-to-router
+
+* modify route table to achieve intercepting requests.
+
+## public key 
+can be calced from private key, but not vice versa.
+
+## wireshark
+
+- shows seq number as relative, different from the raw data.
+
