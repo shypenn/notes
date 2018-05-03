@@ -701,6 +701,7 @@ rm -rf * .*
 unmanaged-devices=interface-name:wlp1s0
 
 
+@) passwords and keys: seahorse
 
 @) gnome screen rotate:
  - org/gnome/settings-daemon/peripherals/touchscreen/orientation-lock: true
@@ -742,7 +743,7 @@ XDG: X Development Group (FreeDesktop.org)
 
 @) install gnome extensions: extract into '~/.local/share/gnome-shell/extensions/'
 
-@) Trash folder is located in .local/share/Trash;
+@) Trash/recycle folder is located in .local/share/Trash;
  *) ls: gvfs-ls trash://
  *) move into: gvfs-trash file
 
