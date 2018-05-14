@@ -736,7 +736,9 @@ unmanaged-devices=interface-name:wlp1s0
  *) gnome tweek tool
  *) systemctl hibernate
 
-@) restart gnome-shell: alt-f2, r
+@) restart gnome-shell: 
+  - usable: alt-f2, r
+  - frozen: shift to another terminal, then `sudo killall -9 gnome-shell`
 
 @) global config stored in /etc/xdg/
 XDG: X Development Group (FreeDesktop.org)
