@@ -588,3 +588,47 @@ can be calced from private key, but not vice versa.
 * It resides between transport and application layers.
 * So it adopts **TCP** to negotiate and **TCP/UDP** to transport.
 * It's invoked directly by application.
+
+## TLS
+
+### format
+
+```
+  struct {
+      uint8 major;
+      uint8 minor;
+  } ProtocolVersion;
+
+  enum {
+      change_cipher_spec(20), alert(21), handshake(22),
+      application_data(23), (255)
+  } ContentType;
+
+1. 
+  struct {
+      ContentType type;
+      ProtocolVersion version;
+      uint16 length;
+      opaque fragment[TLSPlaintext.length];
+  } TLSPlaintext;
+
+2. 
+  struct {
+      ContentType type;       /* same as TLSPlaintext.type */
+      ProtocolVersion version;/* same as TLSPlaintext.version */
+      uint16 length;
+      opaque fragment[TLSCompressed.length];
+  } TLSCompressed;
+3.
+  struct {
+      ContentType type;
+      ProtocolVersion version;
+      uint16 length;
+      select (SecurityParameters.cipher_type) {
+          case stream: GenericStreamCipher;
+          case block:  GenericBlockCipher;
+          case aead:   GenericAEADCipher;
+      } fragment;
+  } TLSCiphertext;
+
+```
