@@ -198,7 +198,7 @@ Device1 = DDInstall1, devId1, devId2
  *) that originates the request;
  *) IRQL < DISPATCH_LEVEL (KeWaitForSingleObject should set timeout to 0);
 
-@) monolithic driver is against to class driver + minidriver;
+@) monolithic driver is against class driver + minidriver;
 
 @) the combination of class driver and minidriver acts as function driver;
 

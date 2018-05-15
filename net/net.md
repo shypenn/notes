@@ -11,7 +11,67 @@
 * WSAStartup	--	Windows Socket Application
 * MAC: media access control;
 
-## Commands:
+## IP 
+
+### header
+
+    0                   1                   2                   3
+    0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |Version|  IHL  |Type of Service|          Total Length         |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |         Identification        |Flags|      Fragment Offset    |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |  Time to Live |    Protocol   |         Header Checksum       |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |                       Source Address                          |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |                    Destination Address                        |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |                    Options                    |    Padding    |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+## IPv4 address
+
+dword, 4-bytes, can be any form of:
+
+* any 4 numbers of combination of decimal/hex/octet together separated by dot
+
+	123.125.114.144
+
+	123.0x7d.114.0220
+
+* any leading bytes till all four can be coalesced together:
+
+	123.0x7d.29328
+
+	2071818896
+
+
+## TCP
+### header
+
+    0                   1                   2                   3   
+    0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |          Source Port          |       Destination Port        |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |                        Sequence Number                        |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |                    Acknowledgment Number                      |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |  Data |           |U|A|P|R|S|F|                               |
+   | Offset| Reserved  |R|C|S|S|Y|I|            Window             |
+   |       |           |G|K|H|T|N|N|                               |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |           Checksum            |         Urgent Pointer        |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |                    Options                    |    Padding    |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |                             data                              |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+### flags:
 
 * URG:  Urgent Pointer field significant
 * ACK:  Acknowledgment field significant
@@ -20,7 +80,7 @@
 * SYN:  Synchronize sequence numbers
 * FIN:  No more data from sender
 
-## TCP Status:
+### Status:
 
 * LISTEN - represents waiting for a connection request from any remote TCP and port.
 
@@ -45,7 +105,7 @@
 * CLOSED - represents no connection state at all.
 
 
-## TCP Connection State Diagram
+### Connection State Diagram
 ```                                   
                               +---------+ ---------\      active OPEN  
                               |  CLOSED |            \    -----------  
@@ -93,7 +153,7 @@
                               +---------+                   +---------+
 ```                                   
 
-## Three way handshake
+### Three way handshake
 
 1. A --> B  SYN my sequence number is X
 2. A <-- B  ACK your sequence number is X;
@@ -163,23 +223,6 @@ doesn't wait the previous request got response(responses still are ordered by re
 	`xn--<ascii>-<unicode>`
 
 	`www.ab人cde.org`	=>	`www.xn--abcde-dd2h.org`
-
-
-## IP address
-
-dword, 4-bytes, can be any form of:
-
-* any 4 numbers of combination of decimal/hex/octet together separated by dot
-
-	123.125.114.144
-
-	123.0x7d.114.0220
-
-* any leading bytes till all four can be coalesced together:
-
-	123.0x7d.29328
-
-	2071818896
 
 
 ## Data netwowk
@@ -301,7 +344,7 @@ acts as checksum.
 
 ## window
 
-a number counting time or others, within the coverage of which, data items sent are cached before receiver confirms.
+a number indicating how many bytes the sender can receive (e.g. how large its buffer leaves).
 
 
 ## 10base5, 10base2, 100baseT... 
@@ -484,7 +527,7 @@ is also called gateway.
 
 - ISN (initial sequence number) is random, instead of 0 or 1.
 
-- ACK number indicates the length of data received.
+- ACK number indicates the next seq expected (data before it is received)
 
 - data length is deduced from `IP-data-length - TCP-header-length`
 
@@ -541,3 +584,7 @@ can be calced from private key, but not vice versa.
 
 - shows seq number as relative, different from the raw data.
 
+## socks5
+* It resides between transport and application layers.
+* So it adopts **TCP** to negotiate and **TCP/UDP** to transport.
+* It's invoked directly by application.

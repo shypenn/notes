@@ -703,7 +703,9 @@ unmanaged-devices=interface-name:wlp1s0
 
 
 @) gnome screen rotate:
- org/gnome/settings-daemon/peripherals/touchscreen/orientation-lock: true
+ - org/gnome/settings-daemon/peripherals/touchscreen/orientation-lock: true
+ - second button in top right panel.
+
 
 @) 'ibus_write_address: assertion 'pf != NULL' failed'
  *) delete ~/.config/ibus/
@@ -748,7 +750,7 @@ XDG: X Development Group (FreeDesktop.org)
 
 @) firefox 
  * touchscreen scroll: env MOZ_USE_XINPUT2=1 firefox
- * resolution: devPixelsPerPx
+ * resolution: about:config - devPixelsPerPx
 
 @) hotspot fix:
 sudo apt install hostapd dnsmasq
@@ -832,3 +834,7 @@ http://www.semicomplete.com/projects/xdotool/xdotool.xhtml
 * xdotool selectwindow
 * xdotool getwindowpid
 * xdotool getwindowname
+
+@) proxy setting should be set in different places for different apps (better to set in app specific way)
+  * gtk: `org.gnome.system.proxy`
+  * environment

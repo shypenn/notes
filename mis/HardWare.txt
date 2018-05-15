@@ -5,6 +5,7 @@
 
 @) i686 is 32bit
 @) x86_64 is 64bit;
+@) ia64 is Interl Itanium;
 
 @) BIOS interrupts are not available in pmode;
 
