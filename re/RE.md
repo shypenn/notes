@@ -27,8 +27,17 @@ delphi
 		-4: length
 		00: data
 
+pack/unpack
+============
+
+
 general
 ============
+
+* DlgHelp consult environment variable `_NT_SYMBOL_PATH` to locate symbol server.
+
+* 'SymSrv.dll' needs an empty file named 'SymSrv.yes' exists alongside.
+
 * dos exe relocation entry is four bytes, the first word is offset, the second is segment.  the address it points is a segment address, which should be added by the "load module" address.
 
 * go to far address to execute:

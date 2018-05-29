@@ -37,11 +37,19 @@ dword, 4-bytes, can be any form of:
 
 * any 4 numbers of combination of decimal/hex/octet together separated by dot
 
+  > in network order (big-endian)
+  > addr: low -> high
+  > magn: high -> low
+
 	123.125.114.144
+
+	0x7b.0x7d.0x72.0x90
 
 	123.0x7d.114.0220
 
 * any leading bytes till all four can be coalesced together:
+
+	0x7b.0x7d.0x7290
 
 	123.0x7d.29328
 
@@ -246,6 +254,10 @@ replicates data to all receivers.
 ## Switcher
 
 pass data to its destination according to address.
+
+## gateway/hop 
+
+converts protocol to another.
 
 ## Hub, repeater
 
@@ -509,9 +521,6 @@ PPP - point to point
 - the last item is 0.0.0.0, its next hop is another router. unmatched ip is sent to it.
 - metrics is hops to the destination network.
 
-## Hop
-is also called gateway.
-
 ## TCP
 - is duplex, two directions are independent, data can be sent when ACK is received no matter what state is of the other.
 
@@ -536,7 +545,7 @@ is also called gateway.
 ## DNS 
 - records are called RR (resource record)
 
-- Reverse translation applys Pointer Record, which converts IP into plain domain form with the top level of in-addr.arpa/addr.arpa (ip4/6).
+- Reverse translation applys Pointer Record, which stores IP in form of plain domain with the top level of in-addr.arpa/addr.arpa (ip4/6).
 
 ## FTP 
 * active/passive mode indicates the role (client/server) of server in data channel.
@@ -550,11 +559,34 @@ is also called gateway.
 
 - client -> [proxy server -> proxy client] -> server
 
-- when send to http proxy, "path" contains full URL in http header.
+- invoke directly by application. (may leak DNS request, then turn on 'remote DNS lookups' if supported)
 
-- http proxy adopts CONNECT method.
+- adopts proxify/socksify tool to intercept request in system level
 
-> gateway converts protocol to another.
+- ssh provide 'dynamic port forwarding', which setup a socks server in local machine, and then relay them over SSH to ssh service on target server, which then send the request. (if target server is locahost, it acts as a pure socks server)
+
+- linux has no uniform way to set system proxy
+
+- windows has system proxy (IE proxy), in 'Internet Options', however application can decide whether to use it
+  `InternetQueryOption`
+
+### http
+
+* when send to http proxy, "path" contains full URL in http header.
+
+* http proxy adopts CONNECT method.
+
+### socks5
+* It resides between transport and application layers.
+* So it adopts **TCP** to negotiate and **TCP/UDP** to transport.
+* `Socks` in chinese is 套接字
+
+### shadowsocks
+
+#### shadowsocks-libev
+* ss-local: explicit
+* ss-redir: transparent (iptable forwarding)
+* ss-tunnel: specific target address and port (-L)
 
 ## file:///c|/windows
 - domain/host name is omited after the second slash
@@ -579,15 +611,6 @@ prevent from decrypting by later diaclousure of key.
 
 ## public key 
 can be calced from private key, but not vice versa.
-
-## wireshark
-
-- shows seq number as relative, different from the raw data.
-
-## socks5
-* It resides between transport and application layers.
-* So it adopts **TCP** to negotiate and **TCP/UDP** to transport.
-* It's invoked directly by application.
 
 ## TLS
 

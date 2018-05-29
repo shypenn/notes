@@ -14,6 +14,11 @@ https://www.kernel.org/doc
  *) man console_codes
 
 @) desktop manager name stored in $DESKTOP_SESSION;
+
+@) manage repo
+`software-properties-common`
+- add-apt-repository
+
 -------------------------------------------------------------------------------------
 PACKAGE
 -------------------------------------------------------------------------------------
@@ -450,6 +455,10 @@ install packages with wildcard and
  * getent passwd (more than /etc/passwd)
  * local users: cat /etc/passwd
 
+
+@) change password non-interactively
+`# echo -e "linuxpassword\nlinuxpassword" | passwd linuxuser`
+
 @) view user info:
 	`id username`
 
@@ -541,7 +550,7 @@ wc
 
 @) list open ports:
 netstat -elnopt
-lsof -i :80
+sudo lsof -i :80
 
 @) kill process which listens on a port:
 kill -9 `lsof -t -i :5858`
@@ -606,6 +615,9 @@ ln -sf /usr/share/zoneinfo/<CONTINENT>/<CITY> /etc/localtime
 	ssh-add ~/.ssh/file
  *) view sshd log:
  	`service sshd status`
+  *) local port forwarding: applications in client side to connect to server
+  *) remote port forwarding: vice versa.
+  *) dynamic port forwarding: where to connect dependents on application layer.
 
 @) copy files between remote systems and local or another:
  *) scp

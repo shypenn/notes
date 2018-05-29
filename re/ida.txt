@@ -8,6 +8,8 @@ idal: Linux/Mac, text
 
 @) when file has '64' suffix, 'ea' is 8 bytes, even target is 32bit; 
 
+@) overrides `_NT_SYMBOL_PATH` by ms server path.
+
 @) plugin file name:
 	Windows 32 bit:        *.plw
 	Windows 64 bit:        *.p64

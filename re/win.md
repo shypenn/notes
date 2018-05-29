@@ -152,3 +152,9 @@
 	| 8.1/12r2   | _MM_AVL_TREE  | _MM_BALANCED_NODE               |
 
 * when execution is transfered to application, `ebx` points to `PEB`;
+
+* winsock
+- `wsock32.lib`: v1
+- `ws2_32.lib`: v2
+
+* int has length of 32bits both in x86 & x64.

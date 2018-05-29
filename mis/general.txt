@@ -10,10 +10,15 @@ cd insure 63...[8]
 zh-hans_windows_xp_professional_with_service_pack_3_x86_cd_vl_x14-74070
 QC986-27D34-6M3TY-JJXP9-TBGMD
 
-envy15:
-f10: bios	f9: boot options	f11: recovery
 cd: be31...(C:1)
 ja..ki..l0..t?2Mbo2n900101
+
+2ofx4bG!
+Pl.. Sm...
+00, end
+Postal Way, Vista, CA
+(Postal Way, Vista, San Diego, California)
+92083
 
 @) usb boot only support certain port, try each;
 
@@ -26,24 +31,11 @@ System32\inetsrv\config\applicationHost.configÀïµÄ:
     <processModel identityType="NetworkService" loadUserProfile="false" />
 </applicationPoolDefaults> 
 
-
-moto:
-1:rocovery:
-	x+power
-volume up+camera
-2:bootloader:
-	up+power
-3:enable power to end call:system/usr/keylayout/cpcap-key.kl:
-	key	107	ENDCALL		WAKE_DROPPED
-
-
 run SQLManagementStudio_x86_ENU.exe--> install center-->installation->new stand-alone installation->management tool(basic)
 
 
  ¾©ICP±¸09078293ºÅ
 
-
-ctrl+c cmd cancel execution;
 
 @) 32 bit true color: 24-bit truecolor depth with 8 bits for an alpha channel;
 
@@ -106,6 +98,7 @@ linux/posix, also:
 
 @) vmware;
  *) shared file is locked caused by bug, fix: open preoperty dialgo then close;
+ *)  %APPDATA%\VMware\preferences.ini pref.grabOnKeyPress = "TRUE"
 
 @) in unicode text file, at the start, a BOM(byte order mark) number may appear:
  *) 0xfffe/0x0000fffe: little endian 
@@ -197,3 +190,6 @@ U+02Ax	ʠ	ʡ	ʢ	ʣ	ʤ	ʥ	ʦ	ʧ	ʨ	ʩ	ʪ	ʫ	ʬ	ʭ	ʮ	ʯ
 
 @) IP geolocation database:
 http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz
+
+## firefox
+* stores configuration in 'prefs.js' in %APPDATA%
