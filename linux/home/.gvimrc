@@ -13,4 +13,4 @@ let g:instant_markdown_autostart = 0
 
 
 " high dpi 4k
-:set gfn=Consolas:h12
+"set gfn=Consolas:h12

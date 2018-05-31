@@ -1,10 +1,17 @@
+# rename to .bash_profile in macos
+
+
 #disable  ctrl-s/q	:freeze/release
 stty -ixon -ixoff
 
 export EDITOR=vim
 set -o vi
+
+#linux
 eval $(dircolors ~/.dircolors)
 alias ls="ls --color=auto"
+#macos
+export CLICOLOR=1
 
 source .cfg/tty-solarized-dark.sh
 export PS1='\
