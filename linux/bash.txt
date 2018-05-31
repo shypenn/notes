@@ -157,6 +157,11 @@ cd `readlink somelinkname`
 cd $(readlink somelinkname)
 readlink somelinkname|cd
 
+@) command executes in $() doesn't affect current session
+
+$(cd a/b/) will not change current working directory.
+
+
 @) equivalent of [] for group of strings in regex is {}.
 
 @) $IFS:	internal field separator.
@@ -358,6 +363,7 @@ IFS="," read catnum rest <<<"$line"
 	*) string converted automatically
 	*) '.' is invalid;
  *) -v : if variable is set;
+   or: if [ -z ${var:+a} ];then echo unset; fi
  *) logical operator: 
 	 * -a, -o: can not mixed with bash conditional switches;
  	 * &&/||: **BETWEEN** []

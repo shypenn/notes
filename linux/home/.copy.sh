@@ -14,7 +14,9 @@ parseSys(){
 					win=1
 				elif [ -z "${line##*WIN_END*}" ];then
 					unset win
-				elif [ ! -v win ];then 
+				# elif [ ! -v win ];then 
+				# mac doesn't support -v
+				elif [ -z ${win:-a} ];then 
 					ctn="$ctn"$'\n'"$line"
 				fi
 			fi
@@ -28,17 +30,18 @@ parseSys(){
 
 log copying files to home
 srcDir=$(dirname $BASH_SOURCE)
-log cd to source folder: $srcDir
-cd $srcDir
+pushd $srcDir
 cp -rf . ~/ || quit
+popd
 
-log cd to ~ 
-cd ~
+log clensing files in home
+pushd ~
+
 
 rm *.cmd *.reg .copy.sh
 
-log  parsing os specific files in $file 
 file=.cfg/xsys_files.txt
+log  parsing os specific files in $file 
 if [ -a $file ]; then
 	while read -r line; do
 		if [ -z "$line" ]; then continue; fi
@@ -52,3 +55,5 @@ else
 	log "ERRORRRRRRRRRR: $file doesn't exist"
 	quit
 fi
+
+popd

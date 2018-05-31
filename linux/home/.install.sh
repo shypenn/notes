@@ -50,13 +50,21 @@ fi
 
 #####################################################
 # step 1: copy files to user directory [
-if [ "$(dirname `realpath $BASH_SOURCE`)" != "$HOME" ]; then
+# if [ "$(dirname `realpath $BASH_SOURCE`)" != "$HOME" ]; then
+# mac has no realpath
+if [ "$(cd `dirname $BASH_SOURCE`; pwd -P)" != "$HOME" ]; then
 	source ./.copy.sh
+else
+	log copy canceled
 fi
 # step 1 ]
 
+pushd ~
+
 # step 2: config os [
-source ./.install_os.sh
+if [[ $(uname -s) == Linux* ]]; then
+	source ./.install_os.sh
+fi
 # step 2 ]
 
 # step 3: whether to install or update vim plugins [
@@ -67,5 +75,6 @@ handleVimPluglins $1
 handleNpmPkgs $2
 # step 4 ]
 
+popd
 log DONE
 quit 0
