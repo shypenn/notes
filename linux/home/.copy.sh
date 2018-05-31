@@ -11,12 +11,13 @@ parseSys(){
 			&& [ -n "${line##*LINUX_END*}" ] \
 			;then 
 				if [ -z "${line##*WIN_START*}" ];then
+echo win is set $win
 					win=1
 				elif [ -z "${line##*WIN_END*}" ];then
 					unset win
 				# elif [ ! -v win ];then 
 				# mac doesn't support -v
-				elif [ -z ${win:-a} ];then 
+				elif [ -z ${win:+a} ];then 
 					ctn="$ctn"$'\n'"$line"
 				fi
 			fi
@@ -47,8 +48,8 @@ if [ -a $file ]; then
 		if [ -z "$line" ]; then continue; fi
 		if [ -n "$line" ]; then
 			parseSys $line
-		else
-			log ["$line"] doesn\'t exist;
+		#else
+		#	log ["$line"] doesn\'t exist;
 		fi
 	done < $file 
 else 
