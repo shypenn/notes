@@ -13,4 +13,7 @@ let g:instant_markdown_autostart = 0
 
 
 " high dpi 4k
+" ubuntu
 "set gfn=Consolas:h12
+" macos
+"set guifont=Menlo\ Regular:h14

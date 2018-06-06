@@ -90,6 +90,8 @@
 @) regex:
  *) '*' is not magic; '\' is not neeeded;
  *) multiline: prepend '\_' to class char: '\_.', '\_s'
+ *) lookahead/behind, replace '?' with '@', append instead of prepend
+ `\v(reg)@<=exp` -> 'exp' after 'reg'
 
 @@ g CTRL+g	-- show the position of cursor;
 

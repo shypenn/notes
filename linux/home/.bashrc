@@ -40,7 +40,7 @@ if [ -d "$HOME/.ssh" ]; then
 	if [ -f "${SSH_ENV}" ]; then
 		. "${SSH_ENV}" > /dev/null
 		echo SSH_AGENT_PID: $SSH_AGENT_PID
-		if ! ps -p $SSH_AGENT_PID >/dev/nul; then
+		if ! ps -p $SSH_AGENT_PID >/dev/null; then
 			echo no ps
 			start_sshagent
 		fi
