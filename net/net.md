@@ -1,3 +1,11 @@
+# todo
+* ss/r
+* tor
+* lantern
+* proxifier
+* softether
+* v2ray
+
 ## Terms
 
 * IETF (Internet Engineering Task Force): who  develops and promotes voluntary Internet Standards, e.g.  Internet protocol suite (TCP/IP);

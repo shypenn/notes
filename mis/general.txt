@@ -13,11 +13,11 @@ QC986-27D34-6M3TY-JJXP9-TBGMD
 cd: be31...(C:1)
 ja..ki..l0..t?2Mbo2n900101
 
-2ofx4bG!
-Pl.. Sm...
+2ofx,4bG!/.
+Pl.. Wa...
 00, end
-Postal Way, Vista, CA
-(Postal Way, Vista, San Diego, California)
+Postal Way, Vista, (San Diego), California)
+new e
 92083
 
 @) usb boot only support certain port, try each;
@@ -193,3 +193,10 @@ http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz
 
 ## firefox
 * stores configuration in 'prefs.js' in %APPDATA%
+
+## putty
+### pscp
+  * with session name:
+    pscp session_name:file local_file
+  * session name should not be a char
+  * if no response, adopt `-scp`

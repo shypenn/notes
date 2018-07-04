@@ -7,7 +7,8 @@ https://www.kernel.org/doc
 @) system info: 
  *) lscpu/hw/of...;
  *) lsb_release(linux standard base);
- *) uname(/proc/version)
+ *) uname -all
+ *) cat /proc/version
  *) cat /etc/*-release
 
 @ by 'echo -e' a special control sequence, attributes of console can be set;
@@ -209,6 +210,7 @@ inotify-tools
  *) rsyslog: check /etc/rsyslog.conf, usually /var/log/messages is the general one;
  *) upstart: /var/log/syslog; /var/log/upstart/
  *) systemd: journalctl [-u unit/service]
+  if not intime, adopt `systemtrl status service`
   
 @) grub2 builds menu-entry config file '/boot/grub/grub.cfg' by scripts in '/etc/grub.d/' and '/etc/default/grub'(custom options)
  *) cmd to build: update-grub
@@ -232,7 +234,15 @@ ctrl+d
 @) lock/unlock screen session:
 ctrl+s/q
 
+to disable: 
+`stty -ixoff -ixon`
+* `-`: disable
+* `ixoff`: host side
+* `ixon`: client/remote side
+  **cause pscp(putty scp) problem of 'Inappropriate ioctl for device', then only enable on interactive session**
 
+@) check if interactive session in bash:
+shopt login_shell
 
 
 @) CentOS network config:
@@ -615,9 +625,9 @@ ln -sf /usr/share/zoneinfo/<CONTINENT>/<CITY> /etc/localtime
 	ssh-add ~/.ssh/file
  *) view sshd log:
  	`service sshd status`
-  *) local port forwarding: applications in client side to connect to server
-  *) remote port forwarding: vice versa.
-  *) dynamic port forwarding: where to connect dependents on application layer.
+  *) local port forwarding: applications in client side to connect to a dedicated third-party server
+  *) remote port forwarding: redirect remote port packets to local port
+  *) dynamic (local) port forwarding: where to connect dependents on application layer.
 
 @) copy files between remote systems and local or another:
  *) scp
@@ -853,3 +863,4 @@ http://www.semicomplete.com/projects/xdotool/xdotool.xhtml
 @) proxy setting should be set in different places for different apps (better to set in app specific way)
   * gtk: `org.gnome.system.proxy`
   * environment
+@) startup script should generate output only in interactive session, or cause problems to scp/sftp
