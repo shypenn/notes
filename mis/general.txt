@@ -193,3 +193,10 @@ http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz
 
 ## firefox
 * stores configuration in 'prefs.js' in %APPDATA%
+* touchscreen scroll: env MOZ_USE_XINPUT2=1 firefox
+* resolution: about:config - devPixelsPerPx
+
+
+## chrome
+* specific proxy instead of system
+`google-chrome --proxy-server="socks5://foobar:66"`

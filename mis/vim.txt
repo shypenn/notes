@@ -520,6 +520,9 @@ put *
 @) set filetype for a specific file, append this modeline at the footer;
 	// vim: set ft=text:
 
+* set at start up
+vim -c "set ft=text" file.ext
+
 @) convert tab to spaces: retab
   * vice versa: set noexpandtab; retab!
 
@@ -533,3 +536,5 @@ put *
 
   - list matched search pattern (when pattern omitted, previous search pattern is adopted)
     :g//p
+
+@) go to quicklist item of number n: `:cc n`

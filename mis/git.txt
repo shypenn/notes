@@ -283,3 +283,5 @@ helper = /usr/share/doc/git/contrib/credential/gnome-keyring/git-credential-gnom
   ```
     git ls-files --others --exclude-standard
   ```
+# shallow to deep:
+  `git fetch --unshallow`

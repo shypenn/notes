@@ -763,10 +763,6 @@ XDG: X Development Group (FreeDesktop.org)
 
 @) gvfs: Gnome Virtual File System;
 
-@) firefox 
- * touchscreen scroll: env MOZ_USE_XINPUT2=1 firefox
- * resolution: about:config - devPixelsPerPx
-
 @) hotspot fix:
 sudo apt install hostapd dnsmasq
 

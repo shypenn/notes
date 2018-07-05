@@ -247,21 +247,29 @@ built on top of existing physical networks, such as phone netwok, television net
 - data and phone can transmit simultaneously.
 - ADSL (asymmetrical DSL), has high downstream speed and lower upstream.
 
-## Repeater
+## devices
 
-replicates data to all receivers.
+### Repeater
 
-## Switcher
+* physical layer
+* two ports
+* replicate data from input to output
 
-pass data to its destination according to address.
+### Hub
 
-## gateway/hop 
+* Repeater with multiple output ports
+* replicate data to all outputs
+* broadcast
+
+### Switcher
+
+* link layer
+* pass data to its destination according to MAC address.
+
+### gateway/hop 
 
 converts protocol to another.
 
-## Hub, repeater
-
-connecting multiple computers via twisted-pair cables, forming a star-shaped LAN.
 
 ## Physical Layer
 
