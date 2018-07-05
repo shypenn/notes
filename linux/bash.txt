@@ -20,9 +20,11 @@
 
 @) no & as in cmd;
 
-@) exit compatible between sourced and subshell
-
-	[ "$BASH_SOURCE" = "$0" ] && alias quit exit || alias quit return
+@) quit without affecting caller shell
+  * sourced: `return`
+  * subshell: `exit`
+  * universal:
+    [ "$BASH_SOURCE" = "$0" ] && alias quit exit || alias quit return
 
 @) 'return' from function or `source`ed script;
  *) get returned value, same as 'exit code': $? 
@@ -152,7 +154,7 @@ export EDITOR=vim
  *) get length: ${#arr[@]}
 
 
-@)put a command output (stdout) as another command's parameter using backticks or $() or pipe:
+@)put a command output (stdout) as another command's parameter using backticks or $() if it doens't accept input from stdin with pipe
 cd `readlink somelinkname`
 cd $(readlink somelinkname)
 readlink somelinkname|cd

@@ -1,7 +1,9 @@
 # rename to .bash_profile in macos
 
+# only execute in interactive session
+shopt -q login_shell || return
 
-#disable  ctrl-s/q	:freeze/release
+#disable  ctrl-s/q	:freeze/release in interactive session
 stty -ixon -ixoff
 
 export EDITOR=vim
